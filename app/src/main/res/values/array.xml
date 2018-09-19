@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="emailType">
+        <item >gmail.com</item>
+        <item >naver.com</item>
+        <item >daum.com</item>
+    </string-array>
+</resources>

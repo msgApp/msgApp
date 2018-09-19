@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Maple</string>
+    <string name="pw_hint">암호를 입력해주세요</string>
+    <string name="em_hint">이메일을 입력해주세요</string>
+    <string name="login_id">아이디</string>
+    <string name="login_pw">비밀번호</string>
+    <string name="login_bt">로그인</string>
+    <string name="id_pw">/</string>
+    <string name="id_pw2">&#160;찾기</string>
+    <string name="join">회원가입</string>
+    <string name="id_pw3"> &#160;|&#160;</string>
+    <string name="re_email">이메일을 입력해주세여</string>
+    <string name="re_cbtn">인증번호 전송</string>
+    <string name="re_cbt2">인증 확인</string>
+    <string name="re_cemail">인증 코드 입력</string>
+    <string name="test_putText">데이터 입력</string>
+    <string name="test_submit_btn">전송</string>
+    <string name="re_pwCheck">암호를 재입력해주세요</string>
+    <string name="re_birthDay">생년월일</string>
+    <string name="re_gender">성별</string>
+    <string name="re_male">남성</string>
+    <string name="re_female">여성</string>
+    <string name="re_nickName">닉네임</string>
+    <string name="re_rName">본명</string>
+    <string name="re_submit">회원가입</string>
+    <string name="emaildot">"@"</string>
+    <string name="addFriend">찾을 친구의 이메일ID를 입력해주세요.</string>
+    <string name="emailhint">example@example.com</string>
+    <string name="action_send">Send</string>
+    <string name="prompt_message">Message</string>
+</resources>

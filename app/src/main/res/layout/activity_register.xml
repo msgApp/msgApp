@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity"
+    tools:layout_editor_absoluteY="25dp">
+
+    <Button
+        android:id="@+id/mailSend"
+        android:layout_width="105dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/re_cbtn"
+        android:onClick="onClick"
+        app:layout_constraintBaseline_toBaselineOf="@+id/re_email"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/re_email"
+        android:layout_width="242dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:hint="@string/re_email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toStartOf="@+id/mailSend"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="20dp" />
+
+    <EditText
+        android:id="@+id/re_emailCheck"
+        android:layout_width="242dp"
+        android:layout_height="46dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/re_cemail"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_email" />
+
+    <Button
+        android:id="@+id/re_reEmailCheck"
+        android:layout_width="105dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/re_cbt2"
+        android:onClick="onClick"
+        app:layout_constraintBaseline_toBaselineOf="@+id/re_emailCheck"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/re_emailCheck" />
+
+    <EditText
+        android:id="@+id/re_passwd"
+        android:layout_width="360dp"
+        android:layout_height="54dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/pw_hint"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_emailCheck" />
+
+    <EditText
+        android:id="@+id/re_passCheck"
+        android:layout_width="360dp"
+        android:layout_height="54dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/re_pwCheck"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_passwd" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_rName">
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:text="@string/re_gender"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/re_male"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/re_male" />
+
+            <CheckBox
+                android:id="@+id/re_female"
+                android:layout_width="84dp"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/re_female" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:text="@string/re_birthDay"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:layout_editor_absoluteX="30dp"
+            tools:layout_editor_absoluteY="513dp" />
+
+        <TextView
+            android:id="@+id/birthDay"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:ems="10"
+            android:inputType="text"
+            android:onClick="onBirthdayClicked"
+            android:text="Name"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            tools:layout_editor_absoluteX="30dp"
+            tools:layout_editor_absoluteY="532dp" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/re_nickName"
+        android:layout_width="194dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/re_nickName"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_passCheck" />
+
+    <EditText
+        android:id="@+id/re_rName"
+        android:layout_width="194dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/re_rName"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/re_nickName" />
+
+    <Button
+        android:id="@+id/reSubmitBtn"
+        android:layout_width="410dp"
+        android:layout_height="wrap_content"
+        android:text="@string/re_submit"
+        android:onClick="onClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

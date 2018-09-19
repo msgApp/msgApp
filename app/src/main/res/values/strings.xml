@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Maple</string>
+    <string name="app_name">MsgApp</string>
     <string name="pw_hint">암호를 입력해주세요</string>
     <string name="em_hint">이메일을 입력해주세요</string>
     <string name="login_id">아이디</string>

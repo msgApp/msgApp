@@ -28,7 +28,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
-    private ArrayList<getItem> items;
+    private ArrayList<GetMessageItem> items;
     JSONObject msg;
     TextView msgInput;
     private Socket mSocket;
@@ -52,7 +52,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         items = new ArrayList();
 
         // RecyclerView를 위해 CustomAdapter를 사용합니다.
-        mAdapter = new RecyclerViewAdapter(items);
+        mAdapter = new ChatAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
         // ArrayList 에 Item 객체(데이터) 넣기
 
@@ -72,7 +72,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                items.add(new getItem(msgInput.getText().toString(),"user"));
+                items.add(new GetMessageItem(msgInput.getText().toString(),"user"));
                 mAdapter.notifyItemInserted(items.size());
                 mSocket.emit("sendMsg",msgData);
 
@@ -81,7 +81,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
     }
     public void addMsg(String setName,String setMsg){
-       items.add(new getItem(setMsg,setName));
+       items.add(new GetMessageItem(setMsg,setName));
         mAdapter.notifyItemInserted(items.size());
         scrollToBottom();
     }

@@ -47,7 +47,6 @@
         </activity>
         <activity
             android:name=".ChatRoomActivity"
-            android:theme="@style/Login"
             >
         </activity>
         <activity
@@ -65,6 +64,10 @@
         <activity
             android:name=".ChatMainActivity"
             android:theme="@style/Login"
+            >
+        </activity>
+        <activity
+            android:name=".ViewPagerActivity"
             >
         </activity>
 

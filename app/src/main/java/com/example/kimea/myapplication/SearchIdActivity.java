@@ -1,7 +1,6 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
-import android.app.AppComponentFactory;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

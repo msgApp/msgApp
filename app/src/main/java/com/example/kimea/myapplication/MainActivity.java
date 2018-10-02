@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -103,11 +104,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mSocket.connect();
                             //Intent intent = new Intent(MainActivity.this, SocketService.class);
 
-                            Intent intent2 = new Intent(MainActivity.this,ChatMainActivity.class);
+                            Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
                             startActivity(intent2);
                         }else{
-
+                            Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, 500);

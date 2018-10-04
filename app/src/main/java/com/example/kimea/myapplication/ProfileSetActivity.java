@@ -108,7 +108,6 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
         bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         imgview2.setImageBitmap(bitmap);
         return bitmap;
-
     }
 
 

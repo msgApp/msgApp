@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +58,9 @@ public class FriendTabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         View view  = inflater.inflate(R.layout.friend_fragment, container, false);
+
+
+
         mSocket.on("friendList", listener);
         fRecyclerView = view.findViewById(R.id.friend_list);
 
@@ -69,6 +75,8 @@ public class FriendTabFragment extends Fragment {
 
         return view;
     }
+
+
     public void addProfile(String setuUserImg,String setUserNickname){
         items.add(new GetFriendListItem(setuUserImg,setUserNickname));
         adapter.notifyDataSetChanged ();
@@ -90,7 +98,7 @@ public class FriendTabFragment extends Fragment {
 
                         setUserImg = pList.getString("u_pf_img");
                         setUserNickname = pList.getString("u_nickname");
-                        Log.i("nickName&img", setUserNickname+", "+setUserImg);
+                       // Log.i("nickName&img", setUserNickname+", "+setUserImg);
 
 
                     }catch (Exception e){
@@ -114,13 +122,13 @@ public class FriendTabFragment extends Fragment {
 
                     try {
                         for(int i = 0; i<fList.length(); i++){
-                            Log.i("fList length", String.valueOf(fList.length()));
-                            Log.i("listener1",fList.toString());
+                           // Log.i("fList length", String.valueOf(fList.length()));
+                            //Log.i("listener1",fList.toString());
                             JSONObject jo = fList.getJSONObject(i);
                             JSONObject data = new JSONObject();
-                            Log.i("fListArray", jo.toString());
+                            //Log.i("fListArray", jo.toString());
                             userList.add(fList.getJSONObject(i).getString("f_email"));
-                            Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                            //Log.i("msg",fList.getJSONObject(i).getString("f_email"));
                             data.put("u_email",userList.get(i).toString());
                             data.put("index",i);
                             mSocket.emit("sendFriend",data);

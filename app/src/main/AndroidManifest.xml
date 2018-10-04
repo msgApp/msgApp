@@ -18,12 +18,15 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/Login"
+            android:configChanges="screenSize|orientation"
             >
 
         </activity>
         <activity
             android:name=".LoadingActivity"
-            android:theme="@style/Loading">
+            android:theme="@style/Loading"
+            android:configChanges="screenSize|orientation"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,15 +36,18 @@
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/Login"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
         <activity
             android:name=".ChatRoomActivity"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
         <activity
             android:name=".ProfileSetActivity"
             android:theme="@style/Login"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
         <service android:name=".SocketService"></service>
@@ -49,15 +55,18 @@
         <activity
             android:name=".AddFriendActivity"
             android:theme="@style/Login"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
         <activity
             android:name=".ChatMainActivity"
             android:theme="@style/Login"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
         <activity
             android:name=".ViewPagerActivity"
+            android:configChanges="screenSize|orientation"
             >
         </activity>
 

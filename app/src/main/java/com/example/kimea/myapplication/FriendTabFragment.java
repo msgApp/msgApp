@@ -77,8 +77,8 @@ public class FriendTabFragment extends Fragment {
     }
 
 
-    public void addProfile(String setuUserImg,String setUserNickname){
-        items.add(new GetFriendListItem(setuUserImg,setUserNickname));
+    public void addProfile(String setuUserImg,String setUserNickname,String setProfileText, String setEmail){
+        items.add(new GetFriendListItem(setuUserImg,setUserNickname,setProfileText,setEmail));
         adapter.notifyDataSetChanged ();
     }
 
@@ -93,18 +93,22 @@ public class FriendTabFragment extends Fragment {
                     Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String setUserNickname ="";
+                    String setProfileText = "";
+                    String setEmail = "";
 
                     try {
 
                         setUserImg = pList.getString("u_pf_img");
                         setUserNickname = pList.getString("u_nickname");
+                        setProfileText = pList.getString("u_pf_text");
+                        setEmail = pList.getString("u_email");
                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
 
 
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    addProfile(setUserImg,setUserNickname);
+                    addProfile(setUserImg,setUserNickname,setProfileText,setEmail);
                 }
             });
         }

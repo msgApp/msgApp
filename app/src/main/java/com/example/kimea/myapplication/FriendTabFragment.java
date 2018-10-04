@@ -113,7 +113,7 @@ public class FriendTabFragment extends Fragment {
 
 
                     try {
-                        for(int i = 0; i<1; i++){
+                        for(int i = 0; i<fList.length(); i++){
                             Log.i("fList length", String.valueOf(fList.length()));
                             Log.i("listener1",fList.toString());
                             JSONObject jo = fList.getJSONObject(i);

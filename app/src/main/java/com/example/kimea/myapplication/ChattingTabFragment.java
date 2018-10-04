@@ -11,6 +11,7 @@ public class ChattingTabFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.friend_fragment,container,false);
+        View view = inflater.inflate(R.layout.chatting_fragment,container,false);
+        return view;
     }
 }

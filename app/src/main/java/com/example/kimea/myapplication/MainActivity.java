@@ -21,7 +21,7 @@ import java.io.IOException;
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
+    JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this, "token.db",null,1);
     TextView search_id;
@@ -65,20 +65,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v){
         switch (v.getId()){
             case R.id.search_id :
-                Intent intent = new Intent(MainActivity.this,SearchIdActivity.class);
-                startActivity(intent);
+
                 break;
             case R.id.search_pw:
 
                 break;
 
             case R.id.register:
-                intent = new Intent(MainActivity.this,RegisterActivity.class);
+                Intent intent = new Intent(MainActivity.this,ViewPagerActivity.class);
                 startActivity(intent);
                 break;
             case R.id.login_btn:
                 //insert
-                JSONObject loginData = new JSONObject();
+                final JSONObject loginData = new JSONObject();
                 try{
                     loginData.put("login_id",login_id.getText().toString());
                     loginData.put("login_pw",login_pw.getText().toString());
@@ -102,10 +101,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(!result2.equals("false")){
                             insert(result2);
                             mSocket.connect();
+
                             //Intent intent = new Intent(MainActivity.this, SocketService.class);
 
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
+
                             startActivity(intent2);
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
@@ -114,22 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, 500);
 
                 break;
-                /*
-            case R.id.mailSend:
-                try {
-                    GMailSender gMailSender = new GMailSender("MyEmail@gmail.com", "password1234");
-                    //GMailhSender.sendMail(제목, 본문내용, 받는사람);
-                    gMailSender.sendMail("제목입니다", message.getText().toString(), textView.getText().toString());
-                    Toast.makeText(getApplicationContext(), "이메일을 성공적으로 보냈습니다.", Toast.LENGTH_SHORT).show();
-                } catch (SendFailedException e) {
-                    Toast.makeText(getApplicationContext(), "이메일 형식이 잘못되었습니다.", Toast.LENGTH_SHORT).show();
-                } catch (MessagingException e) {
-                    Toast.makeText(getApplicationContext(), "인터넷 연결을 확인해주십시오", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-                */
+
         }
 
     }

@@ -58,12 +58,14 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
 
         mSocket.on("friendList",listener);
 
+        /*
         try {
             data.put("email", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         mSocket.emit("sendUser",data);
+        */
     }
     @Override
     public void onClick(View v){

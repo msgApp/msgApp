@@ -44,7 +44,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
         return bitmap;
-
     }
 
     @Override

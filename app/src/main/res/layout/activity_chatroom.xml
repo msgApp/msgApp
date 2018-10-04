@@ -35,7 +35,8 @@
             android:imeOptions="actionSend"
             android:inputType="text"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            tools:ignore="InvalidImeActionId" />
         <ImageButton
             android:id="@+id/send_button"
             android:layout_width="wrap_content"

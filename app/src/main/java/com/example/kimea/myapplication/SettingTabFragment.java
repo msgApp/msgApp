@@ -53,11 +53,11 @@ public class SettingTabFragment extends Fragment{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("sendProfile",data2);
+        mSocket.emit("sendMyProfile",data2);
 
         Log.i("Asdas","dasd");
 
-        mSocket.on("sendProfile",profile2);
+        mSocket.on("sendMyProfile",profile2);
     }
     @Nullable
     @Override

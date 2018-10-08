@@ -119,6 +119,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        mSocket.disconnect();
+
     }
 }

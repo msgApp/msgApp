@@ -39,6 +39,7 @@ public class FriendTabFragment extends Fragment {
     JSONArray fList;
     JSONObject pList;
     ArrayList userList;
+    String ids;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
     private FloatingActionButton  fab1, fab2, fab;
@@ -48,12 +49,13 @@ public class FriendTabFragment extends Fragment {
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-        String ids = getActivity().getIntent().getStringExtra("id");
+        ids = getActivity().getIntent().getStringExtra("id");
         try {
             data.put("email", ids);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         mSocket.emit("sendUser",data);
         items = new ArrayList<>();
     }
@@ -96,6 +98,7 @@ public class FriendTabFragment extends Fragment {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent(getActivity().getApplicationContext(),AddFriendActivity.class);
+                intent.putExtra("id", ids);
                 startActivity(intent);
             }
         });
@@ -137,14 +140,11 @@ public class FriendTabFragment extends Fragment {
                     String setEmail = "";
 
                     try {
-
                         setUserImg = pList.getString("u_pf_img");
                         setUserNickname = pList.getString("u_nickname");
                         setProfileText = pList.getString("u_pf_text");
                         setEmail = pList.getString("u_email");
                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
-
-
                     }catch (Exception e){
                         e.printStackTrace();
                     }

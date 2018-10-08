@@ -34,6 +34,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     ImageView imgview;
     JSONArray friend = new JSONArray();
     String result,friendResult;
+    String ids;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,23 +44,47 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         fName = findViewById(R.id.friendName);
         imgview = findViewById(R.id.friendImg);
         addFriend  = findViewById(R.id.addFriend);
+
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
+
+        ids = getIntent().getStringExtra("id");
+
     }
     @Override
     public void onClick(View v){
         switch (v.getId()){
             case R.id.fSearch:
-                JSONObject data = new JSONObject();
+                if (fEmail.getText().toString().equals(ids)){
+
+                    imgview.setVisibility(View.INVISIBLE);
+                    friendText.setVisibility(View.INVISIBLE);
+                    addFriend.setVisibility(View.INVISIBLE);
+                    fName.setText("나 자신이야");
+                }else{
+                    //imgview.setVisibility(View.VISIBLE);
+                    //addFriend.setVisibility(View.VISIBLE);
+                    JSONObject data = new JSONObject();
+                    try{
+                        data.put("email",fEmail.getText().toString());
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    mSocket.emit("selectUser",data);
+
+                    mSocket.on("selectFriend",friends);
+                }
+
+                break;
+            case R.id.addFriend:
+                JSONObject data2 = new JSONObject();
                 try{
-                    data.put("email",fEmail.getText().toString());
+                    data2.put("email",fEmail.getText().toString());
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                mSocket.emit("selectUser",data);
-
-                mSocket.on("selectFriend",friends);
-
+                mSocket.emit("addFriend",data2);
+                Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -69,20 +94,32 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    friend = (JSONArray)args[0];
-
+                    friend = (JSONArray) args[0];
+                  //  Log.i("list",friend.toString());
                     String friendName="";
+                    String resultText;
                     try {
                         for(int i=0;i<friend.length();i++){
-                            JSONObject get = friend.getJSONObject(i);
-                            //getByteValue(get,"img");
-                            result = get.getString("img");
-                            Log.i("decode",result);
-                            byteArrayToBitmap(result);
-                            friendName =  get.getString("nickName");
-                            friendResult = get.getString("f_rs");
-                            Log.i("rs",friendResult);
-                            checkFriend(friendResult);
+                            try{
+                                JSONObject get = friend.getJSONObject(i);
+                                //getByteValue(get,"img");
+                                // Log.i("listener1",friend.toString());
+                                result = get.getString("img");
+                                // resultText = get.getString("result");
+                                // Log.i("resultText",resultText);
+                                Log.i("decode",result);
+                                byteArrayToBitmap(result);
+                                friendName =  get.getString("nickName");
+                                friendResult = get.getString("f_rs");
+                                Log.i("rs",friendResult);
+                                checkFriend(friendResult);
+                            }catch (Exception e){
+                                friendName = "검색한 유저가 존재하지 않습니다.";
+                                imgview.setVisibility(View.INVISIBLE);
+                                friendText.setVisibility(View.INVISIBLE);
+                                addFriend.setVisibility(View.INVISIBLE);
+                            }
+
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -95,6 +132,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     public void checkFriend(String result){
         if(result.equals("y")){
             Toast.makeText(getApplicationContext(),"이미 친구입니다!",Toast.LENGTH_SHORT).show();
+            imgview.setVisibility(View.VISIBLE);
             addFriend.setVisibility(View.INVISIBLE);
             friendText.setVisibility(View.VISIBLE);
         }
@@ -108,20 +146,5 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-
-    /*
-    public  byte[] getByteValue(JSONObject jsonObj, String key) {
-        byte[] stringVal = null;
-        byte[] tempStr = jsonObj.optString(key).getBytes();
-        if(tempStr != null && tempStr.length > 0) {
-            stringVal = tempStr;
-        }
-        for(byte b:stringVal) {
-            Log.i("byte", String.valueOf(b));
-        }
-
-        return stringVal;
-    }
-    */
 }
 

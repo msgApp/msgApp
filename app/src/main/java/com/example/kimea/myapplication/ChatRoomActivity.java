@@ -83,6 +83,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
 
     }
+
     public void addMsg(String setName,String setMsg){
        items.add(new GetMessageItem(setMsg,setName));
         mAdapter.notifyItemInserted(items.size());

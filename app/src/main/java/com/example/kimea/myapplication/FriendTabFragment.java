@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +16,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +41,7 @@ public class FriendTabFragment extends Fragment {
     ArrayList userList;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
-    private FloatingActionButton fab1, fab2, fab;
+    private FloatingActionButton  fab1, fab2, fab;
     TextView addFriendText;
     @Override
     public void onCreate(Bundle savedInstanceState) {

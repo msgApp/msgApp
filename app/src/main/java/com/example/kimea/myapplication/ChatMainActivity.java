@@ -148,10 +148,10 @@ public class ChatMainActivity extends AppCompatActivity implements View.OnClickL
                             Log.i("msg",fList.getJSONObject(i).getString("f_email"));
                             data.put("u_email",userList.get(i).toString());
                             data.put("index",i);
-                            mSocket.emit("sendFriend",data);
+                            mSocket.emit("sendProfile",data);
 
                         }
-                        mSocket.on("sendFriend", listener2);
+                        mSocket.on("sendProfile", listener2);
 
                     }catch (Exception e){
                         e.printStackTrace();

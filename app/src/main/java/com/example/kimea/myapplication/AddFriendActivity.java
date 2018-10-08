@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,18 +29,20 @@ import io.socket.emitter.Emitter;
 public class AddFriendActivity extends AppCompatActivity implements View.OnClickListener{
 
     private Socket mSocket;
-    TextView fEmail,fName;
+    TextView fEmail,fName,friendText;
+    Button addFriend;
     ImageView imgview;
     JSONArray friend = new JSONArray();
-    String result;
+    String result,friendResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addfriend);
         fEmail = findViewById(R.id.fEmailInput);
+        friendText = findViewById(R.id.friendResult);
         fName = findViewById(R.id.friendName);
         imgview = findViewById(R.id.friendImg);
-
+        addFriend  = findViewById(R.id.addFriend);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
     }
@@ -55,10 +59,9 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 mSocket.emit("selectUser",data);
 
                 mSocket.on("selectFriend",friends);
+
                 break;
-
         }
-
     }
     private Emitter.Listener friends = new Emitter.Listener() {
         @Override
@@ -77,6 +80,9 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                             Log.i("decode",result);
                             byteArrayToBitmap(result);
                             friendName =  get.getString("nickName");
+                            friendResult = get.getString("f_rs");
+                            Log.i("rs",friendResult);
+                            checkFriend(friendResult);
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -86,7 +92,13 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
             });
         }
     };
-
+    public void checkFriend(String result){
+        if(result.equals("y")){
+            Toast.makeText(getApplicationContext(),"이미 친구입니다!",Toast.LENGTH_SHORT).show();
+            addFriend.setVisibility(View.INVISIBLE);
+            friendText.setVisibility(View.VISIBLE);
+        }
+    }
     public Bitmap byteArrayToBitmap(String jsonString) {
         Bitmap bitmap = null;
         byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
@@ -95,6 +107,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         return bitmap;
 
     }
+
 
     /*
     public  byte[] getByteValue(JSONObject jsonObj, String key) {

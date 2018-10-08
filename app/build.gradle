@@ -35,7 +35,9 @@ dependencies {
     implementation ('io.socket:socket.io-client:1.0.0') {
         exclude group: 'org.json', module: 'json'
     }
-
+}
+dependencies {
+    compile 'com.github.clans:fab:1.6.4'
 }
 android{
     useLibrary  'org.apache.http.legacy'

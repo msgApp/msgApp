@@ -50,11 +50,9 @@
             android:configChanges="screenSize|orientation"
             >
         </activity>
-        <service android:name=".SocketService"></service>
 
         <activity
             android:name=".AddFriendActivity"
-            android:theme="@style/Login"
             android:configChanges="screenSize|orientation"
             >
         </activity>

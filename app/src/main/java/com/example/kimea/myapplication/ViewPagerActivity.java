@@ -34,12 +34,7 @@ public class ViewPagerActivity extends AppCompatActivity{
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Socket mSocket;
-    private Animation fab_open, fab_close;
-    private boolean isFabOpen = false;
-    private FloatingActionButton fab, fab1, fab2;
-    ImageView imgview,imgview2;
-    final int REQ_CODE_SELECT_IMAGE=100;
-    String encodeImg;
+
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
@@ -48,12 +43,7 @@ public class ViewPagerActivity extends AppCompatActivity{
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
 
-        fab = findViewById(R.id.fab);
-        fab1 = findViewById(R.id.fab1);
-        fab2 = findViewById(R.id.fab2);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("친구"));
@@ -92,20 +82,7 @@ public class ViewPagerActivity extends AppCompatActivity{
         switch (v.getId()){
             case R.id.fab:
                // Toast.makeText(ViewPagerActivity.this,"dasd",Toast.LENGTH_SHORT).show();
-                if (!isFabOpen) {
-                    //fab1.startAnimation(fab_close);
-                    //fab2.startAnimation(fab_close);
-               //     fab1.setClickable(true);
-                 //   fab2.setClickable(true);
-                    isFabOpen = true;
 
-                } else {
-                    // fab1.startAnimation(fab_open);
-                    // fab2.startAnimation(fab_open);
-                    fab1.setClickable(false);
-                    fab2.setClickable(false);
-                    isFabOpen = false;
-                }
                 break;
            //case R.id.setImg:
                 //Intent intent = new Intent(Intent.ACTION_PICK);

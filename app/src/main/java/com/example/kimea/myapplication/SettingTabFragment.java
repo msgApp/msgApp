@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,12 +29,15 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class SettingTabFragment extends Fragment{
     JSONObject data = new JSONObject();
+    JSONObject data2 = new JSONObject();
     Button setImg,profileSend;
     ImageView imgview,imgview2;
     TextView profile;
+    JSONObject pList;
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
     private Socket mSocket;
@@ -42,6 +47,17 @@ public class SettingTabFragment extends Fragment{
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
 
+        String ids = getActivity().getIntent().getStringExtra("id");
+        try {
+            data2.put("u_email", ids);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("sendProfile",data2);
+
+        Log.i("Asdas","dasd");
+
+        mSocket.on("sendProfile",profile2);
     }
     @Nullable
     @Override
@@ -90,22 +106,53 @@ public class SettingTabFragment extends Fragment{
         return view;
     }
 
+    private Emitter.Listener profile2 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    pList = (JSONObject) args[0];
+
+                    Log.i("pList", pList.toString());
+                    String setUserImg ="";
+                    String profileText ="";
+                    try {
+                        setUserImg = pList.getString("u_pf_img");
+                        profileText = pList.getString("u_pf_text");
+                        Log.i("text",profileText);
+                        profile.setText(profileText);
+                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    byteArrayToBitmap(setUserImg);
+                }
+            });
+        }
+    };
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_SELECT_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
 
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
-
 //                    배치해놓은 ImageView에 이미지를 넣어봅시다.
                     imgview.setImageBitmap(bitmap);
 //                    Glide.with(mContext).load(data.getData()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(imageView); // OOM 없애기위해 그레들사용
-
                 } catch (Exception e) {
                     Log.e("test", e.getMessage());
                 }
             }
         }
 
+    }
+    public Bitmap byteArrayToBitmap(String jsonString) {
+        Bitmap bitmap = null;
+        byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
+        bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        imgview.setImageBitmap(bitmap);
+        return bitmap;
     }
 }

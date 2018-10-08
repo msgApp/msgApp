@@ -28,4 +28,6 @@
     <string name="emailhint">example@example.com</string>
     <string name="action_send">Send</string>
     <string name="prompt_message">Message</string>
+    <string name="Friend">이미 친구입니다</string>
+
 </resources>

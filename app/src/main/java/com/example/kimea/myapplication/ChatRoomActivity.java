@@ -32,6 +32,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     JSONObject msg;
     TextView msgInput;
     private Socket mSocket;
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -42,6 +43,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
@@ -68,7 +71,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 try{
                     msgData.put("message",msgInput.getText().toString());
                     Log.i("inputMsg",msgInput.getText().toString());
-                    msgData.put("u_email","2@gmail.com");
+                    msgData.put("u_email",email);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -116,6 +119,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        mSocket.disconnect();
+
     }
 }

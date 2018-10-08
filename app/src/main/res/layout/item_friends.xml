@@ -12,5 +12,21 @@
     <TextView
         android:id="@+id/userNickname"
         android:layout_width="104dp"
-        android:layout_height="59dp" />
+        android:layout_height="match_parent"
+        android:gravity="left|center"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/profileText"
+        android:layout_width="181dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="asd" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 </LinearLayout>

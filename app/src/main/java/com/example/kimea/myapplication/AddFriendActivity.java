@@ -79,11 +79,12 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
             case R.id.addFriend:
                 JSONObject data2 = new JSONObject();
                 try{
-                    data2.put("email",fEmail.getText().toString());
+                    data2.put("u_email",fEmail.getText().toString());
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
                 mSocket.emit("addFriend",data2);
+                mSocket.emit("sendProfile", data2);
                 Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
                 break;
         }

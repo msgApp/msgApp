@@ -42,3 +42,6 @@ dependencies {
 android{
     useLibrary  'org.apache.http.legacy'
 }
+dependencies {
+    compile 'com.github.clans:fab:1.6.4'
+}

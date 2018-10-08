@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.register:
-                Intent intent = new Intent(MainActivity.this,ViewPagerActivity.class);
+                Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
                 startActivity(intent);
                 break;
             case R.id.login_btn:

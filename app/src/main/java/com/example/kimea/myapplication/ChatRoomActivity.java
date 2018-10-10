@@ -107,8 +107,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
                     try {
                         setMsg =  msg.getString("message");
+                        setName = msg.getString("nickName");
                         Log.i("msg",setMsg);
-                        setName="asdasd";
+
                     }catch (JSONException e){
                         e.printStackTrace();
                     }

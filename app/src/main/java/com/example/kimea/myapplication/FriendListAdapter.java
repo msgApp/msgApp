@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.RecyclerViewHolder>{
     private ArrayList<GetFriendListItem> Item;
-
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView userNickname;
         protected ImageView userImg;
@@ -76,6 +75,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
                 intent.putExtra("img", bs.toByteArray());
+               // intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
 
             }
@@ -93,6 +93,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
                 intent.putExtra("img", bs.toByteArray());
+             //   intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
             }
         });
@@ -110,6 +111,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
                 intent.putExtra("img", bs.toByteArray());
+               // intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
             }
         });

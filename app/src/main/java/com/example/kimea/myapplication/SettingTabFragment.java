@@ -114,7 +114,7 @@ public class SettingTabFragment extends Fragment{
                 public void run() {
                     pList = (JSONObject) args[0];
 
-                    Log.i("pList", pList.toString());
+              //f      Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String profileText ="";
                     try {

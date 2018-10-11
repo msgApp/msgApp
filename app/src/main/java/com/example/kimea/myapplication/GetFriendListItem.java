@@ -22,6 +22,8 @@ public class GetFriendListItem {
         return email;
     }
 
+
+
     public GetFriendListItem(String userImg, String userNickname, String profileText, String email){
         this.userImg = userImg;
         this.userNickname = userNickname;

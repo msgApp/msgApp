@@ -133,7 +133,7 @@ public class FriendTabFragment extends Fragment {
                 public void run() {
                     pList = (JSONObject) args[0];
 
-                    Log.i("pList", pList.toString());
+                    //Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String setUserNickname ="";
                     String setProfileText = "";
@@ -172,13 +172,13 @@ public class FriendTabFragment extends Fragment {
                             JSONObject data = new JSONObject();
                             //Log.i("fListArray", jo.toString());
                             userList.add(fList.getJSONObject(i).getString("f_email"));
-                            //Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                          //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
                             data.put("u_email",userList.get(i).toString());
                             data.put("index",i);
                             mSocket.emit("sendProfile",data);
 
-                        }
-                        fList = new JSONArray();
+                    }
+                    fList = new JSONArray();
                         mSocket.on("sendProfile", listener2);
 
                     }catch (Exception e){

@@ -22,18 +22,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class ViewPagerActivity extends AppCompatActivity{
     JSONObject data = new JSONObject();
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Socket mSocket;
+    JSONArray msg;
+    String ids;
 
     @Override
     public void onCreate(Bundle saveInstanceState){
@@ -43,7 +47,15 @@ public class ViewPagerActivity extends AppCompatActivity{
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
+        ids = getIntent().getStringExtra("id");
+        try {
+            data.put("email", ids);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+        mSocket.emit("sendUser",data);
+        mSocket.on("messageAfter",Lmsg);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("친구"));
@@ -93,10 +105,38 @@ public class ViewPagerActivity extends AppCompatActivity{
 
         }
     }
+
+    private Emitter.Listener Lmsg = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    msg = (JSONArray) args[0];
+                   ;
+                    Log.i("list",msg.toString());
+                    String getMSg="";
+                    String nickName="";
+                    try {
+                        for(int i=0;i<msg.length();i++){
+                            JSONObject gets = msg.getJSONObject(i);
+                            Log.i("msg",msg.getJSONObject(i).toString());
+
+                            //getMSg = gets.getString("message");
+                           // nickName = gets.getString("nickName");
+                           // Log.i("msg",getMSg);
+                           // Log.i("name",nickName);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
 
-        }
-
+    }
 }

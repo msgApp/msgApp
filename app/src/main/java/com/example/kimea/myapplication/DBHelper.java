@@ -19,10 +19,12 @@ public class DBHelper extends SQLiteOpenHelper{
         String sql =
                 "create table token("+
                         "token text primary key);";
-        String sql2 =
-                "create table profile(profileText text,profileImg BLOB);";
+       // String sql2 =
+             //   "create table myid(id text);";
+       // String sql3 =  "create table oneChatting(friendId text,msg text);";
         db.execSQL(sql);
-        db.execSQL(sql2);
+       // db.execSQL(sql2);
+       // db.execSQL(sql3);
     }
 
     @Override

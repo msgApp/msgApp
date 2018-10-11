@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this, "token.db",null,1);
+    DBHelper helper2 = new DBHelper(MainActivity.this, "chat.db", null, 1);
     TextView search_id;
     TextView search_pw;
     TextView register;
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String result, result2 ;
     ChatRoomActivity chatroom;
     private Socket mSocket;
-
+    GetMyEmail idset = new GetMyEmail();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         // TODO
+                        try{
+
+
                         if(!result2.equals("false")){
                             insert(result2);
                             mSocket.connect();
@@ -110,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             startActivity(intent2);
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
+                        }
+                        }catch (Exception e){
+                            Toast.makeText(MainActivity.this, "서버에 문제가 있습니다", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, 500);
@@ -163,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
     }
+
     @Override
     protected void onDestroy() {
         mSocket.disconnect();

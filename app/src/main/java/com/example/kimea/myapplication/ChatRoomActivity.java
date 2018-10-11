@@ -1,8 +1,11 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,8 +35,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     JSONObject msg;
     TextView msgInput;
     private Socket mSocket;
-    String email;
-
+    String email,result;
+    SQLiteDatabase db;
+    DBHelper helper =  new DBHelper(ChatRoomActivity.this, "chat.db",null,1);
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -41,10 +45,37 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         msgInput = findViewById(R.id.message_input);
 
+
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
+
+        String[] array = email.split("@");
+        String ss = array[1];
+        String[] ary2 = ss.split("\\.");
+        // String result = array[0]+array2[0]+array2[1];
+       // Log.i("result3",ary2[0]);
+        result = array[0]+ary2[0]+ary2[1];
+        db = helper.getWritableDatabase();
+       // db.execSQL("drop table '"+result+"'");
+        //Log.i("result4",result);
+        try {
+            SQLiteDatabase database = helper.getReadableDatabase();
+            String sql = "select * from '" + result + "'";
+            Cursor cursor2 = database.rawQuery(sql, null);
+            if (cursor2.equals(null)||cursor2==null){
+               // db = helper.getWritableDatabase();
+               // db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text, ChatText text);");
+            }else{
+                Log.i("else","else");
+            }
+        }catch (Exception e){
+            db = helper.getWritableDatabase();
+            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text, ChatText text);");
+            Log.i("create","create");
+        }
+
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
@@ -58,6 +89,20 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         mAdapter = new ChatAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
         // ArrayList 에 Item 객체(데이터) 넣기
+
+        SQLiteDatabase database = helper.getReadableDatabase();
+        String sql = "select * from '"+result+"'";
+        Cursor cursor = database.rawQuery(sql,null);
+        Log.i("select","select");
+        while(cursor.moveToNext()){
+            int seq = cursor.getInt(0);
+            String id = cursor.getString(1);
+            String text = cursor.getString(2);
+            Log.i("text",text);
+            if (!id.equals(null)) {
+                items.add(new GetMessageItem(text, id));
+            }
+        }
 
         mSocket.on("message",listener);
 
@@ -75,9 +120,12 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                items.add(new GetMessageItem(msgInput.getText().toString(),"user"));
+                items.add(new GetMessageItem(msgInput.getText().toString(),"me"));
                 mAdapter.notifyItemInserted(items.size());
                 mSocket.emit("sendMsg",msgData);
+
+                insert("me",msgInput.getText().toString());
+                msgInput.setText("");
 
                 break;
         }
@@ -87,6 +135,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     public void addMsg(String setName,String setMsg){
        items.add(new GetMessageItem(setMsg,setName));
         mAdapter.notifyItemInserted(items.size());
+        insert(setName,setMsg);
         scrollToBottom();
     }
     private void scrollToBottom() {
@@ -121,6 +170,19 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+    }
+    public void insert(String id,String text) {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("ChatId", id);
+        values.put("ChatText",text);
+        db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("insert","insert");
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
     }
 }

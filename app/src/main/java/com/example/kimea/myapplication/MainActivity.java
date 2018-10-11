@@ -25,28 +25,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this, "token.db",null,1);
-    DBHelper helper2 = new DBHelper(MainActivity.this, "chat.db", null, 1);
+    DBHelper helper2 =  new DBHelper(MainActivity.this, "divice.db",null,1);
     TextView search_id;
     TextView search_pw;
     TextView register;
     TextView login_id;
     TextView login_pw,tx_view;
-    String result, result2 ;
-    ChatRoomActivity chatroom;
+    String result, result2,userId ;
     private Socket mSocket;
-    GetMyEmail idset = new GetMyEmail();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String user = helper.getUser();
+        ChatApplication app = (ChatApplication) getApplication();
+        mSocket = app.getSocket();
+        //String user = helper.getUser();
 
-        if(!user.equals(null)){
-            Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
-            intent2.putExtra("id", user);
+       // if(!user.equals(null)){
+           // Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
+           // intent2.putExtra("id", user);
+      //  }
+
+        try {
+            SQLiteDatabase database = helper.getReadableDatabase();
+            String sql = "select user from divice";
+            Cursor cursor = database.rawQuery(sql,null);
+            while(cursor.moveToNext()){
+                userId = cursor.getString(0);
+              //  Log.i("idssss",userId);
+            }
+            if (cursor.equals(null)||cursor==null){
+
+            }else{
+                mSocket.connect();
+                Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
+                intent2.putExtra("id", userId);
+                startActivity(intent2);
+            }
+        }catch (Exception e){
+            db = helper.getWritableDatabase();
+            db.execSQL("create table divice(user text primary key,token text);");
+            Log.i("create","create");
         }
 
-        DBHelper dbHelper = new DBHelper(getApplicationContext(), "Token.db", null, 1);
+        Log.i("select","select");
+
+
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
@@ -54,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .permitNetwork().build()
         );
 
-        ChatApplication app = (ChatApplication) getApplication();
-        mSocket = app.getSocket();
+
 
 
         search_id = findViewById(R.id.search_id);
@@ -113,10 +136,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             insert(result2);
                             mSocket.connect();
 
-                            //Intent intent = new Intent(MainActivity.this, SocketService.class);
+                            db = helper.getWritableDatabase();
                             ContentValues contentValues = new ContentValues();
                             contentValues.put("user",login_id.getText().toString());
-                            db.insert("divice","",contentValues);
+                            db.insert("divice","null",contentValues);
+
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
 

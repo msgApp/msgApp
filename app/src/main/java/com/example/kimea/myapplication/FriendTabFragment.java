@@ -1,6 +1,8 @@
 package com.example.kimea.myapplication;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,15 +33,18 @@ import io.socket.emitter.Emitter;
 public class FriendTabFragment extends Fragment {
 
     JSONObject data = new JSONObject();
+    SQLiteDatabase db;
+    DBHelper helper =  new DBHelper(getActivity(), "chat.db",null,1);
     private Socket mSocket;
     private RecyclerView fRecyclerView;
     private LinearLayoutManager fLayoutManager;
     private RecyclerView.Adapter adapter;
     private ArrayList<GetFriendListItem> items;
+    JSONArray msg;
     JSONArray fList;
     JSONObject pList;
     ArrayList userList;
-    String ids;
+    String ids,tableResult;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
     private FloatingActionButton  fab1, fab2, fab;
@@ -50,13 +55,14 @@ public class FriendTabFragment extends Fragment {
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
         ids = getActivity().getIntent().getStringExtra("id");
+        Log.i("ids",ids);
         try {
             data.put("email", ids);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         mSocket.emit("sendUser",data);
+        mSocket.on("messageAfter",Lmsg);
         items = new ArrayList<>();
     }
     @Nullable
@@ -189,4 +195,54 @@ public class FriendTabFragment extends Fragment {
             });
         }
     };
+    private Emitter.Listener Lmsg = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    msg = (JSONArray) args[0];
+
+                    Log.i("list",msg.toString());
+                    String getMSg="";
+                    String nickName="";
+                    try {
+                        for(int i=0;i<msg.length();i++){
+                            JSONObject gets = msg.getJSONObject(i);
+                            Log.i("msg",msg.getJSONObject(i).toString());
+
+                            getMSg = gets.getString("message");
+                            nickName = gets.getString("nickName");
+                            insert(nickName,getMSg);
+                            Log.i("msg",getMSg);
+                            Log.i("name",nickName);
+
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+    public void insert(String id,String text) {
+        String[] array = id.split("@");
+        String ss = array[1];
+        String[] ary2 = ss.split("\\.");
+        // String result = array[0]+array2[0]+array2[1];
+        // Log.i("result3",ary2[0]);
+        tableResult = array[0]+ary2[0]+ary2[1];
+
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("ChatId", id);
+        values.put("ChatText",text);
+        db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("insert","insert");
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
+
+    }
 }

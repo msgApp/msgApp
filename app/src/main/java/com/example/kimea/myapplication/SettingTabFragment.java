@@ -55,7 +55,6 @@ public class SettingTabFragment extends Fragment{
         }
         mSocket.emit("sendMyProfile",data2);
 
-        Log.i("Asdas","dasd");
 
         mSocket.on("sendMyProfile",profile2);
     }

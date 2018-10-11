@@ -21,11 +21,11 @@ public class DBHelper extends SQLiteOpenHelper{
                         "token text primary key);";
         String sql2 =
                 "create table profile(profileText text,profileImg BLOB);";
-        String sql3 =
-                "create table divice(user text,token text);";
+       // String sql3 =
+            //    "create table divice(user text primary key,token text);";
         db.execSQL(sql);
         db.execSQL(sql2);
-        db.execSQL(sql3);
+      //  db.execSQL(sql3);
     }
 
     @Override

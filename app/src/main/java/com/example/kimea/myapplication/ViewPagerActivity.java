@@ -2,7 +2,9 @@ package com.example.kimea.myapplication;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,13 +38,16 @@ public class ViewPagerActivity extends AppCompatActivity{
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Socket mSocket;
-    JSONArray msg;
+
     String ids;
+
+
 
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_viewpager);
+
 
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
@@ -54,8 +59,6 @@ public class ViewPagerActivity extends AppCompatActivity{
             e.printStackTrace();
         }
 
-        mSocket.emit("sendUser",data);
-        mSocket.on("messageAfter",Lmsg);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("친구"));
@@ -106,37 +109,11 @@ public class ViewPagerActivity extends AppCompatActivity{
         }
     }
 
-    private Emitter.Listener Lmsg = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    msg = (JSONArray) args[0];
-                   ;
-                    Log.i("list",msg.toString());
-                    String getMSg="";
-                    String nickName="";
-                    try {
-                        for(int i=0;i<msg.length();i++){
-                            JSONObject gets = msg.getJSONObject(i);
-                            Log.i("msg",msg.getJSONObject(i).toString());
 
-                            //getMSg = gets.getString("message");
-                           // nickName = gets.getString("nickName");
-                           // Log.i("msg",getMSg);
-                           // Log.i("name",nickName);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    };
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
 
     }
+
 }

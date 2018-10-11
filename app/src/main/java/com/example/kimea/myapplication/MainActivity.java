@@ -39,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String user = helper.getUser();
+
+        if(!user.equals(null)){
+            Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
+            intent2.putExtra("id", user);
+        }
 
         DBHelper dbHelper = new DBHelper(getApplicationContext(), "Token.db", null, 1);
 
@@ -108,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mSocket.connect();
 
                             //Intent intent = new Intent(MainActivity.this, SocketService.class);
-
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put("user",login_id.getText().toString());
+                            db.insert("divice","",contentValues);
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
 

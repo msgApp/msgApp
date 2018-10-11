@@ -19,12 +19,13 @@ public class DBHelper extends SQLiteOpenHelper{
         String sql =
                 "create table token("+
                         "token text primary key);";
-       // String sql2 =
-             //   "create table myid(id text);";
-       // String sql3 =  "create table oneChatting(friendId text,msg text);";
+        String sql2 =
+                "create table profile(profileText text,profileImg BLOB);";
+        String sql3 =
+                "create table divice(user text,token text);";
         db.execSQL(sql);
-       // db.execSQL(sql2);
-       // db.execSQL(sql3);
+        db.execSQL(sql2);
+        db.execSQL(sql3);
     }
 
     @Override
@@ -39,6 +40,20 @@ public class DBHelper extends SQLiteOpenHelper{
 
         // DB에 있는 데이터를 쉽게 처리하기 위해 Cursor를 사용하여 테이블에 있는 모든 데이터 출력
         Cursor cursor = db.rawQuery("SELECT * FROM token", null);
+        while (cursor.moveToNext()) {
+            result += cursor.getString(0)+"\n";
+        }
+
+        return result;
+    }
+
+    public String getUser() {
+        // 읽기가 가능하게 DB 열기
+        SQLiteDatabase db = getReadableDatabase();
+        String result = "";
+
+        // DB에 있는 데이터를 쉽게 처리하기 위해 Cursor를 사용하여 테이블에 있는 모든 데이터 출력
+        Cursor cursor = db.rawQuery("SELECT user FROM divice", null);
         while (cursor.moveToNext()) {
             result += cursor.getString(0)+"\n";
         }

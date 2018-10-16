@@ -37,7 +37,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private Socket mSocket;
     String email,result;
     SQLiteDatabase db;
-    DBHelper helper =  new DBHelper(ChatRoomActivity.this, "chat.db",null,1);
+    DBHelper helper =  new DBHelper(ChatRoomActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);

@@ -34,7 +34,7 @@ public class FriendTabFragment extends Fragment {
 
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
-    DBHelper helper =  new DBHelper(getActivity(), "chat.db",null,1);
+    DBHelper helper =  new DBHelper(getActivity());
     private Socket mSocket;
     private RecyclerView fRecyclerView;
     private LinearLayoutManager fLayoutManager;
@@ -49,13 +49,14 @@ public class FriendTabFragment extends Fragment {
     private boolean isFabOpen = false;
     private FloatingActionButton  fab1, fab2, fab;
     TextView addFriendText;
+    int countItem = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
         ids = getActivity().getIntent().getStringExtra("id");
-        Log.i("ids",ids);
+        //Log.i("ids",ids);
         try {
             data.put("email", ids);
         } catch (JSONException e) {
@@ -63,6 +64,7 @@ public class FriendTabFragment extends Fragment {
         }
         mSocket.emit("sendUser",data);
         mSocket.on("messageAfter",Lmsg);
+        mSocket.on("friendList", listener);
         items = new ArrayList<>();
     }
     @Nullable
@@ -110,7 +112,7 @@ public class FriendTabFragment extends Fragment {
         });
         fab2 = view.findViewById(R.id.fab2);
 
-        mSocket.on("friendList", listener);
+
         fRecyclerView = view.findViewById(R.id.friend_list);
 
         fLayoutManager = new LinearLayoutManager(getActivity());
@@ -165,31 +167,35 @@ public class FriendTabFragment extends Fragment {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i("countItem",String.valueOf(countItem));
                     fList = (JSONArray)args[0];
 
                     userList = new ArrayList();
 
+                    if(countItem < fList.length()){
+                        try {
+                            for(int i = 0; i<fList.length(); i++){
+                                Log.i("fList length", String.valueOf(fList.length()));
+                                Log.i("listener1",fList.toString());
+                                JSONObject jo = fList.getJSONObject(i);
+                                JSONObject data = new JSONObject();
+                                //Log.i("fListArray", jo.toString());
+                                userList.add(fList.getJSONObject(i).getString("f_email"));
+                                //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                                data.put("u_email",userList.get(i).toString());
+                                data.put("index",i);
+                                mSocket.emit("sendProfile",data);
+                                countItem++;
+                            }
+                            fList = new JSONArray();
+                            mSocket.on("sendProfile", listener2);
 
-                    try {
-                        for(int i = 0; i<fList.length(); i++){
-                           // Log.i("fList length", String.valueOf(fList.length()));
-                            //Log.i("listener1",fList.toString());
-                            JSONObject jo = fList.getJSONObject(i);
-                            JSONObject data = new JSONObject();
-                            //Log.i("fListArray", jo.toString());
-                            userList.add(fList.getJSONObject(i).getString("f_email"));
-                          //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
-                            data.put("u_email",userList.get(i).toString());
-                            data.put("index",i);
-                            mSocket.emit("sendProfile",data);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
                     }
-                    fList = new JSONArray();
-                        mSocket.on("sendProfile", listener2);
 
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
 
                 }
             });

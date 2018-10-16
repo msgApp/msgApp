@@ -1,7 +1,10 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+
 import android.content.Intent;
+
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,13 +23,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -34,13 +37,16 @@ import io.socket.emitter.Emitter;
 public class SettingTabFragment extends Fragment{
     JSONObject data = new JSONObject();
     JSONObject data2 = new JSONObject();
-    Button setImg,profileSend;
+    Button setImg,profileSend,logout;
     ImageView imgview,imgview2;
     TextView profile;
     JSONObject pList;
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
     private Socket mSocket;
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +73,7 @@ public class SettingTabFragment extends Fragment{
         imgview2 = view.findViewById(R.id.profileImg2);
         profile = view.findViewById(R.id.profileText);
         profileSend = view.findViewById(R.id.profileSend);
+        logout = view.findViewById(R.id.logout);
 
         setImg = view.findViewById(R.id.setImg);
         setImg.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +85,21 @@ public class SettingTabFragment extends Fragment{
                  startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
             }
         });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            SQLiteDatabase db;
+            @Override
+            public void onClick(View v) {
+                DBHelper helper2 =  new DBHelper(getActivity());
+                getActivity().deleteDatabase("divice.db");
+                /*db = helper2.getWritableDatabase();
+                db.execSQL("drop table if exists divice;");*/
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                //intent.putExtra("drop", "drop");
+                startActivity(intent);
+            }
+        });
+
         profileSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,4 +176,6 @@ public class SettingTabFragment extends Fragment{
         imgview.setImageBitmap(bitmap);
         return bitmap;
     }
+
+
 }

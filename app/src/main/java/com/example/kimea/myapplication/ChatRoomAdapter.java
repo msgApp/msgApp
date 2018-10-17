@@ -1,5 +1,7 @@
 package com.example.kimea.myapplication;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,11 @@ import java.util.ArrayList;
 
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.RecyclerViewHolder>{
     private ArrayList<GetChatRoomItem> Item;
+    private  OnSendItem mCallback;
+    public interface OnSendItem {
+        void sendIntent(String email);
+    }
+
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView chatRoomId;
         protected ImageView chatUserImg;
@@ -30,8 +38,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             this.chatLastText = view.findViewById(R.id.chatLastText);
         }
     }
-    public ChatRoomAdapter(ArrayList<GetChatRoomItem> list){
+    public ChatRoomAdapter(ArrayList<GetChatRoomItem> list,OnSendItem listner){
         this.Item = list;
+        this.mCallback = listner;
     }
 
     @Override
@@ -62,10 +71,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(v.getContext(), ChatRoomActivity.class);
-                intent.putExtra("email", holder.chatRoomId.getText());
-                // intent.putExtra("myEmail",myEmail.getMyId());
-                v.getContext().startActivity(intent);
+                mCallback.sendIntent(holder.chatRoomId.getText().toString());
 
             }
         });
@@ -76,4 +82,5 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
     public int getItemCount() {
         return (null != Item ? Item.size() : 0);
     }
+
 }

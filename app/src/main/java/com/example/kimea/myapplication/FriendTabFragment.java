@@ -71,7 +71,7 @@ public class FriendTabFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
+        Log.i("createView1","createView");
         View view  = inflater.inflate(R.layout.friend_fragment, container, false);
 
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(),R.anim.fab_open);

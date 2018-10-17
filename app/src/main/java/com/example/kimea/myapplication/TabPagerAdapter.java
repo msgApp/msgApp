@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 public class TabPagerAdapter extends FragmentStatePagerAdapter {
     private int tabCount;
+    //private ArrayList<GetChatRoomItem> complimentList;
 
     public TabPagerAdapter(FragmentManager fm, int tabCount) {
         super(fm);
@@ -24,7 +27,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
                 return mainTabFragment1;
             case 1:
                 ChattingTabFragment mainTabFragment2 = new ChattingTabFragment();
-
+                //complimentList.clear();
                 return mainTabFragment2;
             case 2:
                 SettingTabFragment mainTabFragment3 = new SettingTabFragment();
@@ -43,6 +46,13 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         //	super.destroyItem(container, position, object); }
+    }
+    @Override
+
+    public int getItemPosition(Object object) {
+
+        return POSITION_NONE;
+
     }
 
 }

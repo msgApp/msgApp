@@ -171,10 +171,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Iterator i = msg.keys();
                     ArrayList<String> keys = null;
                     ArrayList<String> values = null;
-                    String setMsg ="";
+
                     String setName ="";
                     String setNickName="";
-
+                    String setMsg="";
                     try {
                         setMsg =  msg.getString("message");
                         setName = msg.getString("email");
@@ -246,5 +246,26 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             Log.i("id1",cursor2.getString(0));
             Log.i("id1",cursor2.getString(1));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+        Intent intent = new Intent();
+        String rs2 = "";
+
+        db = helper.getWritableDatabase();
+        String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
+        Cursor cur2 = db.rawQuery(sql2,null);
+        
+        while (cur2.moveToNext()){
+            rs2=cur2.getString(0);
+        }
+        intent.putExtra("msg", rs2);
+        intent.putExtra("email",email);
+        setResult(1, intent);
+        Log.i("asdasdasd","asdasdasda");
+        finish();
     }
 }

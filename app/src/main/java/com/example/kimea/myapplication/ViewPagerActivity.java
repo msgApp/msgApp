@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -42,7 +43,6 @@ public class ViewPagerActivity extends AppCompatActivity{
     String ids;
     TabPagerAdapter pagerAdapter;
 
-
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
@@ -75,21 +75,23 @@ public class ViewPagerActivity extends AppCompatActivity{
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         //Set TabSelectedListener
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+                pagerAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+              //  pagerAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                viewPager.getAdapter().notifyDataSetChanged();
+                //pagerAdapter.notifyDataSetChanged();
             }
         });
 

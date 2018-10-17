@@ -67,6 +67,7 @@ public class SettingTabFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        Log.i("createView3","createView");
         View view = inflater.inflate(R.layout.setting_fragment,container,false);
 
         imgview = view.findViewById(R.id.profileImg);

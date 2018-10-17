@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper{
                 "create table profile(profileText text,profileImg BLOB);";
        // String sql3 =
             //    "create table divice(user text primary key,token text);";
-        db.execSQL(DATABASE_TABLE_ONEUSER);
+
         db.execSQL(DATABASE_TABLE_TOKEN);
       //  db.execSQL(sql3);
     }

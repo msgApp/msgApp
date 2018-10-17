@@ -24,9 +24,7 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
-
     DBHelper helper =  new DBHelper(MainActivity.this);
-
     TextView search_id;
     TextView search_pw;
     TextView register;
@@ -41,15 +39,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
-
-        Log.i("into","into mainActivity");
-
-
         try {
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select user from divice";
             Cursor cursor = database.rawQuery(sql,null);
-            Log.i("cursor",String.valueOf(cursor.moveToNext()));
             boolean tf = cursor.moveToFirst();
             Log.i("tf",String.valueOf(tf));
             if(String.valueOf(tf).equals("true")){
@@ -65,8 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("idssss","is null");
             }
             Log.i("check","check1");
-            if (userId.equals("")||userId==""){
-
+            if (userId.equals("")||userId=="") {
             }else{
                 mSocket.connect();
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
@@ -74,9 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent2);
             }
         }catch (Exception e){
-            Log.e("select user", e.toString());
             db = helper.getWritableDatabase();
-            db.execSQL("create table divice(user text ,token text);");
+            db.execSQL("create table divice(user text,token text);");
             Log.i("create","create");
         }
 
@@ -133,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
 
-                //db = helper.getWritableDatabase();
-                //db.execSQL("delete from token where token is not null");
+                db = helper.getWritableDatabase();
+                db.execSQL("delete from token where token is not null");
 
                 Handler delayHandler = new Handler();
                 delayHandler.postDelayed(new Runnable() {
@@ -151,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             db = helper.getWritableDatabase();
                             ContentValues contentValues = new ContentValues();
                             contentValues.put("user",login_id.getText().toString());
-                            Log.i("login_id",login_id.getText().toString());
                             db.insert("divice","null",contentValues);
 
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
@@ -205,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-    /*public void insert(String token) {
+    public void insert(String token) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
@@ -215,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         db.insert("token", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
-    }*/
+    }
 
     @Override
     protected void onDestroy() {

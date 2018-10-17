@@ -38,19 +38,22 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     String email,result;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
+  //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
+
+    Cursor cur;
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
 
+
         msgInput = findViewById(R.id.message_input);
-
-
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
 
+        Log.i("상대방 아이디",email);
         String[] array = email.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
@@ -73,8 +76,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }catch (Exception e){
             db = helper.getWritableDatabase();
             db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text, ChatText text);");
-            Log.i("create","create");
+            Log.i("ChatDataBaseCreate","create");
         }
+
+
 
 
         mRecyclerView = findViewById(R.id.recycler_view);
@@ -93,7 +98,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         SQLiteDatabase database = helper.getReadableDatabase();
         String sql = "select * from '"+result+"'";
         Cursor cursor = database.rawQuery(sql,null);
-        Log.i("select","select");
+        Log.i("ChatDataBaseSelect","select");
         while(cursor.moveToNext()){
             int seq = cursor.getInt(0);
             String id = cursor.getString(1);
@@ -105,7 +110,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
 
         mSocket.on("message",listener);
-
+        scrollToBottom();
     }
     @Override
     public void onClick(View v){
@@ -124,9 +129,24 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 mAdapter.notifyItemInserted(items.size());
                 mSocket.emit("sendMsg",msgData);
 
+                db = helper.getWritableDatabase();
+                String sql3 = "select userID from oneUser where userId = '"+email+"';"; //where userId = '"+email+"';";
+                cur = db.rawQuery(sql3,null);
+                if(cur.moveToFirst()) {
+                    for (; ; ) {
+                        Log.i("table name : ", cur.getString(0));
+                        if (!cur.moveToNext())
+                            break;
+                    }
+                }else{
+                    insert2(email);
+                }
                 insert("me",msgInput.getText().toString());
                 msgInput.setText("");
-
+                scrollToBottom();
+                break;
+            case R.id.message_input:
+                scrollToBottom();
                 break;
         }
 
@@ -153,16 +173,40 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     ArrayList<String> values = null;
                     String setMsg ="";
                     String setName ="";
+                    String setNickName="";
 
                     try {
                         setMsg =  msg.getString("message");
-                        setName = msg.getString("nickName");
+                        setName = msg.getString("email");
+                        setNickName = msg.getString("nickName");
                         Log.i("msg",setMsg);
+                        Log.i("닉네이이이이이이이임",setNickName);
+
 
                     }catch (JSONException e){
                         e.printStackTrace();
                     }
-                    addMsg(setName,setMsg);
+                    if(email.equals(setName)) {
+                        addMsg(setNickName, setMsg);
+                   }else{
+                        Log.i("엘즈","else");
+                        Log.i("엘즈",setName);
+                        String[] arrayy = setName.split("@");
+                        String sss = arrayy[1];
+                        String[] ary22 = sss.split("\\.");
+                        // String result = array[0]+array2[0]+array2[1];
+                        // Log.i("result3",ary2[0]);
+                        String result2 = arrayy[0]+ary22[0]+ary22[1];
+                        Log.i("엘즈",result);
+                        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+                        ContentValues elseValue = new ContentValues();
+                        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+
+                        // 데이터의 삽입은 put을 이용한다.
+                        elseValue.put("ChatId", result2);
+                        elseValue.put("ChatText",setMsg);
+                        db.insert("'"+result2+"'", null, elseValue); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+                    }
                 }
             });
         }
@@ -184,5 +228,23 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
+    }
+    public void insert2(String id) {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values2 = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+
+        // 데이터의 삽입은 put을 이용한다.
+        values2.put("userId", id);
+        db.insert("oneUser", null, values2); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("insert","insert");
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
+        SQLiteDatabase database = helper.getReadableDatabase();
+        String sql = "select * from oneUser;";
+        Cursor cursor2 = database.rawQuery(sql, null);
+        while(cursor2.moveToNext()){
+            Log.i("id1",cursor2.getString(0));
+            Log.i("id1",cursor2.getString(1));
+        }
     }
 }

@@ -40,7 +40,7 @@ public class ViewPagerActivity extends AppCompatActivity{
     private Socket mSocket;
 
     String ids;
-
+    TabPagerAdapter pagerAdapter;
 
 
     @Override
@@ -71,11 +71,12 @@ public class ViewPagerActivity extends AppCompatActivity{
         viewPager = findViewById(R.id.viewPager);
 
         //Creating adapter
-        TabPagerAdapter pagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        pagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         //Set TabSelectedListener
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -88,7 +89,7 @@ public class ViewPagerActivity extends AppCompatActivity{
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                viewPager.getAdapter().notifyDataSetChanged();
             }
         });
 

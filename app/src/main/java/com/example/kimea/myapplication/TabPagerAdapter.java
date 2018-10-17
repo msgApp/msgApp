@@ -24,6 +24,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
                 return mainTabFragment1;
             case 1:
                 ChattingTabFragment mainTabFragment2 = new ChattingTabFragment();
+
                 return mainTabFragment2;
             case 2:
                 SettingTabFragment mainTabFragment3 = new SettingTabFragment();
@@ -38,8 +39,10 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return tabCount;
     }
+
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         //	super.destroyItem(container, position, object); }
     }
+
 }

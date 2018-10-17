@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
     <application
         android:allowBackup="true"
@@ -19,6 +22,7 @@
             android:name=".MainActivity"
             android:theme="@style/Login"
             android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="adjustPan"
             >
 
         </activity>
@@ -42,6 +46,7 @@
         <activity
             android:name=".ChatRoomActivity"
             android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="adjustPan"
             >
         </activity>
         <activity

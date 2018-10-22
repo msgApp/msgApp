@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(!result2.equals("false")){
                             //insert(result2);
                             mSocket.connect();
-                            final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT )";
+                            final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                             db = helper.getWritableDatabase();
                             db.execSQL(DATABASE_TABLE_ONEUSER);
                             ContentValues contentValues = new ContentValues();

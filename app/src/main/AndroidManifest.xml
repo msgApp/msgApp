@@ -22,7 +22,6 @@
             android:name=".MainActivity"
             android:theme="@style/Login"
             android:configChanges="screenSize|orientation"
-            android:windowSoftInputMode="adjustPan"
             >
 
         </activity>

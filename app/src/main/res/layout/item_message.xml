@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="@dimen/spacing">
+    android:paddingTop="@dimen/spacing"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/username"
@@ -17,12 +18,15 @@
 
     <TextView
         android:id="@+id/setMsg"
-        style="?android:textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/spacing"
-        android:paddingRight="@dimen/spacing"
-        android:background="@drawable/empty_bubble_512"
+        android:background="@drawable/chatbub2"
+        android:gravity="left"
+        android:maxWidth="260dp"
+        android:paddingLeft="17dp"
+        android:paddingRight="10dp"
+        android:text="1"
+        android:textSize="15dp"
         android:textColor="?android:textColorPrimary" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,10 +32,10 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class FriendTabFragment extends Fragment {
-
+    private  static final String TAG = "FriendTabFragment";
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
-    DBHelper helper =  new DBHelper(getActivity());
+    DBHelper helper;
     private Socket mSocket;
     private RecyclerView fRecyclerView;
     private LinearLayoutManager fLayoutManager;
@@ -56,14 +57,25 @@ public class FriendTabFragment extends Fragment {
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
         //내아이디
+        helper =  new DBHelper(getActivity());
         ids = getActivity().getIntent().getStringExtra("id");
-        //Log.i("ids",ids);
+        SQLiteDatabase database = helper.getReadableDatabase();
+        String sql = "select * from divice";
+        Cursor cursor2 = database.rawQuery(sql, null);
+        String msgToken="";
+        while(cursor2.moveToNext()){
+            Log.e(TAG ,cursor2.getString(2));
+            msgToken = cursor2.getString(2);
+        }
+
         try {
             data.put("email", ids);
+            data.put("divice",msgToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         mSocket.emit("sendUser",data);
+        Log.i("ids",ids);
         mSocket.on("messageAfter",Lmsg);
         mSocket.on("friendList", listener);
         items = new ArrayList<>();

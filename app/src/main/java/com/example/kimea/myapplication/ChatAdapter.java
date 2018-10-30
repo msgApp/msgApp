@@ -20,7 +20,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.RecyclerViewHo
         this.Item = list;
     }
 
-    // RecyclerView에 새로운 데이터를 보여주기 위해 필요한 ViewHolder를 생성해야 할 때 호출됩니다.
+    // RecylerView에 새로운 데이터를 보여주기 위해 필요한 ViewHolder를 생성해야 할 때 호출됩니다.
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_list, null);

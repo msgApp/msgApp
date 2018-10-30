@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,6 +36,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ViewPagerActivity extends AppCompatActivity{
+    private static final String TAG = "ViewPagerActivity";
     JSONObject data = new JSONObject();
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -42,7 +44,8 @@ public class ViewPagerActivity extends AppCompatActivity{
 
     String ids;
     TabPagerAdapter pagerAdapter;
-
+    SQLiteDatabase db;
+    DBHelper helper =  new DBHelper(ViewPagerActivity.this);
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
@@ -53,6 +56,7 @@ public class ViewPagerActivity extends AppCompatActivity{
         mSocket = app.getSocket();
 
         ids = getIntent().getStringExtra("id");
+        Log.i("intentIds",ids);
         try {
             data.put("email", ids);
         } catch (JSONException e) {
@@ -94,6 +98,13 @@ public class ViewPagerActivity extends AppCompatActivity{
                 //pagerAdapter.notifyDataSetChanged();
             }
         });
+        SQLiteDatabase database = helper.getReadableDatabase();
+        String sql = "select * from divice";
+        Cursor cursor2 = database.rawQuery(sql, null);
+        while(cursor2.moveToNext()){
+            Log.e(TAG ,cursor2.getString(0));
+            Log.e(TAG ,cursor2.getString(2));
+        }
 
     }
     public void onClick(final View v){

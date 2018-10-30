@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView register;
     TextView login_id;
     TextView login_pw,tx_view;
-    String result, result2,userId ;
+    String result, result2,userId,msgToken="" ;
     private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +44,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSocket = app.getSocket();
 
         try {
+
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select user from divice";
             Cursor cursor = database.rawQuery(sql,null);
             boolean tf = cursor.moveToFirst();
             Log.i("tf",String.valueOf(tf));
+
             if(String.valueOf(tf).equals("true")){
                 Log.i("idssss","is not null");
 
@@ -53,21 +59,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     userId = cursor.getString(0);
                     //Log.i("idssss",userId);
                 }
+
             }else if(String.valueOf(tf).equals("false")){
                 userId = "";
                 Log.i("idssss","is null");
             }
-            Log.i("check","check1");
+
             if (userId.equals("")||userId=="") {
+
             }else{
                 mSocket.connect();
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                 intent2.putExtra("id", userId);
                 startActivity(intent2);
             }
+
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table divice(user text,token text);");
+            db.execSQL("create table divice(user text,token text,msgToken text);");
             Log.i("create","create");
         }
 
@@ -95,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         search_pw.setOnClickListener(this);
         register.setOnClickListener(this);
 
+
+
     }
     public void onClick(View v){
         switch (v.getId()){
@@ -115,15 +126,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try{
                     loginData.put("login_id",login_id.getText().toString());
                     loginData.put("login_pw",login_pw.getText().toString());
-                }catch (JSONException e){
+                 }catch (JSONException e){
                     e.printStackTrace();
                 }
 
 
-                String url = "http://192.168.0.53:1300/login";
+                String url = "http://192.168.0.34:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
-
+                Log.i("server","dasdasdas");
                 db = helper.getWritableDatabase();
                 db.execSQL("delete from token where token is not null");
 
@@ -141,12 +152,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                             db = helper.getWritableDatabase();
                             db.execSQL(DATABASE_TABLE_ONEUSER);
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("user",login_id.getText().toString());
-                            db.insert("divice","null",contentValues);
 
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
+                            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(MainActivity.this,
+                                    new OnSuccessListener<InstanceIdResult>() {
+                                        @Override
+                                        public void onSuccess(InstanceIdResult instanceIdResult) {
+
+                                            ContentValues contentValues = new ContentValues();
+                                            contentValues.put("user",login_id.getText().toString());
+                                            String newToken = instanceIdResult.getToken();
+                                            msgToken = instanceIdResult.getToken();
+                                            contentValues.put("msgToken",msgToken);
+                                            db.insert("divice","null",contentValues);
+                                            Log.e("newToken",newToken);
+                                        }
+
+                                    });
+                            //contentValues.put("msgToken",msgToken);
 
                             startActivity(intent2);
                         }else{
@@ -219,4 +243,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
        // stopService(intent);
     }
+
 }

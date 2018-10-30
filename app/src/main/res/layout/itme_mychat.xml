@@ -4,7 +4,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="wrap_content"
 android:orientation="vertical"
-android:paddingTop="@dimen/spacing">
+android:paddingTop="@dimen/spacing"
+    android:paddingBottom="8dp">
 
 <TextView
     android:id="@+id/username"
@@ -18,16 +19,17 @@ android:paddingTop="@dimen/spacing">
 
     <TextView
         android:id="@+id/setMsg"
-        style="?android:textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:background="@drawable/bubbles"
-        android:gravity="right"
-        android:paddingLeft="@dimen/spacing"
-        android:paddingRight="@dimen/spacing"
-        android:singleLine="true"
-        android:text="xjjxjj"
-        android:textColor="?android:textColorPrimary" />
+        android:background="@drawable/mychatbub2"
+        android:breakStrategy="balanced"
+        android:gravity="left"
+        android:maxWidth="260dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="17dp"
+        android:text="1"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
 
 </LinearLayout>

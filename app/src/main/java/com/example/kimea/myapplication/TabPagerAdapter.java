@@ -47,12 +47,6 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         //	super.destroyItem(container, position, object); }
     }
-    @Override
 
-    public int getItemPosition(Object object) {
-
-        return POSITION_NONE;
-
-    }
 
 }

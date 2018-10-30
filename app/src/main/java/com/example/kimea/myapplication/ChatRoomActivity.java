@@ -27,7 +27,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class ChatRoomActivity extends Activity implements View.OnClickListener {
-
+    private static final String TAG = "ChatRoomAvtivity";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
@@ -52,14 +52,13 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
 
-        //items.clear();
         msgInput = findViewById(R.id.message_input);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
 
-        Log.i("상대방 아이디",email);
+//        Log.i("상대방 아이디",email);
         String[] array = email.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
@@ -76,12 +75,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text, ChatText text,type TEXT);");
+            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text,type TEXT);");
             Log.i("ChatDataBaseCreate","create");
         }
-
-
-
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
@@ -102,19 +98,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Log.i("ChatDataBaseSelect","select");
         while(cursor.moveToNext()){
             int seq = cursor.getInt(0);
-            Log.i("셀렉트1",String.valueOf(cursor.getInt(0)));
             String id = cursor.getString(1);
-            Log.i("셀렉트2",cursor.getString(1));
-            String text = cursor.getString(2);
-            Log.i("셀렉트3",cursor.getString(2));
-            String type = cursor.getString(3);
-            Log.i("셀렉트4",cursor.getString(3));
-            if (!id.equals(null)&&type.equals("0")) {
-                Log.i("들어오냐","ㅇㅇ");
-                addMsg(id,text,0);
-            }else if(!id.equals(null)&&type.equals("1")){
-                Log.i("들어오냐","ㅇㅇ");
-                addMsg(id,text,1);
+            String nickname = cursor.getString(2);
+            String text = cursor.getString(3);
+            String type = cursor.getString(4);
+            if (type.equals("0")) {
+                addMsg(nickname,text,0);
+            }else if(type.equals("1")){
+                addMsg(nickname,text,1);
             }
         }
 
@@ -126,18 +117,29 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         switch (v.getId()){
 
             case R.id.send_button:
+                String myEmail="";
+                SQLiteDatabase database = helper.getReadableDatabase();
+                String sql = "select * from divice";
+                Cursor cursor2 = database.rawQuery(sql, null);
+                while(cursor2.moveToNext()){
+                    Log.e(TAG ,cursor2.getString(0));
+                    myEmail = cursor2.getString(0);
+                }
+
                 JSONObject msgData = new JSONObject();
                 try{
                     msgData.put("message",msgInput.getText().toString());
                     Log.i("inputMsg",msgInput.getText().toString());
-                    msgData.put("u_email",email);
+                    msgData.put("f_email",email);
+                    msgData.put("u_email",myEmail);
+                    msgData.put("room",email);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
                 addMsg("me",msgInput.getText().toString(),1);
                 mAdapter.notifyItemInserted(items.size());
-                mSocket.emit("sendMsg",msgData);
 
+                mSocket.emit("sendMsg",msgData);
                 //채팅방 목록 테이블에 존재하는지 확인
                 db = helper.getWritableDatabase();
                 String sql3 = "select userID from oneUser where userId = '"+email+"';"; //where userId = '"+email+"';";
@@ -151,8 +153,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 }else{
                     insert2(email);
                 }
-                insert("me",msgInput.getText().toString(),"1");
+                insert("me","me",msgInput.getText().toString(),"1");
                 msgInput.setText("");
+
                 scrollToBottom();
                 break;
             case R.id.message_input:
@@ -206,7 +209,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     //상대방 이메일이 맞으면 테이블 인서트
                     if(email.equals(setName)) {
                         addMsg(setNickName, setMsg,0);
-                        insert(setName,setMsg,"0");
+                        insert(setName,setNickName,setMsg,"0");
                    }else{
                         //아니면 맞는 이메일에 인서트
                         Log.i("엘즈","else");
@@ -237,13 +240,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
     }
     //데이터 삽입
-    public void insert(String id,String text,String type) {
+    public void insert(String id,String nickName,String text,String type) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
 
         // 데이터의 삽입은 put을 이용한다.
         values.put("ChatId", id);
+        values.put("ChatNickName",nickName);
         values.put("ChatText",text);
         values.put("type",type);
         db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "632545316500",
+    "firebase_url": "https://msgapp-eee9c.firebaseio.com",
+    "project_id": "msgapp-eee9c",
+    "storage_bucket": "msgapp-eee9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632545316500:android:5b791b1026afceaa",
+        "android_client_info": {
+          "package_name": "com.example.kimea.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632545316500-2ars4fa9f4cgbf8p6kg6t7q998cl05n6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzVm4icUe2aMgQC-ai0q0pnfnYAV8Tm50"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

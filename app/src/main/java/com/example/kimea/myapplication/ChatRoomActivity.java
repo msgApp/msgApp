@@ -127,12 +127,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 }
 
                 JSONObject msgData = new JSONObject();
+                JSONObject pushData = new JSONObject();
                 try{
                     msgData.put("message",msgInput.getText().toString());
                     Log.i("inputMsg",msgInput.getText().toString());
-                    msgData.put("f_email",email);
                     msgData.put("u_email",myEmail);
-                    msgData.put("room",email);
+                    pushData.put("message",msgInput.getText().toString());
+                    pushData.put("u_email",myEmail);
+                    pushData.put("f_email",email);
+                    pushData.put("room",email);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -284,8 +287,18 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         db = helper.getWritableDatabase();
         String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
+        String query = "select user from divice";
+        Cursor cur = db.rawQuery(query,null);
         Cursor cur2 = db.rawQuery(sql2,null);
-        
+        cur.moveToFirst();
+        String email = cur.getString(0);
+        JSONObject emailJson = new JSONObject();
+        try {
+            emailJson.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("outActivity", emailJson);
         while (cur2.moveToNext()){
             rs2=cur2.getString(0);
         }

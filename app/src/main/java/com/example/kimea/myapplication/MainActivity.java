@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView login_id;
     TextView login_pw,tx_view;
     String result, result2,userId,msgToken="" ;
+
     private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         if(!result2.equals("false")){
                             //insert(result2);
+
                             mSocket.connect();
                             final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                             db = helper.getWritableDatabase();
@@ -234,9 +236,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
+        /*SQLiteDatabase database = helper.getReadableDatabase();
+        String sql = "select user from divice";
+        Cursor cursor2 = database.rawQuery(sql, null);
+        cursor2.moveToFirst();
+        String email = cursor2.getString(0);
+        Log.i("dis email", email);
+        try {
+            data.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mSocket.emit("disconnet", data);
+*/
         mSocket.disconnect();
         super.onDestroy();
-        //mSocket.emit("disconnet", data);
+
         //mSocket.disconnect();
 
        // Intent intent = new Intent(getApplicationContext(),SocketService.class); // 이동할 컴포넌트

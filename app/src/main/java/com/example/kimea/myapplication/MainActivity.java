@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
 
-                String url = "http://192.168.0.34:1300/login";
+                String url = "http://192.168.0.71:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
                 Log.i("server","dasdasdas");
@@ -157,6 +159,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                             intent2.putExtra("id", login_id.getText().toString());
+
+                            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("userId", login_id.getText().toString());
+                            editor.commit();
+
                             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(MainActivity.this,
                                     new OnSuccessListener<InstanceIdResult>() {
                                         @Override
@@ -173,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                     });
                             //contentValues.put("msgToken",msgToken);
-
+                            FirebaseMessaging.getInstance().subscribeToTopic("ALL");
                             startActivity(intent2);
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();

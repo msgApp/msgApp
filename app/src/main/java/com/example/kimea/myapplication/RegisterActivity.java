@@ -141,7 +141,7 @@ public class RegisterActivity extends AppCompatActivity{
                     e.printStackTrace();
                 }
                 emailCheck.setText(reData.toString());
-                url = "http://192.168.0.34:1300/signUp";
+                url = "http://192.168.0.71:1300/signUp";
                 Log.i("email : ",email.getText().toString());
                 ServerTask serverTask = new ServerTask(url,reData.toString());
                 serverTask.execute();
@@ -171,7 +171,7 @@ public class RegisterActivity extends AppCompatActivity{
                 break;
             case R.id.mailSend:
 
-                url = "http://192.168.0.34:1300/overlapCheck";
+                url = "http://192.168.0.71:1300/overlapCheck";
                 Log.i("email : ",email.getText().toString());
 
                 JSONObject jemail = new JSONObject();

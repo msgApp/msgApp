@@ -220,11 +220,11 @@ public class FriendTabFragment extends Fragment {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    msg = (JSONArray) args[0];
-
-                    Log.i("list",msg.toString());
+                    msg = (JSONArray)args[0];
+                    //Log.e(TAG,"Array "+ msg);
                     String getMSg="";
                     String nickName="";
+                    String userId="";
                     try {
                         for(int i=0;i<msg.length();i++){
                             JSONObject gets = msg.getJSONObject(i);
@@ -232,7 +232,8 @@ public class FriendTabFragment extends Fragment {
 
                             getMSg = gets.getString("message");
                             nickName = gets.getString("nickName");
-                            insert(nickName,getMSg);
+                            userId = gets.getString("email");
+                            insert(userId,getMSg,nickName);
                             Log.i("msg",getMSg);
                             Log.i("name",nickName);
 
@@ -244,7 +245,7 @@ public class FriendTabFragment extends Fragment {
             });
         }
     };
-    public void insert(String id,String text) {
+    public void insert(String id,String text,String nickName) {
         String[] array = id.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
@@ -258,6 +259,7 @@ public class FriendTabFragment extends Fragment {
         // 데이터의 삽입은 put을 이용한다.
         values.put("ChatId", id);
         values.put("ChatText",text);
+        values.put("ChatNickName",nickName);
         db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         Log.i("SaveCharInsert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.

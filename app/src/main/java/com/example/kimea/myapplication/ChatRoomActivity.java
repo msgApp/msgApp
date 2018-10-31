@@ -102,10 +102,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String nickname = cursor.getString(2);
             String text = cursor.getString(3);
             String type = cursor.getString(4);
-            if (type.equals("0")) {
-                addMsg(nickname,text,0);
-            }else if(type.equals("1")){
-                addMsg(nickname,text,1);
+            try {
+                if (type.equals("0")) {
+                    addMsg(nickname, text, 0);
+                } else if (type.equals("1")) {
+                    addMsg(nickname, text, 1);
+                }
+            }catch (Exception e){
+
             }
         }
 
@@ -131,17 +135,18 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 try{
                     msgData.put("message",msgInput.getText().toString());
                     Log.i("inputMsg",msgInput.getText().toString());
-                    msgData.put("u_email",myEmail);
+                    msgData.put("u_email",email);
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
                     pushData.put("f_email",email);
-                    pushData.put("room",email);
+                 //   pushData.put("room",email);
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
                 addMsg("me",msgInput.getText().toString(),1);
                 mAdapter.notifyItemInserted(items.size());
 
+                mSocket.emit("pushMsg",pushData);
                 mSocket.emit("sendMsg",msgData);
                 //채팅방 목록 테이블에 존재하는지 확인
                 db = helper.getWritableDatabase();

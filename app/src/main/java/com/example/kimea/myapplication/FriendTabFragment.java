@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
@@ -221,24 +222,28 @@ public class FriendTabFragment extends Fragment {
                 @Override
                 public void run() {
                     msg = (JSONArray)args[0];
-                    //Log.e(TAG,"Array "+ msg);
+                    Log.e(TAG,"Array "+ msg);
                     String getMSg="";
                     String nickName="";
                     String userId="";
                     try {
                         for(int i=0;i<msg.length();i++){
-                            JSONObject gets = msg.getJSONObject(i);
-                            Log.i("msg",msg.getJSONObject(i).toString());
+                            String get = msg.getString(i);
+                            //JSONObject gets = msg.getJSONObject(i);
+                            Log.i("msg",get);
+                            JSONObject gets = new JSONObject(get);
 
                             getMSg = gets.getString("message");
                             nickName = gets.getString("nickName");
                             userId = gets.getString("email");
                             insert(userId,getMSg,nickName);
+                            Log.i("id" ,userId);
                             Log.i("msg",getMSg);
                             Log.i("name",nickName);
 
                         }
                     }catch (Exception e){
+                        Log.e("msgERROR", String.valueOf(e));
                         e.printStackTrace();
                     }
                 }
@@ -252,14 +257,16 @@ public class FriendTabFragment extends Fragment {
         // String result = array[0]+array2[0]+array2[1];
         // Log.i("result3",ary2[0]);
         tableResult = array[0]+ary2[0]+ary2[1];
+        Log.i("tableResult", tableResult);
 
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
         // 데이터의 삽입은 put을 이용한다.
         values.put("ChatId", id);
-        values.put("ChatText",text);
         values.put("ChatNickName",nickName);
+        values.put("ChatText",text);
+        values.put("type","0");
         db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         Log.i("SaveCharInsert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.

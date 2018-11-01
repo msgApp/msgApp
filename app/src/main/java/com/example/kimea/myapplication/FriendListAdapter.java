@@ -1,6 +1,9 @@
 package com.example.kimea.myapplication;
 
+
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,16 +17,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+import io.socket.client.Socket;
+
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.RecyclerViewHolder>{
     private ArrayList<GetFriendListItem> Item;
+
+
+
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView userNickname;
         protected ImageView userImg;
         protected TextView email;
         protected TextView profileText;
+
+
 
         public RecyclerViewHolder(View view) {
             super(view);
@@ -65,10 +78,12 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
             @Override
             public void onClick(View v) {
 
+
                 Drawable d = holder.userImg.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+
 
                 Intent intent = new Intent(v.getContext(), FriendProfile.class);
                 intent.putExtra("email", holder.email.getText());
@@ -83,10 +98,15 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         holder.userImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
                 Drawable d = holder.userImg.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+
+
                 Intent intent = new Intent(v.getContext(), FriendProfile.class);
 
                 intent.putExtra("email", holder.email.getText());
@@ -101,10 +121,13 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         holder.profileText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Drawable d = holder.userImg.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+
+
                 Intent intent = new Intent(v.getContext(), FriendProfile.class);
 
                 intent.putExtra("email", holder.email.getText());

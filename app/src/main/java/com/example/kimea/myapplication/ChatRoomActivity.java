@@ -35,7 +35,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
     TextView msgInput;
     private Socket mSocket;
-    String email,result;
+    String email,result,my_email;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
@@ -46,6 +46,24 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
     }
+
+    /*@Override
+    protected void onStart() {
+        super.onStart();
+        db = helper.getReadableDatabase();
+        String query = "select user from divice";
+        Cursor cur = db.rawQuery(query, null);
+        cur.moveToFirst();
+        my_email = cur.getString(0);
+        JSONObject actData = new JSONObject();
+
+        try {
+            actData.put("email", my_email);
+            actData.put("activity", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -58,6 +76,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
 
+
 //        Log.i("상대방 아이디",email);
         String[] array = email.split("@");
         String ss = array[1];
@@ -67,7 +86,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         result = array[0]+ary2[0]+ary2[1];
         db = helper.getWritableDatabase();
        // db.execSQL("drop table '"+result+"'");
-        //Log.i("result4",result);
+        Log.i("result4",result);
         try {
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select * from '" + result + "'";
@@ -286,6 +305,19 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+        JSONObject actData = new JSONObject();
+        db = helper.getReadableDatabase();
+        String query2 = "select user from divice";
+        Cursor cur3 = db.rawQuery(query2, null);
+        cur3.moveToFirst();
+        my_email = cur3.getString(0);
+        try {
+            actData.put("email", my_email);
+            //actData.put("activity", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("outActivity", actData);
 
         Intent intent = new Intent();
         String rs2 = "";
@@ -303,7 +335,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("outActivity", emailJson);
+        //mSocket.emit("outActivity", emailJson);
         while (cur2.moveToNext()){
             rs2=cur2.getString(0);
         }

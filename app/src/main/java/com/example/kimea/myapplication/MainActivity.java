@@ -244,20 +244,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        /*SQLiteDatabase database = helper.getReadableDatabase();
-        String sql = "select user from divice";
-        Cursor cursor2 = database.rawQuery(sql, null);
-        cursor2.moveToFirst();
-        String email = cursor2.getString(0);
-        Log.i("dis email", email);
+        JSONObject actData = new JSONObject();
+        db = helper.getReadableDatabase();
+        String query2 = "select user from divice";
+        Cursor cur3 = db.rawQuery(query2, null);
+        cur3.moveToFirst();
+        String my_email = cur3.getString(0);
         try {
-            data.put("email", email);
+            actData.put("email", my_email);
+            //actData.put("activity", email);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        mSocket.emit("disconnet", data);
-*/
+        mSocket.emit("outActivity", actData);
         mSocket.disconnect();
         super.onDestroy();
 

@@ -345,4 +345,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Log.i("asdasdasd","asdasdasda");
         finish();
     }
+
+
 }

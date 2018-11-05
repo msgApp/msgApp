@@ -86,6 +86,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 mSocket.emit("addFriend",data2);
                 mSocket.emit("sendProfile", data2);
                 Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
+                this.finish();
                 break;
         }
     }

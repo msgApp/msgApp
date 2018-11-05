@@ -1,14 +1,17 @@
 package com.example.kimea.myapplication;
 
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +24,9 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
     ImageView profileImg;
     TextView nickname;
     TextView profileText;
-    String email;
+    String email,my_email;
+    String intentPosition;
+    int position;
     SQLiteDatabase db;
     private Socket mSocket;
     DBHelper helper =  new DBHelper(this);
@@ -46,14 +51,16 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
         nickname.setText(intent.getStringExtra("nickname"));
         profileText.setText(intent.getStringExtra("profileText"));
         email = intent.getStringExtra("email");
-
+        intentPosition = intent.getStringExtra("position");
+        Log.i("intent Position", intentPosition);
+        position = Integer.valueOf(intentPosition);
 
         db = helper.getReadableDatabase();
         String query = "select user from divice";
         Cursor cur = db.rawQuery(query, null);
 
         cur.moveToFirst();
-        String my_email = cur.getString(0);
+        my_email = cur.getString(0);
         JSONObject actData = new JSONObject();
 
         try {
@@ -75,6 +82,33 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
                 Intent intent = new Intent(FriendProfile.this, ChatRoomActivity.class);
                 intent.putExtra("email", email);
                 startActivity(intent);
+                break;
+
+            case R.id.block :
+                JSONObject blockJson = new JSONObject();
+                try{
+                    blockJson.put("f_email", email);
+                    blockJson.put("my_email", my_email);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                mSocket.emit("block", blockJson);
+
+                //FriendTabFragment ff = new FriendTabFragment();
+                //ff.removed(position);
+
+                Fragment fragment = new FriendTabFragment();
+                Bundle bundle = new Bundle(1);
+                bundle.putString("position", intentPosition);
+                fragment.setArguments(bundle);
+                //.finish();
+                Intent backIntent = new Intent(this, ViewPagerActivity.class);
+                backIntent.putExtra("id", my_email);
+                startActivity(backIntent);
+
+                break;
+
+
         }
     }
 }

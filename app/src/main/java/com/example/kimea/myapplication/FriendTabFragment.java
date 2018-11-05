@@ -40,23 +40,29 @@ public class FriendTabFragment extends Fragment {
     private Socket mSocket;
     private RecyclerView fRecyclerView;
     private LinearLayoutManager fLayoutManager;
-    private RecyclerView.Adapter adapter;
+    private FriendListAdapter adapter;
     private ArrayList<GetFriendListItem> items;
     JSONArray msg;
     JSONArray fList;
     JSONObject pList;
     ArrayList userList;
-    String ids,tableResult;
+    String ids,tableResult,intentPosition;
+    int ps;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
     private FloatingActionButton  fab1, fab2, fab;
     TextView addFriendText;
     int countItem = 0;
+    int position = -1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
+
+
+
+
         //내아이디
         helper =  new DBHelper(getActivity());
         ids = getActivity().getIntent().getStringExtra("id");
@@ -137,7 +143,15 @@ public class FriendTabFragment extends Fragment {
         items = new ArrayList<>();
         adapter = new FriendListAdapter(items);
         fRecyclerView.setAdapter(adapter);
+        try{
+            String pos = getArguments().getString("position");
+            Log.i("Arguments position", pos);
+            position = Integer.valueOf(pos);
+            adapter.itemRemove(position);
 
+        }catch (Exception e){
+            Log.e("block Intent", e.toString());
+        }
         return view;
     }
 
@@ -271,5 +285,11 @@ public class FriendTabFragment extends Fragment {
         Log.i("SaveCharInsert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
+    }
+    public void removed (int position){
+        Log.i("items", String.valueOf(items.size()));
+        items.remove(position);
+        adapter.notifyItemRemoved(position);
+        adapter.notifyItemRangeChanged(position, items.size());
     }
 }

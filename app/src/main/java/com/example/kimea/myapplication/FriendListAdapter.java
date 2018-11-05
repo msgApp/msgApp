@@ -11,7 +11,10 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,11 +33,12 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
 
 
 
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         protected TextView userNickname;
         protected ImageView userImg;
         protected TextView email;
         protected TextView profileText;
+
 
 
 
@@ -44,6 +48,14 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
             this.userNickname = view.findViewById(R.id.userNickname);
             this.profileText = view.findViewById(R.id.profileText);
             this.email = view.findViewById(R.id.email);
+
+            view.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            MenuItem edit = contextMenu.add(Menu.NONE, 1001, 1, "삭제");
+            //edit.setOnMenuItemClickListener()
         }
     }
     public FriendListAdapter(ArrayList<GetFriendListItem> list){
@@ -66,8 +78,14 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         return bitmap;
     }
 
+    public void itemRemove(int position){
+        Item.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, Item.size());
+    }
+
     @Override
-    public void onBindViewHolder(final RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerViewHolder holder, final int position) {
 
         holder.userImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getUserImgI()));
         holder.userNickname.setText(Item.get(position).getUserNickname());
@@ -89,6 +107,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                Log.i("position", String.valueOf(position));
+                intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());
                // intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
@@ -112,6 +132,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                Log.i("position", String.valueOf(position));
+                intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());
              //   intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
@@ -133,6 +155,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                Log.i("position", String.valueOf(position));
+                intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());
                // intent.putExtra("myEmail",myEmail.getMyId());
                 v.getContext().startActivity(intent);
@@ -145,4 +169,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
     public int getItemCount() {
         return (null != Item ? Item.size() : 0);
     }
+
+
 }

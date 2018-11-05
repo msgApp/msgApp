@@ -55,10 +55,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String[] array = email.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
-        // String result = array[0]+array2[0]+array2[1];
-        // Log.i("result3",ary2[0]);
         result = array[0]+ary2[0]+ary2[1];
-        insert(email,msgTitle,msgBody,"0");
+
         sendNotification(msgTitle,msgBody);
         set_alarm_badge();
     }

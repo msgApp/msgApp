@@ -61,15 +61,8 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
 
         cur.moveToFirst();
         my_email = cur.getString(0);
-        JSONObject actData = new JSONObject();
 
-        try {
-            actData.put("email", my_email);
-            actData.put("activity", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mSocket.emit("intoActivity", actData);
+
 
 
 
@@ -79,6 +72,15 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bt_msg :
+                JSONObject actData = new JSONObject();
+
+                try {
+                    actData.put("email", my_email);
+                    actData.put("activity", email);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mSocket.emit("intoActivity", actData);
                 Intent intent = new Intent(FriendProfile.this, ChatRoomActivity.class);
                 intent.putExtra("email", email);
                 startActivity(intent);

@@ -24,9 +24,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
-import io.socket.client.Socket;
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.RecyclerViewHolder>{
     private ArrayList<GetFriendListItem> Item;

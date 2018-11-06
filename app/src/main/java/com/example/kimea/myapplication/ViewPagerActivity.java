@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -41,7 +42,6 @@ public class ViewPagerActivity extends AppCompatActivity{
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Socket mSocket;
-
     String ids;
     TabPagerAdapter pagerAdapter;
     SQLiteDatabase db;
@@ -50,8 +50,6 @@ public class ViewPagerActivity extends AppCompatActivity{
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_viewpager);
-
-
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
@@ -63,6 +61,13 @@ public class ViewPagerActivity extends AppCompatActivity{
             e.printStackTrace();
         }
 
+        SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        if (pref.getString("email","").isEmpty()) {
+            editor.putString("email", "none");
+            editor.commit();
+            Log.e(TAG,"commit");
+        }
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("친구"));

@@ -48,7 +48,6 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
         mSocket = app.getSocket();
 
         imgview = findViewById(R.id.profileImg);
-        imgview2 = findViewById(R.id.profileImg2);
         profile = findViewById(R.id.profileText);
 
     }

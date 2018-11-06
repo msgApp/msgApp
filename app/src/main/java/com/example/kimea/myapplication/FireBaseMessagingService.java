@@ -25,6 +25,7 @@ import java.util.Map;
 
 public class FireBaseMessagingService extends FirebaseMessagingService{
     private static final String TAG = "MyFirebaseMsgService";
+    private int badge;
     int badge_count;
     String result;
     SQLiteDatabase db;
@@ -39,7 +40,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         // TODO: Implement this method to send token to your app server.
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("token", token);
+        editor.putInt("badge", badge);
         editor.commit();
     }
 
@@ -50,20 +51,58 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
        // Map<String, String > rsmg = remoteMessage.getData();
 
         String msgBody = remoteMessage.getNotification().getBody();
-        String email = remoteMessage.getData().get("email");
         String msgTitle = remoteMessage.getNotification().getTitle();
-        String[] array = email.split("@");
-        String ss = array[1];
-        String[] ary2 = ss.split("\\.");
-        result = array[0]+ary2[0]+ary2[1];
-
-        sendNotification(msgTitle,msgBody);
-        set_alarm_badge();
-    }
-    private void sendNotification(String messageBody,String messageTitle) {
-
+        String email = remoteMessage.getData().get("email");
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
+        SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
+
+        if(email!=null){
+            SharedPreferences pref = getSharedPreferences(email,MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            String badge_check = pref.getString("badge_count","");
+            if(badge_check.isEmpty()){
+                editor.putString("badge_count","0");
+                editor.commit();
+            }
+            //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
+            if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(email)){
+                SharedPreferences preferences = getSharedPreferences(email,MODE_PRIVATE);
+                int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
+                badge_int++;
+                SharedPreferences.Editor editor3 = preferences.edit();
+                editor3.putString("badge_count",String.valueOf(badge_int));
+                editor3.commit();
+                Log.e(TAG,"email_badge_commit");
+            }
+        }
+        try {
+            String[] array = email.split("@");
+            String ss = array[1];
+            String[] ary2 = ss.split("\\.");
+            // String result = array[0]+array2[0]+array2[1];
+            // Log.i("result3",ary2[0]);
+            result = array[0] + ary2[0] + ary2[1];
+            insert(email, msgTitle, msgBody, "0");
+        }catch (Exception e){
+
+        }
+        if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(email)) {
+            sendNotification(msgTitle, msgBody, email);
+            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+            int badge_count = pref.getInt("badge",0);
+            badge_count++;
+            pref = getSharedPreferences("pref", MODE_PRIVATE);
+            SharedPreferences.Editor editor2 = pref.edit();
+            editor2.putInt("badge", badge_count);
+            editor2.commit();
+            set_badge_alarm(badge_count);
+        }
+
+    }
+    private void sendNotification(String messageBody,String messageTitle,String email) {
+
+
 
         Intent intent = new Intent(this, ChatRoomActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -81,15 +120,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         nManager.notify(0 /* ID of notification */, nBuilder.build());
 
     }
-    public void set_alarm_badge(){
-    Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
-    badge_count =1;
-    intent.putExtra("badge_count", badge_count);
-    intent.putExtra("badge_count_package_name", getApplicationContext().getPackageName());
-    intent.putExtra("badge_count_class_name", MainActivity.class.getName());
-    sendBroadcast(intent);
 
-    }
     //데이터 삽입
     public void insert(String id,String nickName,String text,String type) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
@@ -105,7 +136,14 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
-
+    public void set_badge_alarm(int badge_count){
+        Log.e(TAG , "badgeCount :"+badge_count);
+        Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+        intent.putExtra("badge_count", badge_count);
+        intent.putExtra("badge_count_package_name", getPackageName());
+        intent.putExtra("badge_count_class_name", "com.example.kimea.myapplication.LoadingActivity");
+        sendBroadcast(intent);
+    }
         }
 
 

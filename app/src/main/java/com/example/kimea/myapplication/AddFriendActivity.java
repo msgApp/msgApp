@@ -45,6 +45,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         imgview = findViewById(R.id.friendImg);
         addFriend  = findViewById(R.id.addFriend);
 
+
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
 
@@ -57,9 +58,9 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
             case R.id.fSearch:
                 if (fEmail.getText().toString().equals(ids)){
 
-                    imgview.setVisibility(View.INVISIBLE);
-                    friendText.setVisibility(View.INVISIBLE);
-                    addFriend.setVisibility(View.INVISIBLE);
+                    imgview.setVisibility(View.GONE);
+                    friendText.setVisibility(View.GONE);
+                    addFriend.setVisibility(View.GONE);
                     fName.setText("나 자신이야");
                 }else{
                     //imgview.setVisibility(View.VISIBLE);
@@ -104,11 +105,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                         for(int i=0;i<friend.length();i++){
                             try{
                                 JSONObject get = friend.getJSONObject(i);
-                                //getByteValue(get,"img");
-                                // Log.i("listener1",friend.toString());
                                 result = get.getString("img");
-                                // resultText = get.getString("result");
-                                // Log.i("resultText",resultText);
                                 Log.i("decode",result);
                                 byteArrayToBitmap(result);
                                 friendName =  get.getString("nickName");
@@ -117,9 +114,9 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                                 checkFriend(friendResult);
                             }catch (Exception e){
                                 friendName = "검색한 유저가 존재하지 않습니다.";
-                                imgview.setVisibility(View.INVISIBLE);
-                                friendText.setVisibility(View.INVISIBLE);
-                                addFriend.setVisibility(View.INVISIBLE);
+                                imgview.setVisibility(View.GONE);
+                                friendText.setVisibility(View.GONE);
+                                addFriend.setVisibility(View.GONE);
                             }
 
                         }
@@ -133,10 +130,15 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     };
     public void checkFriend(String result){
         if(result.equals("y")){
-            Toast.makeText(getApplicationContext(),"이미 친구입니다!",Toast.LENGTH_SHORT).show();
+            fName.setVisibility(View.VISIBLE);
             imgview.setVisibility(View.VISIBLE);
-            addFriend.setVisibility(View.INVISIBLE);
+            addFriend.setVisibility(View.GONE);
             friendText.setVisibility(View.VISIBLE);
+        }else{
+            fName.setVisibility(View.VISIBLE);
+            imgview.setVisibility(View.VISIBLE);
+            addFriend.setVisibility(View.VISIBLE);
+            friendText.setVisibility(View.GONE);
         }
     }
     public Bitmap byteArrayToBitmap(String jsonString) {

@@ -60,6 +60,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/friendName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,6 +78,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:gravity="center"
+        android:visibility="gone"
         android:text="TextView"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/addFriend"
@@ -95,6 +97,7 @@
         android:layout_marginStart="8dp"
         android:text="추가"
         android:onClick="onClick"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

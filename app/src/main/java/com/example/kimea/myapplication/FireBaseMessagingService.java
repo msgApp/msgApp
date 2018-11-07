@@ -52,13 +52,18 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String msgBody = remoteMessage.getNotification().getBody();
         String email = remoteMessage.getData().get("email");
         String msgTitle = remoteMessage.getNotification().getTitle();
+        String chatRoom = remoteMessage.getData().get("chatRoom");
         String[] array = email.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
         result = array[0]+ary2[0]+ary2[1];
 
-        sendNotification(msgTitle,msgBody);
-        set_alarm_badge();
+        insert(email,msgTitle,msgBody,"0");
+        if(!email.equals(chatRoom)){
+            sendNotification(msgTitle,msgBody);
+            set_alarm_badge();
+        }
+
     }
     private void sendNotification(String messageBody,String messageTitle) {
 

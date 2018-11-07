@@ -4,6 +4,7 @@ public class GetChatRoomItem {
     String userId;
     String lastChat;
     String chatImg;
+    String badge;
     public String getUserId(){
         return userId;
     }
@@ -13,9 +14,13 @@ public class GetChatRoomItem {
     public String getChatImg(){
         return chatImg;
     }
-    public GetChatRoomItem(String userId, String lastChat,String chatImg){
+    public String getBadge(){
+        return badge;
+    }
+    public GetChatRoomItem(String userId, String lastChat,String chatImg,String badge){
         this.userId = userId;
         this.lastChat = lastChat;
         this.chatImg = chatImg;
+        this.badge = badge;
     }
 }

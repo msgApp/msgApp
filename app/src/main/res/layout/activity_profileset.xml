@@ -13,20 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="52dp"
         android:background="@drawable/imageview"
-        android:scaleType="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-    <ImageView
-        android:id="@+id/profileImg2"
-        android:layout_width="144dp"
-        android:layout_height="143dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="324dp"
-        android:background="@drawable/imageview"
-        android:scaleType="center"
+        android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_gallery" />

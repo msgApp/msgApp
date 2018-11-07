@@ -71,7 +71,6 @@ public class SettingTabFragment extends Fragment{
         View view = inflater.inflate(R.layout.setting_fragment,container,false);
 
         imgview = view.findViewById(R.id.profileImg);
-        imgview2 = view.findViewById(R.id.profileImg2);
         profile = view.findViewById(R.id.profileText);
         profileSend = view.findViewById(R.id.profileSend);
         logout = view.findViewById(R.id.logout);

@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -83,6 +84,10 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
                 mSocket.emit("intoActivity", actData);
                 Intent intent = new Intent(FriendProfile.this, ChatRoomActivity.class);
                 intent.putExtra("email", email);
+                SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("email",email);
+                editor.commit();
                 startActivity(intent);
                 break;
 

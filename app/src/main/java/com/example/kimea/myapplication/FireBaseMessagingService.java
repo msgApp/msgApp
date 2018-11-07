@@ -23,16 +23,12 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.List;
 import java.util.Map;
 
-import io.socket.client.Socket;
-
 public class FireBaseMessagingService extends FirebaseMessagingService{
     private static final String TAG = "MyFirebaseMsgService";
     int badge_count;
     String result;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(this);
-    private Socket mSocket;
-
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
@@ -55,20 +51,14 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
 
         String msgBody = remoteMessage.getNotification().getBody();
         String email = remoteMessage.getData().get("email");
-        String chatRoom = remoteMessage.getData().get("chatRoom");
         String msgTitle = remoteMessage.getNotification().getTitle();
-        Log.i("pushMSG TITLE", msgTitle);
         String[] array = email.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
         result = array[0]+ary2[0]+ary2[1];
-        insert(email,msgTitle,msgBody,"0");
-        Log.i("f-m", email+" , "+chatRoom);
-        if(!email.equals(chatRoom)){
-            sendNotification(msgTitle,msgBody);
-            set_alarm_badge();
-        }
 
+        sendNotification(msgTitle,msgBody);
+        set_alarm_badge();
     }
     private void sendNotification(String messageBody,String messageTitle) {
 

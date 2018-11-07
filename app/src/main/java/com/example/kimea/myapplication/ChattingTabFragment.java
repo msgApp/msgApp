@@ -1,7 +1,9 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private LinearLayoutManager fLayoutManager;
     private RecyclerView.Adapter adapter;
     private ArrayList<GetChatRoomItem> chatItems;
+    private static final String TAG = "ChattingTabFragment";
 
     Cursor cur;
     @Override
@@ -50,11 +53,14 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         adapter = new ChatRoomAdapter(chatItems,this);
         fRecyclerView.setAdapter(adapter);
         int index = chatItems.size();
+        SharedPreferences pref = getActivity().getSharedPreferences("chatEmail",Context.MODE_PRIVATE);
+        Log.e(TAG,"id"+pref.getString("email",""));
+
 
         return view;
     }
-    public void addProfile(String setUserId,String setLastChat,String setChatImg){
-        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg));
+    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge){
+        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge));
         adapter.notifyDataSetChanged ();
         for(int i=0;i<chatItems.size();i++){
             Log.i("list",chatItems.get(i).toString());
@@ -80,6 +86,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             while(cur.moveToNext()) {
                 Log.i("hihi","hihi2222");
                 Log.i("useIdData", cur.getString(0));
+                SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
+                String badge = preferences.getString("badge_count","");
                 String s = cur.getString(0);
                 String[] array = s.split("@");
                 String ss = array[1];
@@ -91,7 +99,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                 Cursor cur2 = db.rawQuery(sql2,null);
                 while (cur2.moveToNext()){
                     String rs2=cur2.getString(0);
-                    addProfile(s,rs2,null);
+                    Log.e(TAG,"badge: "+badge);
+                    addProfile(s,rs2,null,badge);
                 }
 
             }
@@ -105,8 +114,13 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         intent.putExtra("email", email);
         // intent.putExtra("myEmail",myEmail.getMyId());
+        SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("email",email);
+        editor.commit();
         startActivityForResult(intent,1);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -129,6 +143,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                 while(cur.moveToNext()) {
                     Log.i("hihi","hihi2222");
                     Log.i("useIdData", cur.getString(0));
+                    SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
+                    String badge = preferences.getString("badge_count","");
                     String s = cur.getString(0);
                     String[] array = s.split("@");
                     String ss = array[1];
@@ -140,7 +156,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                     Cursor cur2 = db.rawQuery(sql2,null);
                     while (cur2.moveToNext()){
                         String rs2=cur2.getString(0);
-                        addProfile(s,rs2,null);
+                        Log.e(TAG,"badge: "+badge);
+                        addProfile(s,rs2,null,badge);
                     }
 
                 }

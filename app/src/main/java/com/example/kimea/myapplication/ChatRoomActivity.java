@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -32,7 +33,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private LinearLayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<GetMessageItem> items;
-
     TextView msgInput;
     private Socket mSocket;
     String email,result,my_email;
@@ -70,13 +70,39 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
 
+        SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
+        SharedPreferences.Editor emaile = pref.edit();
+        emaile.putString("email",email);
+        emaile.commit();
+        Log.e(TAG,"prefEmail "+pref.getString("email",""));
         msgInput = findViewById(R.id.message_input);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
+        try {
+            SharedPreferences emailBadge = getSharedPreferences(email, MODE_PRIVATE);
+            String mailBadge = emailBadge.getString("badge_count", "0");
+            Log.e(TAG, "mailBadge: " + mailBadge);
+            SharedPreferences appBadge = getSharedPreferences("pref", MODE_PRIVATE);
+            int apBadge = appBadge.getInt("badge", 0);
+            Log.e(TAG, "appBadge: " + apBadge);
+            int badgeResult = apBadge - Integer.parseInt(mailBadge);
+            Log.e(TAG, "badgeResult: " + badgeResult);
 
-
+            SharedPreferences.Editor editor = appBadge.edit();
+            editor.putInt("badge", badgeResult);
+            editor.commit();
+            Log.e(TAG, "commit1 ");
+            SharedPreferences.Editor editor2 = emailBadge.edit();
+            editor2.putString("badge_count", "0");
+            editor2.commit();
+            Log.e(TAG, "commit2");
+            set_badge_alarm(badgeResult);
+            Log.e(TAG, "badge_send");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 //        Log.i("상대방 아이디",email);
         String[] array = email.split("@");
         String ss = array[1];
@@ -306,6 +332,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+
         JSONObject actData = new JSONObject();
         db = helper.getReadableDatabase();
         String query2 = "select user from divice";
@@ -347,5 +374,20 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         finish();
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences preferences = getSharedPreferences("chatEmail",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("email","none");
+        editor.commit();
+    }
+    public void set_badge_alarm(int badge_count){
+        Log.e(TAG , "badgeCount :"+badge_count);
+        Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+        intent.putExtra("badge_count", badge_count);
+        intent.putExtra("badge_count_package_name", getPackageName());
+        intent.putExtra("badge_count_class_name", "com.example.kimea.myapplication.LoadingActivity");
+        sendBroadcast(intent);
+    }
 }

@@ -12,6 +12,7 @@ public class LoadingActivity extends Activity {
         try {
             Thread.sleep(1000);
             Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+      //      intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
             finish();
         }catch (Exception e){

@@ -211,6 +211,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private Emitter.Listener listener = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            Log.i("listener check", "check!!!!!!");
                 runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -236,7 +237,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     //상대방 이메일이 맞으면 테이블 인서트
                     if(email.equals(setName)) {
                         addMsg(setNickName, setMsg,0);
-                        insert(setName,setNickName,setMsg,"0");
+                        //insert(setName,setNickName,setMsg,"0");
                    }else{
                         //아니면 맞는 이메일에 인서트
                         Log.i("엘즈","else");

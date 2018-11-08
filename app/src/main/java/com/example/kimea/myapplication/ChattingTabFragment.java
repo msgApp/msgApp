@@ -16,7 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -29,6 +34,10 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private ArrayList<GetChatRoomItem> chatItems;
     private static final String TAG = "ChattingTabFragment";
     static Context CONTEXT;
+    private FloatingActionButton chattingFab, chattingFab1;
+    private TextView createRoom;
+    private boolean ifFabOn = false;
+    private Animation fab_open,fab_close;
 
     Cursor cur;
     public static ChattingTabFragment newInstance() {
@@ -78,7 +87,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             while (cur2.moveToNext()){
                 String rs2=cur2.getString(0);
                 Log.e(TAG,"badge: "+badge);
-                addProfile(s,rs2,null,badge);
+                addProfile(s,rs2,null,badge,s);
             }
 
         }
@@ -87,29 +96,67 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chatting_fragment,container,false);
-        Log.i("createView2","createView");
-        helper = new DBHelper(getActivity());
-        CONTEXT = container.getContext();
-        fRecyclerView = view.findViewById(R.id.chatRoomList);
+            View view = inflater.inflate(R.layout.chatting_fragment,container,false);
+            Log.i("createView2","createView");
 
-        fLayoutManager = new LinearLayoutManager(getActivity());
-        fRecyclerView.setLayoutManager(fLayoutManager);
+            fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
+            fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_close);
 
-        fLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            chattingFab = view.findViewById(R.id.chattingFab);
+            chattingFab1 = view.findViewById(R.id.chattingFab1);
+            createRoom = view.findViewById(R.id.createRoom);
 
-        chatItems = new ArrayList<>();
-        adapter = new ChatRoomAdapter(chatItems,this);
-        fRecyclerView.setAdapter(adapter);
-        int index = chatItems.size();
-        SharedPreferences pref = getActivity().getSharedPreferences("chatEmail",Context.MODE_PRIVATE);
-        Log.e(TAG,"id"+pref.getString("email",""));
+            chattingFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    anim();
+                }
+            });
+
+            chattingFab1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*Intent intent = new Intent(getActivity(), FriendPop.class);
+                    startActivity(intent);*/
+                }
+            });
+
+            helper = new DBHelper(getActivity());
+            CONTEXT = container.getContext();
+            fRecyclerView = view.findViewById(R.id.chatRoomList);
 
 
-        return view;
+            fLayoutManager = new LinearLayoutManager(getActivity());
+            fRecyclerView.setLayoutManager(fLayoutManager);
+
+            fLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+            chatItems = new ArrayList<>();
+            adapter = new ChatRoomAdapter(chatItems,this);
+            fRecyclerView.setAdapter(adapter);
+            int index = chatItems.size();
+            SharedPreferences pref = getActivity().getSharedPreferences("chatEmail",Context.MODE_PRIVATE);
+            Log.e(TAG,"id"+pref.getString("email",""));
+
+
+            return view;
     }
-    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge){
-        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge));
+    public void anim(){
+        if(ifFabOn){
+            chattingFab1.startAnimation(fab_close);
+            chattingFab1.setClickable(false);
+            createRoom.setVisibility(View.INVISIBLE);
+            ifFabOn = false;
+        }else{
+            chattingFab1.startAnimation(fab_open);
+            chattingFab1.setClickable(true);
+            createRoom.setVisibility(View.VISIBLE);
+            ifFabOn = true;
+        }
+    }
+
+    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge,String setRoom){
+        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge,setRoom));
         adapter.notifyDataSetChanged ();
         for(int i=0;i<chatItems.size();i++){
             Log.i("list",chatItems.get(i).toString());
@@ -119,51 +166,12 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(this).commit();
     }
-    /*
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        {
 
-            Log.i("visible","visible");
-            db = helper.getWritableDatabase();
-            String sql = "select userId from oneUser";
 
-            cur = db.rawQuery(sql,null);
-            Log.i("채팅텝 select","select");
-            while(cur.moveToNext()) {
-                Log.i("hihi","hihi2222");
-                Log.i("useIdData", cur.getString(0));
-                SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
-                String badge = preferences.getString("badge_count","");
-                String s = cur.getString(0);
-                String[] array = s.split("@");
-                String ss = array[1];
-                String[] ary2 = ss.split("\\.");
-                String result = array[0]+ary2[0]+ary2[1];
-                Log.i("userid 값 담은 변수",s);
-                Log.i("userid 값 자른 변수",result);
-                String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
-                Cursor cur2 = db.rawQuery(sql2,null);
-                while (cur2.moveToNext()){
-                    String rs2=cur2.getString(0);
-                    Log.e(TAG,"badge: "+badge);
-                    addProfile(s,rs2,null,badge);
-                }
-
-            }
-        }
-        else
-        {
-            Log.i("invisible","invisible");
-        }
-        }
-        */
-
-    public void sendIntent(String email){
+    public void sendIntent(String email, String room){
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         intent.putExtra("email", email);
+        intent.putExtra("roomname", room);
         // intent.putExtra("myEmail",myEmail.getMyId());
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -208,7 +216,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                     while (cur2.moveToNext()){
                         String rs2=cur2.getString(0);
                         Log.e(TAG,"badge: "+badge);
-                        addProfile(s,rs2,null,badge);
+                        addProfile(s,rs2,null,badge,s);
                     }
 
                 }

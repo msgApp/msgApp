@@ -35,7 +35,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private ArrayList<GetMessageItem> items;
     TextView msgInput;
     private Socket mSocket;
-    String email,result,my_email;
+    String email,result,my_email,roomname;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
@@ -80,6 +80,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         mSocket = app.getSocket();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
+        roomname = intent.getStringExtra("roomname");
+
         try {
             SharedPreferences emailBadge = getSharedPreferences(email, MODE_PRIVATE);
             String mailBadge = emailBadge.getString("badge_count", "0");
@@ -187,6 +189,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Log.i("inputMsg",msgInput.getText().toString());
                     msgData.put("u_email",email);
                     msgData.put("my_email", myEmail);
+                    msgData.put("room", roomname);
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
                     pushData.put("f_email",email);

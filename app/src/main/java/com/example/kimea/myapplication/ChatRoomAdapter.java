@@ -26,7 +26,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
     private ArrayList<GetChatRoomItem> Item;
     private  OnSendItem mCallback;
     public interface OnSendItem {
-        void sendIntent(String email);
+        void sendIntent(String email, String room);
         void reset();
     }
 
@@ -36,6 +36,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         protected ImageView chatUserImg;
         protected TextView chatLastText;
         protected TextView bagdeCount;
+        protected TextView roomname;
 
         public RecyclerViewHolder(View view) {
             super(view);
@@ -43,6 +44,8 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             this.chatRoomId = view.findViewById(R.id.chatRoomId);
             this.chatLastText = view.findViewById(R.id.chatLastText);
             this.bagdeCount = view.findViewById(R.id.badge_notification);
+            this.roomname = view.findViewById(R.id.roomname);
+
         }
     }
     public ChatRoomAdapter(ArrayList<GetChatRoomItem> list,OnSendItem listner){
@@ -79,10 +82,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         //holder.chatUserImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getChatImg()));
         holder.chatRoomId.setText(Item.get(position).getUserId());
         holder.chatLastText.setText(Item.get(position).getLastChat());
+        holder.roomname.setText(Item.get(position).getRoomname());
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.sendIntent(holder.chatRoomId.getText().toString());
+                mCallback.sendIntent(holder.chatRoomId.getText().toString(), holder.roomname.getText().toString());
             }
         });
 

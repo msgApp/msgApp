@@ -43,10 +43,45 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-        helper = new DBHelper(getActivity());
+
         CONTEXT  = getContext();
-        refresh();
+        //refresh();
+
         Log.i("create","create");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        chatItems.clear();
+        Log.i("visible","visible");
+        helper =  new DBHelper(getActivity());
+        db = helper.getWritableDatabase();
+        String sql = "select userId from oneUser";
+
+        cur = db.rawQuery(sql,null);
+        Log.i("채팅텝 select","select");
+        while(cur.moveToNext()) {
+            Log.i("hihi","hihi2222");
+            Log.i("useIdData", cur.getString(0));
+            SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
+            String badge = preferences.getString("badge_count","");
+            String s = cur.getString(0);
+            String[] array = s.split("@");
+            String ss = array[1];
+            String[] ary2 = ss.split("\\.");
+            String result = array[0]+ary2[0]+ary2[1];
+            Log.i("userid 값 담은 변수",s);
+            Log.i("userid 값 자른 변수",result);
+            String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
+            Cursor cur2 = db.rawQuery(sql2,null);
+            while (cur2.moveToNext()){
+                String rs2=cur2.getString(0);
+                Log.e(TAG,"badge: "+badge);
+                addProfile(s,rs2,null,badge);
+            }
+
+        }
     }
 
     @Nullable
@@ -54,6 +89,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chatting_fragment,container,false);
         Log.i("createView2","createView");
+        helper = new DBHelper(getActivity());
         CONTEXT = container.getContext();
         fRecyclerView = view.findViewById(R.id.chatRoomList);
 
@@ -83,13 +119,13 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(this).commit();
     }
-
+    /*
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if(isVisibleToUser)
         {
-            chatItems.clear();
+
             Log.i("visible","visible");
             db = helper.getWritableDatabase();
             String sql = "select userId from oneUser";
@@ -122,7 +158,9 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         {
             Log.i("invisible","invisible");
         }
-    }
+        }
+        */
+
     public void sendIntent(String email){
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         intent.putExtra("email", email);

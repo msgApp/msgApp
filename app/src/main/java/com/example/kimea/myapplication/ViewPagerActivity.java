@@ -93,7 +93,7 @@ public class ViewPagerActivity extends AppCompatActivity{
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                pagerAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -139,7 +139,6 @@ public class ViewPagerActivity extends AppCompatActivity{
                     public void run() {
                         // 해당 작업을 처리함
                         pagerAdapter.notifyDataSetChanged();
-                       Toast.makeText(ViewPagerActivity.this,"cas",Toast.LENGTH_SHORT).show();
                     }
                 });
             }

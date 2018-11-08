@@ -75,7 +75,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 SharedPreferences.Editor editor3 = preferences.edit();
                 editor3.putString("badge_count",String.valueOf(badge_int));
                 editor3.commit();
-                ((ViewPagerActivity)ChattingTabFragment.CONTEXT).reset();
+                ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                 Log.e(TAG,"email_badge_commit");
             }
         }

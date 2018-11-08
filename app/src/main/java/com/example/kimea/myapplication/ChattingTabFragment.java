@@ -28,20 +28,33 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private RecyclerView.Adapter adapter;
     private ArrayList<GetChatRoomItem> chatItems;
     private static final String TAG = "ChattingTabFragment";
+    static Context CONTEXT;
 
     Cursor cur;
+    public static ChattingTabFragment newInstance() {
+        return new ChattingTabFragment();
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
+
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         helper = new DBHelper(getActivity());
+        CONTEXT  = getContext();
         refresh();
         Log.i("create","create");
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chatting_fragment,container,false);
         Log.i("createView2","createView");
+        CONTEXT = container.getContext();
         fRecyclerView = view.findViewById(R.id.chatRoomList);
 
         fLayoutManager = new LinearLayoutManager(getActivity());
@@ -164,5 +177,10 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
 
             }
         }
+    }
+    public void reset(){
+
+        Toast.makeText(getActivity(),"asd",Toast.LENGTH_SHORT).show();
+
     }
 }

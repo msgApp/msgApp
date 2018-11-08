@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
     private  OnSendItem mCallback;
     public interface OnSendItem {
         void sendIntent(String email);
+        void reset();
     }
 
 
@@ -34,6 +36,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         protected ImageView chatUserImg;
         protected TextView chatLastText;
         protected TextView bagdeCount;
+        protected Button reFresh;
 
         public RecyclerViewHolder(View view) {
             super(view);
@@ -41,6 +44,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             this.chatRoomId = view.findViewById(R.id.chatRoomId);
             this.chatLastText = view.findViewById(R.id.chatLastText);
             this.bagdeCount = view.findViewById(R.id.badge_notification);
+            this.reFresh = view.findViewById(R.id.refresh);
         }
     }
     public ChatRoomAdapter(ArrayList<GetChatRoomItem> list,OnSendItem listner){
@@ -67,13 +71,19 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
     }
 
     @Override
-    public void onBindViewHolder(final ChatRoomAdapter.RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(final ChatRoomAdapter.RecyclerViewHolder holder, final int position) {
         holder.bagdeCount.setText(Item.get(position).getBadge());
         if (Item.get(position).getBadge().equals("0")||Item.get(position).getBadge().equals("")) {
             holder.bagdeCount.setVisibility(View.GONE);
         }else{
             holder.bagdeCount.setVisibility(View.VISIBLE);
         }
+        holder.reFresh.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mCallback.reset();
+            }
+        });
         //holder.chatUserImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getChatImg()));
         holder.chatRoomId.setText(Item.get(position).getUserId());
         holder.chatLastText.setText(Item.get(position).getLastChat());

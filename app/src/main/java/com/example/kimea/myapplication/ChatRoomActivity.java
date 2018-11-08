@@ -117,6 +117,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select * from '" + result + "'";
             Cursor cursor2 = database.rawQuery(sql, null);
+            while(cursor2.moveToNext()){
+                Log.e(TAG,"chatId"+cursor2.getString(0));
+                Log.e(TAG,"chatnick"+cursor2.getString(1));
+                Log.e(TAG,"chattext"+cursor2.getString(2));
+            }
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
@@ -181,6 +186,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     msgData.put("message",msgInput.getText().toString());
                     Log.i("inputMsg",msgInput.getText().toString());
                     msgData.put("u_email",email);
+                    msgData.put("my_email", myEmail);
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
                     pushData.put("f_email",email);

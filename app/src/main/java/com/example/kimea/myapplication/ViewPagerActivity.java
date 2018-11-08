@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -46,13 +47,15 @@ public class ViewPagerActivity extends AppCompatActivity{
     TabPagerAdapter pagerAdapter;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ViewPagerActivity.this);
+    public static Context CONTEXT;
+
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_viewpager);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-
+        CONTEXT = this;
         ids = getIntent().getStringExtra("id");
         Log.i("intentIds",ids);
         try {
@@ -127,7 +130,22 @@ public class ViewPagerActivity extends AppCompatActivity{
 
         }
     }
+    public void reset(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        // 해당 작업을 처리함
+                        pagerAdapter.notifyDataSetChanged();
+                       Toast.makeText(ViewPagerActivity.this,"cas",Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).start();
 
+    }
 
     @Override
     public void onBackPressed() {

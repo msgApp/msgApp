@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private ArrayList<GetChatRoomItem> chatItems;
     private static final String TAG = "ChattingTabFragment";
     static Context CONTEXT;
-
+    Button popButton;
     Cursor cur;
     public static ChattingTabFragment newInstance() {
         return new ChattingTabFragment();
@@ -43,10 +44,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
-
         CONTEXT  = getContext();
         //refresh();
-
         Log.i("create","create");
     }
 
@@ -90,7 +89,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         View view = inflater.inflate(R.layout.chatting_fragment,container,false);
         Log.i("createView2","createView");
         helper = new DBHelper(getActivity());
-        CONTEXT = container.getContext();
         fRecyclerView = view.findViewById(R.id.chatRoomList);
 
         fLayoutManager = new LinearLayoutManager(getActivity());
@@ -104,7 +102,15 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         int index = chatItems.size();
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail",Context.MODE_PRIVATE);
         Log.e(TAG,"id"+pref.getString("email",""));
+        popButton = view.findViewById(R.id.goFriendPop);
 
+        popButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),FriendPop.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

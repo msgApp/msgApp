@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,24 +21,27 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final String TAG = "MainActivity";
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this);
-    TextView search_id;
-    TextView search_pw;
-    TextView register;
-    TextView login_id;
-    TextView login_pw,tx_view;
-    String result, result2,userId,msgToken="" ;
-
+    TextView search_pw, search_id, register, login_id, login_pw, tx_view;
+    JSONArray fList;
+    JSONObject pList;
+    ArrayList userList;
+    String result, result2, userId, msgToken="";
+    int countItem = 0;
     private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,24 +145,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 db = helper.getWritableDatabase();
                 db.execSQL("delete from token where token is not null");
 
-                Handler delayHandler = new Handler();
+                final Handler delayHandler = new Handler();
                 delayHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         // TODO
                         try{
-
-
                         if(!result2.equals("false")){
                             //insert(result2);
-
                             mSocket.connect();
                             final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                             db = helper.getWritableDatabase();
                             db.execSQL(DATABASE_TABLE_ONEUSER);
-
-                            Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
-                            intent2.putExtra("id", login_id.getText().toString());
 
                             SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
@@ -169,6 +167,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     new OnSuccessListener<InstanceIdResult>() {
                                         @Override
                                         public void onSuccess(InstanceIdResult instanceIdResult) {
+                                            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+                                            SharedPreferences.Editor editor = pref.edit();
+                                            editor.putString("msgToken", instanceIdResult.getToken());
+                                            editor.commit();
 
                                             ContentValues contentValues = new ContentValues();
                                             contentValues.put("user",login_id.getText().toString());
@@ -178,11 +180,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             db.insert("divice","null",contentValues);
                                             Log.e("newToken",newToken);
                                         }
-
                                     });
                             //contentValues.put("msgToken",msgToken);
                             FirebaseMessaging.getInstance().subscribeToTopic("ALL");
-                            startActivity(intent2);
+                            SharedPreferences pref2 = getSharedPreferences("pref",MODE_PRIVATE);
+                            String userid =  pref2.getString("userId",null);
+                            String msgT =  pref2.getString("msgToken",null);
+                            JSONObject data2 = new JSONObject();
+                            try {
+                                data2.put("email", userid);
+                                data2.put("divice", msgT);
+                            }catch (Exception e){
+
+                            }
+                            mSocket.emit("sendUser",data2);
+                            mSocket.on("friendList", listener);
+                            final Handler delayHandler2 = new Handler();
+                            delayHandler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
+                                    intent2.putExtra("id", login_id.getText().toString());
+                                    startActivity(intent2);
+                                }
+                            },2000);
+
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                         }
@@ -197,6 +219,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+    private Emitter.Listener listener2 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    pList = (JSONObject) args[0];
+
+                    //Log.i("pList", pList.toString());
+                    String setUserImg ="";
+                    String setUserNickname ="";
+                    String setProfileText = "";
+                    String setEmail = "";
+
+                    try {
+                        setUserImg = pList.getString("u_pf_img");
+                        setUserNickname = pList.getString("u_nickname");
+                        setProfileText = pList.getString("u_pf_text");
+                        setEmail = pList.getString("u_email");
+                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
+                        Log.e(TAG,"setUserNickname "+setUserNickname);
+                        Log.e(TAG,"setProfileText "+setProfileText);
+                        Log.e(TAG,"setEmail "+setEmail);
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    friendInsert(setEmail, setUserNickname, setUserImg, setProfileText);
+                }
+            });
+        }
+    };
+    private Emitter.Listener listener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i("countItem",String.valueOf(countItem));
+                    fList = (JSONArray)args[0];
+
+                    userList = new ArrayList();
+
+                    if(countItem < fList.length()){
+                        try {
+                            for(int i = 0; i<fList.length(); i++){
+                                Log.i("fList length", String.valueOf(fList.length()));
+                                Log.i("listener1",fList.toString());
+                                JSONObject jo = fList.getJSONObject(i);
+                                JSONObject data = new JSONObject();
+                                //Log.i("fListArray", jo.toString());
+                                userList.add(fList.getJSONObject(i).getString("f_email"));
+                                //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                                data.put("u_email",userList.get(i).toString());
+                                data.put("index",i);
+                                mSocket.emit("sendProfile",data);
+                                countItem++;
+                            }
+                            fList = new JSONArray();
+                            mSocket.on("sendProfile", listener2);
+
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+
+
+                }
+            });
+        }
+    };
     public class ServerTask extends AsyncTask<Void,Void,String> {
         private String url;
         private String str;
@@ -229,6 +323,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //insert
 
         }
+    }
+    public void friendInsert(String email, String nick, String img, String text){
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("friendemail", email);
+        values.put("friendnick",nick);
+        values.put("friendimg",img);
+        values.put("friendText", text);
+        db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("SaveCharInsert","insert");
+
     }
     public void insert(String token) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능

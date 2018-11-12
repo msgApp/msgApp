@@ -6,18 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper{
-
+    private static final String TAG = "DB";
     private static  final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT )";
     private static  final String DATABASE_TABLE_TOKEN = "create table token(token text primary key);";
-    Context mycontext;
-    String name = "divice.db";
-
-
+    private static  final String DATABASE_TABLE_FRIEND = "create table friend(friendemail text, friendnick text, friendimg text, friendText text) ";
+    static Context mycontext;
+    static final String name = "divice.db";
 
     public DBHelper(Context context) {
-        super(context, "divice.db", null, 1);
+        super(context, name, null, 1);
         mycontext = context;
     }
     @Override
@@ -29,13 +29,12 @@ public class DBHelper extends SQLiteOpenHelper{
                 "create table profile(profileText text,profileImg BLOB);";
        // String sql3 =
             //    "create table divice(user text primary key,token text);";
-
+        Log.e(TAG, "success0");
         db.execSQL(DATABASE_TABLE_TOKEN);
+        Log.e(TAG, "success");
+        db.execSQL(DATABASE_TABLE_FRIEND);
+        Log.e(TAG, "success2");
       //  db.execSQL(sql3);
-    }
-
-    public void dropDB(){
-        boolean drop = mycontext.deleteDatabase(name);
     }
 
     @Override

@@ -60,11 +60,8 @@ public class FriendTabFragment extends Fragment {
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
 
-
-
-
         //내아이디
-        helper =  new DBHelper(getActivity());
+        helper =  new DBHelper(getActivity().getApplicationContext());
         ids = getActivity().getIntent().getStringExtra("id");
         SQLiteDatabase database = helper.getReadableDatabase();
         String sql = "select * from divice";
@@ -74,19 +71,25 @@ public class FriendTabFragment extends Fragment {
             Log.e(TAG ,cursor2.getString(2));
             msgToken = cursor2.getString(2);
         }
-
         try {
             data.put("email", ids);
             data.put("divice",msgToken);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("sendUser",data);
+        //mSocket.emit("sendUser",data);
         Log.i("ids",ids);
         mSocket.on("messageAfter",Lmsg);
-        mSocket.on("friendList", listener);
         items = new ArrayList<>();
+
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -143,92 +146,33 @@ public class FriendTabFragment extends Fragment {
         items = new ArrayList<>();
         adapter = new FriendListAdapter(items);
         fRecyclerView.setAdapter(adapter);
+
         try{
             String pos = getArguments().getString("position");
             Log.i("Arguments position", pos);
             position = Integer.valueOf(pos);
             adapter.itemRemove(position);
-
-        }catch (Exception e){
+        }catch (Exception e) {
             Log.e("block Intent", e.toString());
+        }
+        db = helper.getWritableDatabase();
+        String sql2 = "select * from friend";
+        Cursor cursor = db.rawQuery(sql2,null);
+        while(cursor.moveToNext()){
+            String email = cursor.getString(0);
+            Log.e(TAG,"Cursor" + email);
+            String nick = cursor.getString(1);
+            Log.e(TAG,"Cursor" + nick);
+            String img = cursor.getString(2);
+            // Log.e(TAG,"Cursor" + img);
+            String text = cursor.getString(3);
+            Log.e(TAG,"Cursor" + text);
+            addProfile(img, nick, text, email);
+            Log.e(TAG,"addSuccess");
         }
         return view;
     }
 
-
-    public void addProfile(String setuUserImg,String setUserNickname,String setProfileText, String setEmail){
-        items.add(new GetFriendListItem(setuUserImg,setUserNickname,setProfileText,setEmail));
-        adapter.notifyDataSetChanged ();
-    }
-
-    private Emitter.Listener listener2 = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    pList = (JSONObject) args[0];
-
-                    //Log.i("pList", pList.toString());
-                    String setUserImg ="";
-                    String setUserNickname ="";
-                    String setProfileText = "";
-                    String setEmail = "";
-
-                    try {
-                        setUserImg = pList.getString("u_pf_img");
-                        setUserNickname = pList.getString("u_nickname");
-                        setProfileText = pList.getString("u_pf_text");
-                        setEmail = pList.getString("u_email");
-                       // Log.i("nickName&img", setUserNickname+", "+setUserImg);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    addProfile(setUserImg,setUserNickname,setProfileText,setEmail);
-                }
-            });
-        }
-    };
-    private Emitter.Listener listener = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i("countItem",String.valueOf(countItem));
-                    fList = (JSONArray)args[0];
-
-                    userList = new ArrayList();
-
-                    if(countItem < fList.length()){
-                        try {
-                            for(int i = 0; i<fList.length(); i++){
-                                Log.i("fList length", String.valueOf(fList.length()));
-                                Log.i("listener1",fList.toString());
-                                JSONObject jo = fList.getJSONObject(i);
-                                JSONObject data = new JSONObject();
-                                //Log.i("fListArray", jo.toString());
-                                userList.add(fList.getJSONObject(i).getString("f_email"));
-                                //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
-                                data.put("u_email",userList.get(i).toString());
-                                data.put("index",i);
-                                mSocket.emit("sendProfile",data);
-                                countItem++;
-                            }
-                            fList = new JSONArray();
-                            mSocket.on("sendProfile", listener2);
-
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-
-                    }
-
-
-                }
-            });
-        }
-    };
     private Emitter.Listener Lmsg = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -240,6 +184,7 @@ public class FriendTabFragment extends Fragment {
                     String getMSg="";
                     String nickName="";
                     String userId="";
+
                     try {
                         for(int i=0;i<msg.length();i++){
                             String get = msg.getString(i);
@@ -254,16 +199,20 @@ public class FriendTabFragment extends Fragment {
                             Log.i("id" ,userId);
                             Log.i("msg",getMSg);
                             Log.i("name",nickName);
-
                         }
                     }catch (Exception e){
                         Log.e("msgERROR", String.valueOf(e));
                         e.printStackTrace();
                     }
+
                 }
             });
         }
     };
+    public void addProfile(String setUserImg,String setUserNickname,String setProfileText, String setEmail){
+        items.add(new GetFriendListItem(setUserImg,setUserNickname,setProfileText,setEmail));
+        adapter.notifyDataSetChanged ();
+    }
     public void insert(String id,String text,String nickName) {
         String[] array = id.split("@");
         String ss = array[1];

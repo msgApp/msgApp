@@ -181,6 +181,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Log.e(TAG ,cursor2.getString(0));
                     myEmail = cursor2.getString(0);
                 }
+                Log.i("ChatRoomAct-myEmail", myEmail);
 
                 JSONObject msgData = new JSONObject();
                 JSONObject pushData = new JSONObject();

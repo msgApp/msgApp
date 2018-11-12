@@ -16,8 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -30,7 +34,11 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private ArrayList<GetChatRoomItem> chatItems;
     private static final String TAG = "ChattingTabFragment";
     static Context CONTEXT;
-    Button popButton;
+    private FloatingActionButton chattingFab, chattingFab1;
+    private TextView createRoom;
+    private boolean ifFabOn = false;
+    private Animation fab_open,fab_close;
+
     Cursor cur;
     public static ChattingTabFragment newInstance() {
         return new ChattingTabFragment();
@@ -44,8 +52,10 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
+
         CONTEXT  = getContext();
         //refresh();
+
         Log.i("create","create");
     }
 
@@ -77,7 +87,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             while (cur2.moveToNext()){
                 String rs2=cur2.getString(0);
                 Log.e(TAG,"badge: "+badge);
-                addProfile(s,rs2,null,badge);
+                addProfile(s,rs2,null,badge,s);
             }
 
         }
@@ -86,10 +96,34 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chatting_fragment,container,false);
-        Log.i("createView2","createView");
-        helper = new DBHelper(getActivity());
-        fRecyclerView = view.findViewById(R.id.chatRoomList);
+            View view = inflater.inflate(R.layout.chatting_fragment,container,false);
+            Log.i("createView2","createView");
+
+            fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
+            fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_close);
+
+            chattingFab = view.findViewById(R.id.chattingFab);
+            chattingFab1 = view.findViewById(R.id.chattingFab1);
+            createRoom = view.findViewById(R.id.createRoom);
+
+            chattingFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    anim();
+                }
+            });
+
+            chattingFab1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*Intent intent = new Intent(getActivity(), FriendPop.class);
+                    startActivity(intent);*/
+                }
+            });
+
+            helper = new DBHelper(getActivity());
+            CONTEXT = container.getContext();
+            fRecyclerView = view.findViewById(R.id.chatRoomList);
 
         fLayoutManager = new LinearLayoutManager(getActivity());
         fRecyclerView.setLayoutManager(fLayoutManager);
@@ -102,20 +136,26 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         int index = chatItems.size();
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail",Context.MODE_PRIVATE);
         Log.e(TAG,"id"+pref.getString("email",""));
-        popButton = view.findViewById(R.id.goFriendPop);
 
-        popButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),FriendPop.class);
-                startActivity(intent);
-            }
-        });
 
         return view;
     }
-    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge){
-        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge));
+    public void anim(){
+        if(ifFabOn){
+            chattingFab1.startAnimation(fab_close);
+            chattingFab1.setClickable(false);
+            createRoom.setVisibility(View.INVISIBLE);
+            ifFabOn = false;
+        }else{
+            chattingFab1.startAnimation(fab_open);
+            chattingFab1.setClickable(true);
+            createRoom.setVisibility(View.VISIBLE);
+            ifFabOn = true;
+        }
+    }
+
+    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge,String setRoom){
+        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge,setRoom));
         adapter.notifyDataSetChanged ();
         for(int i=0;i<chatItems.size();i++){
             Log.i("list",chatItems.get(i).toString());
@@ -170,6 +210,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     public void sendIntent(String email){
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         intent.putExtra("email", email);
+
         // intent.putExtra("myEmail",myEmail.getMyId());
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -214,7 +255,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                     while (cur2.moveToNext()){
                         String rs2=cur2.getString(0);
                         Log.e(TAG,"badge: "+badge);
-                        addProfile(s,rs2,null,badge);
+                        addProfile(s,rs2,null,badge,s);
                     }
 
                 }

@@ -56,7 +56,9 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
 
                 }
                 mSocket.emit("createRoom",s);
-                return true;
+
+                this.finish();
+
         }
         return super.onOptionsItemSelected(item);
     }

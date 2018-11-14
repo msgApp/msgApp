@@ -80,7 +80,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             holder.bagdeCount.setVisibility(View.VISIBLE);
         }
         //holder.chatUserImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getChatImg()));
-        holder.chatRoomId.setText(Item.get(position).getUserId());
+        holder.chatRoomId.setText(Item.get(position).getRoomname());
         holder.chatLastText.setText(Item.get(position).getLastChat());
         holder.roomname.setText(Item.get(position).getRoomname());
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {

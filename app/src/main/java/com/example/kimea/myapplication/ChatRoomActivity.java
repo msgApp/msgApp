@@ -106,7 +106,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             e.printStackTrace();
         }
 //        Log.i("상대방 아이디",email);
-        String[] array = email.split("@");
+        String[] array = roomname.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
         // String result = array[0]+array2[0]+array2[1];
@@ -191,6 +191,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     msgData.put("u_email",email);
                     msgData.put("my_email", myEmail);
                     msgData.put("room", roomname);
+                    pushData.put("roomname",roomname);
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
                     pushData.put("f_email",email);

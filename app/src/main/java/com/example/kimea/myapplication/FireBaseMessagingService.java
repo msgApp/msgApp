@@ -54,7 +54,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String msgBody = remoteMessage.getNotification().getBody();
         String msgTitle = remoteMessage.getNotification().getTitle();
         String email = remoteMessage.getData().get("email");
-        String chatRoom = remoteMessage.getData().get("chatRoom");
+        String chatRoom = remoteMessage.getData().get("roomname");
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
         SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
@@ -80,7 +80,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             }
         }
         try {
-            String[] array = email.split("@");
+            String[] array = chatRoom.split("@");
             String ss = array[1];
             String[] ary2 = ss.split("\\.");
             // String result = array[0]+array2[0]+array2[1];

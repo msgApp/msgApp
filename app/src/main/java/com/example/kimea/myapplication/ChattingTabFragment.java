@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -23,7 +25,12 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnSendItem{
     SQLiteDatabase db;
@@ -38,6 +45,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private TextView createRoom;
     private boolean ifFabOn = false;
     private Animation fab_open,fab_close;
+    private Socket mSocket;
 
     Cursor cur;
     public static ChattingTabFragment newInstance() {
@@ -52,11 +60,38 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
+        ChatApplication app = (ChatApplication)getActivity().getApplication();
+        mSocket = app.getSocket();
 
         CONTEXT  = getContext();
         //refresh();
 
         Log.i("create","create");
+        mSocket.on("createRoom", listener);
+
+
+    }
+
+    private Emitter.Listener listener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jRoom = (JSONObject)args[0];
+                    Log.i("jRoom",jRoom.toString());
+                    try{
+                        String roomname = jRoom.getString("roomname");
+                        addProfile("","","","",roomname);
+                    }catch (Exception e){
+
+                    }
+                }
+            });
+        }
+    };
+    public void addRoom(){
+        mSocket.on("createRoom", listener);
     }
 
     @Override
@@ -116,8 +151,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             chattingFab1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*Intent intent = new Intent(getActivity(), FriendPop.class);
-                    startActivity(intent);*/
+                    Intent intent = new Intent(getActivity(), FriendPop.class);
+                    startActivity(intent);
                 }
             });
 

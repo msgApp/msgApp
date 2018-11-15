@@ -51,9 +51,14 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         String a="";
         switch (item.getItemId()){
             case R.id.resultButton:
+                db = helper.getReadableDatabase();
+                String query = "select userId from divice";
+                Cursor cursor = db.rawQuery(query,null);
+                cursor.moveToFirst();
+                String user = cursor.getString(0);
                 for(int i=0;i<chatEmail.size();i++){
                     if(i== 0){
-                        a = chatEmail.get(i);
+                        a = user+" "+chatEmail.get(i);
                     }else {
                         a +=" "+chatEmail.get(i);
                     }

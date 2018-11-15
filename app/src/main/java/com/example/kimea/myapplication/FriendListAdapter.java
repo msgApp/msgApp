@@ -107,6 +107,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                intent.putExtra("roomname",holder.email.getText());
                 Log.i("position", String.valueOf(position));
                 intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());
@@ -132,6 +133,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                intent.putExtra("roomname",holder.email.getText());
                 Log.i("position", String.valueOf(position));
                 intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());
@@ -155,6 +157,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());
+                intent.putExtra("roomname",holder.email.getText());
                 Log.i("position", String.valueOf(position));
                 intent.putExtra("position", String.valueOf(position));
                 intent.putExtra("img", bs.toByteArray());

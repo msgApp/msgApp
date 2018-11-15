@@ -72,7 +72,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor emaile = pref.edit();
-        emaile.putString("email",email);
+        emaile.putString("email",roomname);
         emaile.commit();
         Log.e(TAG,"prefEmail "+pref.getString("email",""));
         msgInput = findViewById(R.id.message_input);
@@ -206,7 +206,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 mSocket.emit("sendMsg",msgData);
                 //채팅방 목록 테이블에 존재하는지 확인
                 db = helper.getWritableDatabase();
-                String sql3 = "select userID from oneUser where userId = '"+email+"';"; //where userId = '"+email+"';";
+                String sql3 = "select userID from oneUser where userId = '"+roomname+"';"; //where userId = '"+email+"';";
                 cur = db.rawQuery(sql3,null);
                 if(cur.moveToFirst()) {
                     for (; ; ) {
@@ -215,7 +215,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                             break;
                     }
                 }else{
-                    insert2(email);
+                    insert2(roomname);
                 }
                 insert("me","me",msgInput.getText().toString(),"1");
                 msgInput.setText("");

@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,13 +64,35 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         ChatApplication app = (ChatApplication)getActivity().getApplication();
         mSocket = app.getSocket();
 
+
+
         CONTEXT  = getContext();
         //refresh();
 
         Log.i("create","create");
+
         mSocket.on("createRoom", listener);
 
+    }
+    public void insert(String id,String nickName,String text,String type,String room) {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values = new ContentValues();
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
 
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("ChatId", id);
+        values.put("ChatNickName",nickName);
+        values.put("ChatText",text);
+        values.put("type",type);
+        String[] array = room.split("@");
+        String ss = array[1];
+        String[] ary2 = ss.split("\\.");
+
+        String result = array[0]+ary2[0]+ary2[1];
+
+        db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("insert","insert");
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 
     private Emitter.Listener listener = new Emitter.Listener() {
@@ -82,6 +105,17 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                     Log.i("jRoom",jRoom.toString());
                     try{
                         String roomname = jRoom.getString("roomname");
+                        //insert("","","","0",roomname);
+                        db = helper.getWritableDatabase();
+                        String[] array = roomname.split("@");
+                        String ss = array[1];
+                        String[] ary2 = ss.split("\\.");
+
+                        String result = array[0]+ary2[0]+ary2[1];
+                        //db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text,type TEXT);");
+                        //insert("1","1","1","0",roomname);
+                        ChatRoomActivity cra = new ChatRoomActivity();
+                        //cra.insert2(roomname);
                         addProfile("","","","",roomname);
                     }catch (Exception e){
 
@@ -91,7 +125,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         }
     };
     public void addRoom(){
-        mSocket.on("createRoom", listener);
+
     }
 
     @Override
@@ -111,6 +145,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
             String badge = preferences.getString("badge_count","");
             String s = cur.getString(0);
+            Log.i("roomID",s);
             String[] array = s.split("@");
             String ss = array[1];
             String[] ary2 = ss.split("\\.");
@@ -133,6 +168,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.chatting_fragment,container,false);
             Log.i("createView2","createView");
+
 
             fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
             fab_close = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_close);
@@ -200,47 +236,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(this).commit();
     }
-    /*
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        {
 
-            Log.i("visible","visible");
-            db = helper.getWritableDatabase();
-            String sql = "select userId from oneUser";
-
-            cur = db.rawQuery(sql,null);
-            Log.i("채팅텝 select","select");
-            while(cur.moveToNext()) {
-                Log.i("hihi","hihi2222");
-                Log.i("useIdData", cur.getString(0));
-                SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0),Context.MODE_PRIVATE);
-                String badge = preferences.getString("badge_count","");
-                String s = cur.getString(0);
-                String[] array = s.split("@");
-                String ss = array[1];
-                String[] ary2 = ss.split("\\.");
-                String result = array[0]+ary2[0]+ary2[1];
-                Log.i("userid 값 담은 변수",s);
-                Log.i("userid 값 자른 변수",result);
-                String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
-                Cursor cur2 = db.rawQuery(sql2,null);
-                while (cur2.moveToNext()){
-                    String rs2=cur2.getString(0);
-                    Log.e(TAG,"badge: "+badge);
-                    addProfile(s,rs2,null,badge);
-                }
-
-            }
-        }
-        else
-        {
-            Log.i("invisible","invisible");
-        }
-        }
-        */
 
     public void sendIntent(String email, String room){
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
@@ -285,12 +281,15 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                     String result = array[0]+ary2[0]+ary2[1];
                     Log.i("userid 값 담은 변수",s);
                     Log.i("userid 값 자른 변수",result);
-                    String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
+                    String sql2 ="select ChatText,ChatId,ChatNickName from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
+
                     Cursor cur2 = db.rawQuery(sql2,null);
                     while (cur2.moveToNext()){
                         String rs2=cur2.getString(0);
+                        String rs3=cur2.getString(1);
+                        String rs4=cur2.getString(2);
                         Log.e(TAG,"badge: "+badge);
-                        addProfile(s,rs2,null,badge,s);
+                        addProfile(rs3,rs2,null,badge,s);
                     }
 
                 }

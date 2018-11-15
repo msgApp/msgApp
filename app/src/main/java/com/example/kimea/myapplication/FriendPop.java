@@ -1,8 +1,11 @@
 package com.example.kimea.myapplication;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,6 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnSendPop {
     private static final String TAG = "FriendPop";
@@ -31,6 +35,7 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
     private DBHelper helper = new DBHelper(FriendPop.this);
     private Socket mSocket;
     Cursor cursor;
+    String room;
     private ArrayList<String> chatEmail = new ArrayList<>();
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,7 +52,12 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         switch (item.getItemId()){
             case R.id.resultButton:
                 for(int i=0;i<chatEmail.size();i++){
-                  a +=" "+chatEmail.get(i);
+                    if(i== 0){
+                        a = chatEmail.get(i);
+                    }else {
+                        a +=" "+chatEmail.get(i);
+                    }
+
                 }
                 JSONObject s = new JSONObject();
                 try {
@@ -57,7 +67,11 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                 }
                 mSocket.emit("createRoom",s);
 
+                //mSocket.on("createRoom",listener);
                 this.finish();
+
+
+
 
         }
         return super.onOptionsItemSelected(item);
@@ -99,7 +113,32 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         }
 
     }
+    private Emitter.Listener listener = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject jRoom = (JSONObject)args[0];
+                    Log.i("jRoom",jRoom.toString());
+                    try{
+                        room = jRoom.getString("roomname");
+                        /*ChattingTabFragment ctf = new ChattingTabFragment();
 
+                        ctf.addProfile("","","","",room);*/
+
+
+                    }catch (Exception e){
+
+                    }
+                }
+            });
+            finish();
+        }
+    };
+    public void end(){
+        this.finish();
+    }
     public void addProfile(String setUserImg,String setUserNickname, String setEmail){
         fpItem.add(new GetFriendPopItem(setUserImg, setUserNickname, setEmail));
         adapter.notifyDataSetChanged ();

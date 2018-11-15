@@ -77,7 +77,7 @@ public class FriendTabFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //mSocket.emit("sendUser",data);
+        mSocket.emit("sendUser",data);
         Log.i("ids",ids);
         mSocket.on("messageAfter",Lmsg);
         items = new ArrayList<>();
@@ -184,6 +184,7 @@ public class FriendTabFragment extends Fragment {
                     String getMSg="";
                     String nickName="";
                     String userId="";
+                    String room = "";
 
                     try {
                         for(int i=0;i<msg.length();i++){
@@ -195,7 +196,8 @@ public class FriendTabFragment extends Fragment {
                             getMSg = gets.getString("message");
                             nickName = gets.getString("nickName");
                             userId = gets.getString("email");
-                            insert(userId,getMSg,nickName);
+                            room = gets.getString("room");
+                            insert(userId,getMSg,nickName,room);
                             Log.i("id" ,userId);
                             Log.i("msg",getMSg);
                             Log.i("name",nickName);
@@ -213,8 +215,8 @@ public class FriendTabFragment extends Fragment {
         items.add(new GetFriendListItem(setUserImg,setUserNickname,setProfileText,setEmail));
         adapter.notifyDataSetChanged ();
     }
-    public void insert(String id,String text,String nickName) {
-        String[] array = id.split("@");
+    public void insert(String id,String text,String nickName,String room) {
+        String[] array = room.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
         // String result = array[0]+array2[0]+array2[1];

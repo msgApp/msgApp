@@ -59,6 +59,12 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
         SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
 
+        String[] array = chatRoom.split("@");
+        String ss = array[1];
+        String[] ary2 = ss.split("\\.");
+        result = array[0] + ary2[0] + ary2[1];
+        insert(email,msgTitle,msgBody,"0");
+
         if(email!=null){
             SharedPreferences pref = getSharedPreferences(email,MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
@@ -68,7 +74,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor.commit();
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
-            if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(email)){
+            if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(chatRoom)){
                 SharedPreferences preferences = getSharedPreferences(email,MODE_PRIVATE);
                 int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
                 badge_int++;
@@ -79,17 +85,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 Log.e(TAG,"email_badge_commit");
             }
         }
-        try {
-            String[] array = chatRoom.split("@");
-            String ss = array[1];
-            String[] ary2 = ss.split("\\.");
-            // String result = array[0]+array2[0]+array2[1];
-            // Log.i("result3",ary2[0]);
-            result = array[0] + ary2[0] + ary2[1];
-        }catch (Exception e){
 
-        }
-        if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(email)) {
+        if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(chatRoom)) {
             sendNotification(msgTitle, msgBody);
             SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
             int badge_count = pref.getInt("badge",0);
@@ -100,7 +97,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             editor2.commit();
             set_badge_alarm(badge_count);
         }
-        insert(email,msgTitle,msgBody,"0");
+        Log.i("Fire Service", email+"/"+msgTitle+"/"+msgBody+"/"+result);
+
     }
     private void sendNotification(String messageBody,String messageTitle) {
         Intent intent = new Intent(this, ChatRoomActivity.class);
@@ -127,10 +125,12 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
 
         // 데이터의 삽입은 put을 이용한다.
-        values.put("ChatId", id);
+
         values.put("ChatNickName",nickName);
-        values.put("ChatText",text);
+        values.put("ChatId", id);
         values.put("type",type);
+        values.put("ChatText",text);
+
         db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.

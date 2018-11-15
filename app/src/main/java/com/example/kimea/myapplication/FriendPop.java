@@ -52,7 +52,7 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         switch (item.getItemId()){
             case R.id.resultButton:
                 db = helper.getReadableDatabase();
-                String query = "select userId from divice";
+                String query = "select user from divice";
                 Cursor cursor = db.rawQuery(query,null);
                 cursor.moveToFirst();
                 String user = cursor.getString(0);

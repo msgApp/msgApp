@@ -92,7 +92,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
             if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(chatRoom)){
-                SharedPreferences preferences = getSharedPreferences(email,MODE_PRIVATE);
+                SharedPreferences preferences = getSharedPreferences(chatRoom,MODE_PRIVATE);
                 int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
                 badge_int++;
                 SharedPreferences.Editor editor3 = preferences.edit();
@@ -104,17 +104,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             }
         }
 
-        if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(chatRoom)) {
-            sendNotification(msgTitle, msgBody);
-            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-            int badge_count = pref.getInt("badge",0);
-            badge_count++;
-            pref = getSharedPreferences("pref", MODE_PRIVATE);
-            SharedPreferences.Editor editor2 = pref.edit();
-            editor2.putInt("badge", badge_count);
-            editor2.commit();
-            set_badge_alarm(badge_count);
-        }
         Log.i("Fire Service", email+"/"+msgTitle+"/"+msgBody+"/"+result);
 
 

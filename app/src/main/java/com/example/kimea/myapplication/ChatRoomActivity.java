@@ -191,7 +191,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     msgData.put("u_email",email);
                     msgData.put("my_email", myEmail);
                     msgData.put("room", roomname);
-                    pushData.put("roomname",roomname);
+                    if(email.equals(roomname)){
+                        pushData.put("roomname", myEmail);
+                    }else {
+                        pushData.put("roomname",roomname);
+                    }
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
                     pushData.put("f_email",email);

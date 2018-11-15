@@ -82,11 +82,11 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         //holder.chatUserImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getChatImg()));
         holder.chatRoomId.setText(Item.get(position).getRoomname());
         holder.chatLastText.setText(Item.get(position).getLastChat());
-        holder.roomname.setText(Item.get(position).getRoomname());
+        holder.roomname.setText(Item.get(position).getUserId());
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.sendIntent(Item.get(position).getUserId(), holder.roomname.getText().toString());
+                mCallback.sendIntent(holder.roomname.getText().toString(), holder.chatRoomId.getText().toString());
             }
         });
 

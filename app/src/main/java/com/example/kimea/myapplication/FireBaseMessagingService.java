@@ -76,9 +76,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         }catch (Exception e){
             db = helper.getWritableDatabase();
             db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, type TEXT);");
+            insert(email,msgTitle,msgBody,"0");
             insert2(chatRoom);
-
-            ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
         }
 
 
@@ -98,7 +97,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 SharedPreferences.Editor editor3 = preferences.edit();
                 editor3.putString("badge_count",String.valueOf(badge_int));
                 editor3.commit();
-
+                sendNotification(msgBody,msgTitle);
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                 Log.e(TAG,"email_badge_commit");
             }

@@ -2,8 +2,10 @@ package com.example.kimea.myapplication;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,13 +46,15 @@ public class SettingTabFragment extends Fragment{
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
     private Socket mSocket;
+    String myEmail;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-
+        SharedPreferences preferences = getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
+        myEmail = preferences.getString("email","");
         String ids = getActivity().getIntent().getStringExtra("id");
         try {
             data2.put("u_email", ids);
@@ -66,19 +70,13 @@ public class SettingTabFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         Log.i("createView3","createView");
+
         View view = inflater.inflate(R.layout.setting_fragment,container,false);
 
         imgview = view.findViewById(R.id.profileImg);
         profile = view.findViewById(R.id.profileText);
         profileSend = view.findViewById(R.id.profileSend);
         logout = view.findViewById(R.id.logout);
-        profile.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),ChangeProfileText.class);
-                startActivity(intent);
-            }
-        });
         imgview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +118,7 @@ public class SettingTabFragment extends Fragment{
                     // Log.i("asdas",result);
                     data.put("u_pf_img", encodeImg);
                     // data.put("u_pf_img", encodeImg);
+                    data.put("u_email",myEmail);
                     data.put("u_pf_text", profile.getText().toString());
                 } catch (Exception e) {
                     e.printStackTrace();

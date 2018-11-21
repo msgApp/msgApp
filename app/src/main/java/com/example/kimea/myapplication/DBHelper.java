@@ -12,7 +12,7 @@ public class DBHelper extends SQLiteOpenHelper{
     private static final String TAG = "DB";
     private static  final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT )";
     private static  final String DATABASE_TABLE_TOKEN = "create table token(token text primary key);";
-    private static  final String DATABASE_TABLE_FRIEND = "create table friend(friendemail text, friendnick text, friendimg text, friendText text) ";
+    private static  final String DATABASE_TABLE_FRIEND = "create table friend(friendemail text, friendnick text, friendimg text, friendText text DEFAULT '') ";
     static Context mycontext;
     static final String name = "divice.db";
 

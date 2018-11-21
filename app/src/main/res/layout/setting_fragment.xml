@@ -29,10 +29,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="92dp"
         android:ems="10"
-        android:focusableInTouchMode="false"
         android:hint="프로필 메세지"
         android:inputType="text"
-        android:onClick="onClick"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileImg" />
 

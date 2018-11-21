@@ -284,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             e.printStackTrace();
                         }
 
+                    }else{
+
                     }
 
 
@@ -331,22 +333,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Cursor cur3 = db.rawQuery(query2, null);
 
         if (!cur3.moveToFirst()){
-            Log.e(TAG,"check 1");
+            ContentValues values = new ContentValues();
+            // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+            // 데이터의 삽입은 put을 이용한다.
+            values.put("friendemail", email);
+            values.put("friendnick",nick);
+            values.put("friendimg",img);
+            values.put("friendText", text);
+            db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+            Log.i("SaveCharInsert","insert");
         }else{
             Log.e(TAG,"check 2");
         }
-
          // db 객체를 얻어온다. 쓰기 가능
-        ContentValues values = new ContentValues();
-        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-        // 데이터의 삽입은 put을 이용한다.
-        values.put("friendemail", email);
-        values.put("friendnick",nick);
-        values.put("friendimg",img);
-        values.put("friendText", text);
-        db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-        Log.i("SaveCharInsert","insert");
-
     }
     public void insert(String token) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능

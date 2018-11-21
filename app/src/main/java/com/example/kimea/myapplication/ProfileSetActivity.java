@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -39,6 +40,7 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
     JSONObject data = new JSONObject();
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
+    String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,8 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
 
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-
+        SharedPreferences preferences = getSharedPreferences("myEmail",MODE_PRIVATE);
+        email = preferences.getString("email","");
         imgview = findViewById(R.id.profileImg);
         profile = findViewById(R.id.profileText);
 
@@ -74,6 +77,7 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
                     //String result = new String(photo,"utf-8");
                   // Log.i("asdas",result);
                     data.put("u_pf_img", encodeImg);
+                    data.put("u_email",email);
                    // data.put("u_pf_img", encodeImg);
                     data.put("u_pf_text", profile.getText().toString());
                 } catch (Exception e) {

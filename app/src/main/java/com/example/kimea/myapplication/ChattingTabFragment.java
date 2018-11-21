@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     private boolean ifFabOn = false;
     private Animation fab_open,fab_close;
     private Socket mSocket;
+    String email;
 
     Cursor cur;
     public static ChattingTabFragment newInstance() {
@@ -63,15 +65,14 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         super.onCreate(saveInstanceState);
         ChatApplication app = (ChatApplication)getActivity().getApplication();
         mSocket = app.getSocket();
-
-
-
         CONTEXT  = getContext();
         //refresh();
 
         Log.i("create","create");
 
         mSocket.on("createRoom", listener);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
+        email = sharedPreferences.getString("email", null);
 
     }
     public void insert(String id,String nickName,String text,String type,String room) {
@@ -110,13 +111,10 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                         String[] array = roomname.split("@");
                         String ss = array[1];
                         String[] ary2 = ss.split("\\.");
-
                         String result = array[0]+ary2[0]+ary2[1];
-                        //db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text,type TEXT);");
-                        //insert("1","1","1","0",roomname);
                         ChatRoomActivity cra = new ChatRoomActivity();
-                        //cra.insert2(roomname);
-                        addProfile("","","","",roomname);
+
+                        addProfile("","","","",roomname, email);
                     }catch (Exception e){
 
                     }
@@ -124,9 +122,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             });
         }
     };
-    public void addRoom(){
-
-    }
 
     @Override
     public void onResume() {
@@ -157,7 +152,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             while (cur2.moveToNext()){
                 String rs2=cur2.getString(0);
                 Log.e(TAG,"badge: "+badge);
-                addProfile(s,rs2,null,badge,s);
+                addProfile(null,rs2,null,badge,s, email);
             }
 
         }
@@ -225,16 +220,12 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         }
     }
 
-    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge,String setRoom){
-        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge,setRoom));
+    public void addProfile(String setUserId,String setLastChat,String setChatImg,String setBadge,String setRoom,String setEmail){
+        chatItems.add(new GetChatRoomItem(setUserId,setLastChat,setChatImg,setBadge,setRoom,setEmail));
         adapter.notifyDataSetChanged ();
         for(int i=0;i<chatItems.size();i++){
             Log.i("list",chatItems.get(i).toString());
         }
-    }
-    public void refresh(){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
     }
 
 
@@ -248,6 +239,26 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         editor.putString("email",email);
         editor.commit();
         startActivityForResult(intent,1);
+    }
+
+    @Override
+    public void deleteRoom(JSONObject jsonObject) {
+
+        try {
+            Log.i("delete Room",jsonObject.toString());
+            db = helper.getWritableDatabase();
+            String room = jsonObject.getString("room");
+            String[] array = room.split("@");
+            String ss = array[1];
+            String[] array2 = ss.split("\\.");
+            String result = array[0]+array2[0]+array2[1];
+            db.execSQL("drop table '"+result+"';");
+            db.delete("oneUser","userId = ?",new String[]{room});
+            mSocket.emit("outRoom", jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -289,7 +300,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
                         String rs3=cur2.getString(1);
                         String rs4=cur2.getString(2);
                         Log.e(TAG,"badge: "+badge);
-                        addProfile(rs3,rs2,null,badge,s);
+                        addProfile(rs3,rs2,null,badge,s,email);
                     }
 
                 }

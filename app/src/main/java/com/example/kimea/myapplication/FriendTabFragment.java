@@ -1,7 +1,9 @@
 package com.example.kimea.myapplication;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -54,6 +56,7 @@ public class FriendTabFragment extends Fragment {
     TextView addFriendText;
     int countItem = 0;
     int position = -1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,10 +70,17 @@ public class FriendTabFragment extends Fragment {
         String sql = "select * from divice";
         Cursor cursor2 = database.rawQuery(sql, null);
         String msgToken="";
+        String id = "";
         while(cursor2.moveToNext()){
             Log.e(TAG ,cursor2.getString(2));
+            id = cursor2.getString(0);
             msgToken = cursor2.getString(2);
         }
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("email", id);
+        editor.commit();
+
         try {
             data.put("email", ids);
             data.put("divice",msgToken);
@@ -89,6 +99,8 @@ public class FriendTabFragment extends Fragment {
         super.onResume();
 
     }
+
+
 
     @Nullable
     @Override
@@ -188,6 +200,7 @@ public class FriendTabFragment extends Fragment {
 
                     try {
                         for(int i=0;i<msg.length();i++){
+
                             String get = msg.getString(i);
                             //JSONObject gets = msg.getJSONObject(i);
                             Log.i("msg",get);
@@ -197,10 +210,20 @@ public class FriendTabFragment extends Fragment {
                             nickName = gets.getString("nickName");
                             userId = gets.getString("email");
                             room = gets.getString("room");
+                            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(room,Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            int count = Integer.valueOf(sharedPreferences.getString("badge_count","0"));
+                            count++;
+                            editor.putString("badge_count",String.valueOf(count));
+                            editor.commit();
+                            Log.i("count", String.valueOf(count));
+
                             insert(userId,getMSg,nickName,room);
+                            ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                             Log.i("id" ,userId);
                             Log.i("msg",getMSg);
                             Log.i("name",nickName);
+
                         }
                     }catch (Exception e){
                         Log.e("msgERROR", String.valueOf(e));
@@ -224,6 +247,16 @@ public class FriendTabFragment extends Fragment {
         tableResult = array[0]+ary2[0]+ary2[1];
         Log.i("tableResult", tableResult);
 
+        try{
+            db = helper.getReadableDatabase();
+            String query = "select * from '"+tableResult+"'";
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+            String checkTB = c.getString(0);
+        }catch(Exception e){
+            db = helper.getWritableDatabase();
+            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, type TEXT);");
+        }
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
@@ -232,6 +265,7 @@ public class FriendTabFragment extends Fragment {
         values.put("ChatNickName",nickName);
         values.put("ChatText",text);
         values.put("type","0");
+
         db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         Log.i("SaveCharInsert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.

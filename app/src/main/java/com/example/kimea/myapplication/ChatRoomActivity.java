@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -38,6 +40,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     String email,result,my_email,roomname;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
+
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
 
     Cursor cur;
@@ -47,28 +50,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         super.onAttachedToWindow();
     }
 
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        db = helper.getReadableDatabase();
-        String query = "select user from divice";
-        Cursor cur = db.rawQuery(query, null);
-        cur.moveToFirst();
-        my_email = cur.getString(0);
-        JSONObject actData = new JSONObject();
-
-        try {
-            actData.put("email", my_email);
-            actData.put("activity", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+        roomname = intent.getStringExtra("roomname");
 
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor emaile = pref.edit();
@@ -78,12 +67,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         msgInput = findViewById(R.id.message_input);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
-        roomname = intent.getStringExtra("roomname");
+
 
         try {
-            SharedPreferences emailBadge = getSharedPreferences(email, MODE_PRIVATE);
+            SharedPreferences emailBadge = getSharedPreferences(roomname, MODE_PRIVATE);
             String mailBadge = emailBadge.getString("badge_count", "0");
             Log.e(TAG, "mailBadge: " + mailBadge);
             SharedPreferences appBadge = getSharedPreferences("pref", MODE_PRIVATE);
@@ -193,8 +180,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     msgData.put("room", roomname);
                     if(email.equals(roomname)){
                         pushData.put("roomname", myEmail);
+                        Log.i("roomname is my", myEmail);
                     }else {
                         pushData.put("roomname",roomname);
+                        Log.i("roomname is room", roomname);
                     }
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
@@ -264,10 +253,12 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     String setName ="";
                     String setNickName="";
                     String setMsg="";
+                    String setRoom="";
                     try {
                         setMsg =  msg.getString("message");
                         setName = msg.getString("email");
                         setNickName = msg.getString("nickName");
+                        setRoom = msg.getString("room");
                         Log.i("msg",setMsg);
                         Log.i("닉네이이이이이이이임",setNickName);
 
@@ -276,14 +267,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         e.printStackTrace();
                     }
                     //상대방 이메일이 맞으면 테이블 인서트
-                    if(email.equals(setName)) {
+                    if(roomname.equals(setRoom)) {
                         addMsg(setNickName, setMsg,0);
                         //insert(setName,setNickName,setMsg,"0");
                    }else{
                         //아니면 맞는 이메일에 인서트
                         Log.i("엘즈","else");
-                        Log.i("엘즈",setName);
-                        String[] arrayy = setName.split("@");
+                        Log.i("엘즈",setRoom);
+                        String[] arrayy = setRoom.split("@");
                         String sss = arrayy[1];
                         String[] ary22 = sss.split("\\.");
                         // String result = array[0]+array2[0]+array2[1];
@@ -297,6 +288,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         // 데이터의 삽입은 put을 이용한다.
                         elseValue.put("ChatId", result2);
                         elseValue.put("ChatText",setMsg);
+
                         db.insert("'"+result2+"'", null, elseValue); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
                     }
                 }
@@ -307,6 +299,20 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     public void onDestroy(){
         super.onDestroy();
 
+    }
+
+
+    public String userId (){
+        db = helper.getReadableDatabase();
+        String query = "select user from divice";
+        Cursor cur = db.rawQuery(query,null);
+        cur.moveToFirst();
+        String user = cur.getString(0);
+        return user;
+    }
+
+    public void outRoom(JSONObject jsonObject){
+        mSocket.emit("outRoom", jsonObject);
     }
     //데이터 삽입
     public void insert(String id,String nickName,String text,String type) {

@@ -55,8 +55,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String msgBody = remoteMessage.getNotification().getBody();
         String msgTitle = remoteMessage.getNotification().getTitle();
         String email = remoteMessage.getData().get("email");
+        String f_email = remoteMessage.getData().get("f_email");
         chatRoom = remoteMessage.getData().get("roomname");
-        String groupYN = remoteMessage.getData().get("group");
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
         SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
@@ -71,7 +71,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             String query = "select * from '"+result+"'";
             Cursor cur = db.rawQuery(query,null);
             cur.moveToFirst();
-            insert(email,msgTitle,msgBody,"0");
+
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
@@ -79,6 +79,11 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             insert(email,msgTitle,msgBody,"0");
             insert2(chatRoom);
         }
+        db = helper.getReadableDatabase();
+        String query = "select user from divice";
+        Cursor cur = db.rawQuery(query, null);
+        cur.moveToFirst();
+        String mineCheck = cur.getString(0);
 
 
         if(email!=null){
@@ -90,7 +95,11 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor.commit();
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
-            if(!ac.get(0).topActivity.getClassName().equals("com.example.kimea.myapplication.ChatRoomActivity")&&!getEmail.getString("email","").equals(chatRoom)){
+            Log.i("mineCheck = email", mineCheck+" = "+email);
+            if(email.equals(mineCheck)&&!getEmail.getString("email","").equals(chatRoom)){
+                Log.i("mine", "mine");
+            }else if(!getEmail.getString("email","").equals(chatRoom)){
+                Log.i("getEmail = chatRoom", getEmail.getString("email","")+ " = "+chatRoom);
                 SharedPreferences preferences = getSharedPreferences(chatRoom,MODE_PRIVATE);
                 int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
                 badge_int++;
@@ -99,8 +108,10 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor3.commit();
                 sendNotification(msgBody,msgTitle);
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
+                insert(email,msgTitle,msgBody,"0");
                 Log.e(TAG,"email_badge_commit");
             }
+
         }
 
         Log.i("Fire Service", email+"/"+msgTitle+"/"+msgBody+"/"+result);

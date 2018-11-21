@@ -110,6 +110,8 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
                 bundle.putString("position", intentPosition);
                 fragment.setArguments(bundle);
                 //.finish();
+                db = helper.getWritableDatabase();
+                db.delete("friend","friendemail = ?",new String[]{email});
                 Intent backIntent = new Intent(this, ViewPagerActivity.class);
                 backIntent.putExtra("id", my_email);
                 startActivity(backIntent);

@@ -68,6 +68,9 @@
         <activity android:name=".FriendProfile"
            android:configChanges="screenSize|orientation"
             />
+        <activity android:name=".ChangeProfileText"
+            android:configChanges="screenSize|orientation"
+            />
         <activity
             android:name=".FriendPop"
             android:configChanges="screenSize|orientation"

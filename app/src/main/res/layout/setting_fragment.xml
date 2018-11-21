@@ -6,35 +6,20 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
+    <com.example.kimea.myapplication.CircleImageView
         android:id="@+id/profileImg"
         android:layout_width="144dp"
         android:layout_height="143dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="52dp"
-        android:background="@drawable/imageview"
+        android:onClick="onClick"
         android:scaleType="centerCrop"
+        app:civ_border_color="#D1D1D1"
+        app:civ_border_width="0.1px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-    <Button
-        android:id="@+id/setImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-
-        android:text="사진선택"
-        app:layout_constraintBottom_toTopOf="@+id/profileText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profileImg"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/profileText"
@@ -42,10 +27,12 @@
         android:layout_height="60dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="92dp"
         android:ems="10"
+        android:focusableInTouchMode="false"
         android:hint="프로필 메세지"
         android:inputType="text"
+        android:onClick="onClick"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileImg" />
 
@@ -53,11 +40,11 @@
         android:id="@+id/profileSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="36dp"
         android:onClick="onClick"
         android:text="변경"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.324"
+        app:layout_constraintHorizontal_bias="0.273"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileText" />
 
@@ -67,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="36dp"
         android:text="로그아웃"
         app:layout_constraintStart_toEndOf="@+id/profileSend"
         app:layout_constraintTop_toBottomOf="@+id/profileText" />

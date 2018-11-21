@@ -1,7 +1,6 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -40,7 +39,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     String email,result,my_email,roomname;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
-
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
 
     Cursor cur;
@@ -50,6 +48,23 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         super.onAttachedToWindow();
     }
 
+    /*@Override
+    protected void onStart() {
+        super.onStart();
+        db = helper.getReadableDatabase();
+        String query = "select user from divice";
+        Cursor cur = db.rawQuery(query, null);
+        cur.moveToFirst();
+        my_email = cur.getString(0);
+        JSONObject actData = new JSONObject();
+
+        try {
+            actData.put("email", my_email);
+            actData.put("activity", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -288,7 +303,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         // 데이터의 삽입은 put을 이용한다.
                         elseValue.put("ChatId", result2);
                         elseValue.put("ChatText",setMsg);
-
                         db.insert("'"+result2+"'", null, elseValue); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
                     }
                 }
@@ -371,27 +385,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Intent intent = new Intent();
         String rs2 = "";
 
-        db = helper.getWritableDatabase();
-        String sql2 ="select ChatText from'"+result+"' where Chatseq = (select max(Chatseq) from '"+result+"');";
-        String query = "select user from divice";
-        Cursor cur = db.rawQuery(query,null);
-        Cursor cur2 = db.rawQuery(sql2,null);
-        cur.moveToFirst();
-        String email = cur.getString(0);
-        JSONObject emailJson = new JSONObject();
-        try {
-            emailJson.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //mSocket.emit("outActivity", emailJson);
-        while (cur2.moveToNext()){
-            rs2=cur2.getString(0);
-        }
-        intent.putExtra("msg", rs2);
-        intent.putExtra("email",email);
-        setResult(1, intent);
-        Log.i("asdasdasd","asdasdasda");
         finish();
     }
 

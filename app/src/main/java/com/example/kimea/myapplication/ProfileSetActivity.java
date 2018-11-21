@@ -53,7 +53,7 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
     }
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.setImg:
+            case R.id.profileImg:
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

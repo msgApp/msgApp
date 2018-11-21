@@ -5,35 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <com.example.kimea.myapplication.CircleImageView
         android:id="@+id/profileImg"
         android:layout_width="144dp"
         android:layout_height="143dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="52dp"
-        android:background="@drawable/imageview"
+        android:layout_marginLeft="120dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="48dp"
+        android:onClick="onClick"
         android:scaleType="fitCenter"
+        app:civ_border_color="#D1D1D1"
+        app:civ_border_width="0.1px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-    <Button
-        android:id="@+id/setImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="onClick"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/profileText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profileImg"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/setPfText"

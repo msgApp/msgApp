@@ -45,8 +45,6 @@ public class SettingTabFragment extends Fragment{
     String encodeImg;
     private Socket mSocket;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,9 +72,14 @@ public class SettingTabFragment extends Fragment{
         profile = view.findViewById(R.id.profileText);
         profileSend = view.findViewById(R.id.profileSend);
         logout = view.findViewById(R.id.logout);
-
-        setImg = view.findViewById(R.id.setImg);
-        setImg.setOnClickListener(new View.OnClickListener() {
+        profile.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),ChangeProfileText.class);
+                startActivity(intent);
+            }
+        });
+        imgview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
@@ -167,7 +170,6 @@ public class SettingTabFragment extends Fragment{
                 }
             }
         }
-
     }
     public Bitmap byteArrayToBitmap(String jsonString) {
         Bitmap bitmap = null;
@@ -176,6 +178,4 @@ public class SettingTabFragment extends Fragment{
         imgview.setImageBitmap(bitmap);
         return bitmap;
     }
-
-
 }

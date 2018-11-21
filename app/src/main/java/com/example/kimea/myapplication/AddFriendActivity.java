@@ -1,6 +1,8 @@
 package com.example.kimea.myapplication;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -27,7 +29,7 @@ import io.socket.emitter.Emitter;
 
 
 public class AddFriendActivity extends AppCompatActivity implements View.OnClickListener{
-
+    private static final String TAG ="AddFriendActivity";
     private Socket mSocket;
     TextView fEmail,fName,friendText;
     Button addFriend;
@@ -35,6 +37,12 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     JSONArray friend = new JSONArray();
     String result,friendResult;
     String ids;
+    static String img;
+    static String dbnick;
+    static String dbemail;
+    String dbtext;
+    SQLiteDatabase db;
+    DBHelper helper =  new DBHelper(AddFriendActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +95,9 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 mSocket.emit("addFriend",data2);
                 mSocket.emit("sendProfile", data2);
                 Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
-                this.finish();
+                insert();
+                ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
+                //this.finish();
                 break;
         }
     }
@@ -107,9 +117,14 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                                 JSONObject get = friend.getJSONObject(i);
                                 result = get.getString("img");
                                 Log.i("decode",result);
+                                img = result;
+                                dbemail = fEmail.getText().toString();
+                                dbnick = get.getString("nickName");
+                                dbtext = get.getString("text");
                                 byteArrayToBitmap(result);
                                 friendName =  get.getString("nickName");
                                 friendResult = get.getString("f_rs");
+                                Log.e(TAG,get.getString("text"));
                                 Log.i("rs",friendResult);
                                 checkFriend(friendResult);
                             }catch (Exception e){
@@ -148,6 +163,22 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         imgview.setImageBitmap(bitmap);
         return bitmap;
 
+    }
+    public void insert() {
+        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        ContentValues values = new ContentValues();
+        values.put("friendemail", dbemail);
+        values.put("friendnick",dbnick);
+        values.put("friendimg",img);
+        values.put("friendText",dbtext);
+        db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.e(TAG,"email = "+dbemail+" nick = "+dbnick);
+        dbemail="";
+        dbnick="";
+        img="";
+        dbtext="";
+        Log.e(TAG,"insert");
+        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 
 }

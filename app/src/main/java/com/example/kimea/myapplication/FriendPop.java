@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,12 +26,19 @@ import java.util.ArrayList;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnSendPop {
+public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnSendPop, FriendPopAdapter2.OnSendPop {
     private static final String TAG = "FriendPop";
     private RecyclerView fpRecycler;
+    private RecyclerView sFpRecycler;
+
     private LinearLayoutManager fpLayout;
+    private LinearLayoutManager sFpLayout;
+
     private RecyclerView.Adapter adapter;
+    private RecyclerView.Adapter sAdapter;
+
     private ArrayList<GetFriendPopItem> fpItem;
+    private ArrayList<GetFriendPopItem2> sFpItem;
     private SQLiteDatabase db;
     private DBHelper helper = new DBHelper(FriendPop.this);
     private Socket mSocket;
@@ -62,16 +70,13 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                     }else {
                         a +=" "+chatEmail.get(i);
                     }
-
                 }
                 JSONObject s = new JSONObject();
                 try {
                     s.put("group", a);
                 }catch (Exception e){
-
                 }
                 mSocket.emit("createRoom",s);
-
                 //mSocket.on("createRoom",listener);
                 this.finish();
 
@@ -93,13 +98,25 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         ab.setTitle("친구추가");
 
         fpRecycler = findViewById(R.id.friend_pop_view);
+        sFpRecycler = findViewById(R.id.select_friend_pop);
+
         fpLayout = new LinearLayoutManager(this);
+        sFpLayout = new LinearLayoutManager(this);
+
         fpRecycler.setLayoutManager(fpLayout);
+        sFpRecycler.setLayoutManager(sFpLayout);
+
         fpLayout.setOrientation(LinearLayoutManager.VERTICAL);
+        sFpLayout.setOrientation(LinearLayoutManager.HORIZONTAL);
 
         fpItem = new ArrayList<>();
-        adapter = new FriendPopAdapter(fpItem,this);
+        sFpItem = new ArrayList<>();
+
+        adapter = new FriendPopAdapter(fpItem, sFpItem, this);
+        sAdapter = new FriendPopAdapter2(sFpItem,fpItem,this);
+
         fpRecycler.setAdapter(adapter);
+        sFpRecycler.setAdapter(sAdapter);
 
         db = helper.getWritableDatabase();
         String sql2 = "select * from friend";
@@ -149,14 +166,13 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         adapter.notifyDataSetChanged ();
     }
     public void listdel(String email){
-        Log.e(TAG,"listdel" + email);
+        Log.e(TAG,"DelEmail"+ email);
         int totalSize = chatEmail.size();
         for (int i = 0; i< totalSize; i++ ){
-            Log.e(TAG,"arrayEmail"+chatEmail.get(i));
             if(chatEmail.get(i).equals(email)){
                 chatEmail.remove(i);
+               break;
             }
-
         }
         //mSocket.emit("group",ja);
     }
@@ -167,5 +183,20 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         for (int i = 0; i< totalSize; i++ ){
             Log.e(TAG,"arrayEmail :"+chatEmail.get(i));
         }
+    }
+    public void addSelectList(String img, String email, String nick){
+        Log.e(TAG, "EMail  = "+email);
+        Log.e(TAG, "nick  = "+nick);
+        sFpRecycler.setVisibility(View.VISIBLE);
+        sFpItem.add(new GetFriendPopItem2(img,nick,email));
+        sAdapter.notifyDataSetChanged();
+    }
+    public void refresh(){
+        adapter.notifyDataSetChanged();
+        sAdapter.notifyDataSetChanged();
+    }
+    public void setVisibility(){
+        sFpRecycler.setVisibility(View.GONE);
+
     }
 }

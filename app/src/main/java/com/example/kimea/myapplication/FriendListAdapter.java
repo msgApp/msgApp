@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -29,18 +31,14 @@ import java.util.ArrayList;
 
 
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.RecyclerViewHolder>{
+
     private ArrayList<GetFriendListItem> Item;
-
-
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         protected TextView userNickname;
         protected ImageView userImg;
         protected TextView email;
         protected TextView profileText;
-
-
-
 
         public RecyclerViewHolder(View view) {
             super(view);
@@ -64,10 +62,11 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerViewHolder viewHolder;
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_friends, parent, false);
 
-        RecyclerViewHolder viewHolder = new RecyclerViewHolder(view);
+        viewHolder = new RecyclerViewHolder(view);
         return viewHolder;
     }
     public Bitmap byteArrayToBitmap(String jsonString) {
@@ -88,6 +87,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
     public void onBindViewHolder(final RecyclerViewHolder holder, final int position) {
 
         holder.userImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getUserImgI()));
+
         holder.userNickname.setText(Item.get(position).getUserNickname());
         holder.profileText.setText(Item.get(position).getProfileText());
         holder.email.setText(Item.get(position).getEmail());

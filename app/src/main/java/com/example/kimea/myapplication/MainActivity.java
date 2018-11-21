@@ -1,5 +1,6 @@
 package com.example.kimea.myapplication;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,13 +44,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String result, result2, userId, msgToken="";
     int countItem = 0;
     private Socket mSocket;
+    public static Activity mainac;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-
+        mainac = MainActivity.this;
         try {
 
             SQLiteDatabase database = helper.getReadableDatabase();
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }catch (Exception e){
             db = helper.getWritableDatabase();
             db.execSQL("create table divice(user text,token text,msgToken text);");
-            Log.i("create","create");
+            Log.i("createDivice","create");
         }
 
         Log.i("select","select");
@@ -136,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  }catch (JSONException e){
                     e.printStackTrace();
                 }
-
-
                 String url = "http://192.168.0.71:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
@@ -171,14 +171,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             SharedPreferences.Editor editor = pref.edit();
                                             editor.putString("msgToken", instanceIdResult.getToken());
                                             editor.commit();
-
                                             ContentValues contentValues = new ContentValues();
                                             contentValues.put("user",login_id.getText().toString());
                                             String newToken = instanceIdResult.getToken();
                                             msgToken = instanceIdResult.getToken();
                                             contentValues.put("msgToken",msgToken);
                                             db.insert("divice","null",contentValues);
-                                            Log.e("newToken",newToken);
+                                            Log.e("DiviceInsertNewToken",newToken);
                                         }
                                     });
                             //contentValues.put("msgToken",msgToken);
@@ -202,14 +201,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                                     intent2.putExtra("id", login_id.getText().toString());
                                     startActivity(intent2);
+                                    //finish();
                                 }
                             },2000);
-
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                         }
                         }catch (Exception e){
                             Toast.makeText(MainActivity.this, "서버에 문제가 있습니다", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                     }
                 }, 500);
@@ -325,7 +325,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     public void friendInsert(String email, String nick, String img, String text){
-        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
+        db = helper.getWritableDatabase();
+
+        String query2 = "select * from friend";
+        Cursor cur3 = db.rawQuery(query2, null);
+
+        if (!cur3.moveToFirst()){
+            Log.e(TAG,"check 1");
+        }else{
+            Log.e(TAG,"check 2");
+        }
+
+         // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
         // 데이터의 삽입은 put을 이용한다.
@@ -374,5 +385,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
        // stopService(intent);
     }
+
 
 }

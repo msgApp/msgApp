@@ -97,7 +97,6 @@ public class FriendTabFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
 
@@ -276,5 +275,8 @@ public class FriendTabFragment extends Fragment {
         items.remove(position);
         adapter.notifyItemRemoved(position);
         adapter.notifyItemRangeChanged(position, items.size());
+    }
+    public void refresh(){
+        adapter.notifyDataSetChanged();
     }
 }

@@ -50,7 +50,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Log.d(TAG ,"From:" +remoteMessage.getNotification().getBody());
-       // Map<String, String > rsmg = remoteMessage.getData();
+        // Map<String, String > rsmg = remoteMessage.getData();
 
         String msgBody = remoteMessage.getNotification().getBody();
         String msgTitle = remoteMessage.getNotification().getTitle();
@@ -189,6 +189,5 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         intent.putExtra("badge_count_class_name", "com.example.kimea.myapplication.LoadingActivity");
         sendBroadcast(intent);
     }
-        }
-
+}
 

@@ -48,6 +48,7 @@ public class ViewPagerActivity extends AppCompatActivity{
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ViewPagerActivity.this);
     public static Context CONTEXT;
+  //  MainActivity mainActivity = (MainActivity)MainActivity.mainac;
 
     @Override
     public void onCreate(Bundle saveInstanceState){
@@ -55,7 +56,9 @@ public class ViewPagerActivity extends AppCompatActivity{
         setContentView(R.layout.activity_viewpager);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
+        mSocket.connect();
         CONTEXT = this;
+        //mainActivity.finish();
         ids = getIntent().getStringExtra("id");
         Log.i("intentIds",ids);
         try {

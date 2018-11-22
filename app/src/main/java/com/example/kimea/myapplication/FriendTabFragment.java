@@ -112,25 +112,20 @@ public class FriendTabFragment extends Fragment {
         addFriendText = view.findViewById(R.id.addFriendText);
         fab = view.findViewById(R.id.fab);
         fab1 = view.findViewById(R.id.fab1);
-        fab2 = view.findViewById(R.id.fab2);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("boolean",String.valueOf(isFabOpen));
                 if (isFabOpen) {
                     fab1.startAnimation(fab_close);
-                    fab2.startAnimation(fab_close);
                     isFabOpen = false;
                     fab1.setVisibility(View.INVISIBLE);
-                    fab2.setVisibility(View.INVISIBLE);
                     addFriendText.setVisibility(View.INVISIBLE);
 
                 } else {
                     fab1.startAnimation(fab_open);
-                    fab2.startAnimation(fab_open);
                     isFabOpen = true;
                     fab1.setVisibility(View.VISIBLE);
-                    fab2.setVisibility(View.VISIBLE);
                     addFriendText.setVisibility(View.VISIBLE);
                 }
             }
@@ -144,8 +139,6 @@ public class FriendTabFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        fab2 = view.findViewById(R.id.fab2);
-
 
         fRecyclerView = view.findViewById(R.id.friend_list);
 

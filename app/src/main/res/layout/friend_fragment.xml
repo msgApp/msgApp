@@ -41,24 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/fab2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginRight="18dp"
-        android:onClick="onClick"
-        android:visibility="invisible"
-        app:fab_label="action"
-        app:backgroundTint="#4a4949"
-        app:elevation="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:pressedTranslationZ="12dp"
-        />
-
-    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

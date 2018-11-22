@@ -44,14 +44,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String result, result2, userId, msgToken="";
     int countItem = 0;
     private Socket mSocket;
-    public static Activity mainac;
+    ArrayList<GetFriendListItem2> mainList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
-        mainac = MainActivity.this;
+        mainList = new ArrayList<>();
         try {
 
             SQLiteDatabase database = helper.getReadableDatabase();
@@ -98,10 +98,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .permitDiskWrites()
                 .permitNetwork().build()
         );
-
-
-
-
         search_id = findViewById(R.id.search_id);
         search_pw = findViewById(R.id.search_pw);
         register = findViewById(R.id.register);
@@ -112,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         search_id.setOnClickListener(this);
         search_pw.setOnClickListener(this);
         register.setOnClickListener(this);
-
-
 
     }
     public void onClick(View v){
@@ -198,12 +192,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             delayHandler2.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    friendInsert();
+                                }
+                            },1000);
+                            final Handler delayHandler3 = new Handler();
+                            delayHandler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
                                     Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                                     intent2.putExtra("id", login_id.getText().toString());
                                     startActivity(intent2);
-                                    //finish();
                                 }
-                            },2000);
+                            },1000);
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                         }
@@ -246,7 +247,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    friendInsert(setEmail, setUserNickname, setUserImg, setProfileText);
+
+                    makeList(setUserImg, setUserNickname, setProfileText, setEmail);
                 }
             });
         }
@@ -326,25 +328,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-    public void friendInsert(String email, String nick, String img, String text){
+    public void makeList(String img, String nick, String text, String email){
+        Log.e(TAG,nick+text);
+       mainList.add(new GetFriendListItem2(img,nick,text,email));
+    }
+    public void friendInsert(){
         db = helper.getWritableDatabase();
-
-        String query2 = "select * from friend";
+        String query2 = "select friendemail from friend";
         Cursor cur3 = db.rawQuery(query2, null);
-
+        Log.e(TAG,"0");
         if (!cur3.moveToFirst()){
-            ContentValues values = new ContentValues();
-            // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-            // 데이터의 삽입은 put을 이용한다.
-            values.put("friendemail", email);
-            values.put("friendnick",nick);
-            values.put("friendimg",img);
-            values.put("friendText", text);
-            db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-            Log.i("SaveCharInsert","insert");
+            Log.e(TAG,"1");
+            if(mainList.size()!=0) {
+                Log.e(TAG,"2");
+                for (int i = 0; i < mainList.size(); i++) {
+                    Log.e(TAG,"3");
+                    ContentValues values = new ContentValues();
+                    String email = mainList.get(i).getEmail();
+                    Log.e(TAG,mainList.get(i).getEmail());
+                    String nick = mainList.get(i).getUserNickname();
+                    String img = mainList.get(i).getUserImgI();
+                    String text = mainList.get(i).getProfileText();
+                    // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+                    // 데이터의 삽입은 put을 이용한다.
+                    values.put("friendemail", email);
+                    values.put("friendnick", nick);
+                    values.put("friendimg", img);
+                    values.put("friendText", text);
+                    db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+                    Log.i("SaveCharInsert", "insert");
+                }
+            }
         }else{
-            Log.e(TAG,"check 2");
+            /*
+            Log.e(TAG,"asdasdasda");
+            while(cur3.moveToNext()){
+                Log.e(TAG,"qwerqwerqewrqwe");
+
+                String query22 = "select friendemail from friend";
+                Cursor cur33 = db.rawQuery(query22, null);
+                Log.e(TAG,cur3.getString(0));
+                if (cur33.getString(0).equals(email)){
+
+                }else{
+                    ContentValues values = new ContentValues();
+                    // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+                    // 데이터의 삽입은 put을 이용한다.
+                    values.put("friendemail", email);
+                    values.put("friendnick",nick);
+                    values.put("friendimg",img);
+                    values.put("friendText", text);
+                    db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+                    Log.i("SaveCharInsert","insert");
+                }
+            }
+            */
         }
+
          // db 객체를 얻어온다. 쓰기 가능
     }
     public void insert(String token) {

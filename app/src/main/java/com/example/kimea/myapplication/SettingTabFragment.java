@@ -83,7 +83,7 @@ public class SettingTabFragment extends Fragment{
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                 startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
+                startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
             }
         });
 
@@ -110,9 +110,6 @@ public class SettingTabFragment extends Fragment{
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] photo = baos.toByteArray();
                 encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
-                // for (byte b:photo){
-                //  Log.i("img",String.valueOf(b));
-                //   }
                 try {
                     //String result = new String(photo,"utf-8");
                     // Log.i("asdas",result);

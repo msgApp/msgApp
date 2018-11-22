@@ -97,7 +97,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
                 insert();
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
-                //this.finish();
+                this.finish();
                 break;
         }
     }

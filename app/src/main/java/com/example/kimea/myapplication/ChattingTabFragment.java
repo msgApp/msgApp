@@ -72,7 +72,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
 
         Log.i("create", "create");
 
-        mSocket.on("createRoom", listener);
+       // mSocket.on("createRoom", listener);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("myEmail", Context.MODE_PRIVATE);
         email = sharedPreferences.getString("email", null);
 

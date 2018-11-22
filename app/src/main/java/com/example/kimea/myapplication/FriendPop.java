@@ -44,6 +44,8 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
     private Socket mSocket;
     Cursor cursor;
     String room;
+
+    boolean intentCheck = true;
     private ArrayList<String> chatEmail = new ArrayList<>();
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,8 +79,11 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                 }catch (Exception e){
                 }
                 mSocket.emit("createRoom",s);
+                mSocket.on("createRoom", listener);
+
+
                 //mSocket.on("createRoom",listener);
-                this.finish();
+                //this.finish();
 
 
 
@@ -145,6 +150,14 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                     Log.i("jRoom",jRoom.toString());
                     try{
                         room = jRoom.getString("roomname");
+                        Intent intent = new Intent(FriendPop.this, ChatRoomActivity.class);
+                        intent.putExtra("roomname", room);
+                        intent.putExtra("email","");
+                        if(intentCheck){
+                            intentCheck = false;
+                            startActivity(intent);
+                        }
+
                         /*ChattingTabFragment ctf = new ChattingTabFragment();
 
                         ctf.addProfile("","","","",room);*/

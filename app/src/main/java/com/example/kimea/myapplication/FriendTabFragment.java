@@ -97,9 +97,8 @@ public class FriendTabFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
     }
-
-
 
     @Nullable
     @Override
@@ -211,6 +210,7 @@ public class FriendTabFragment extends Fragment {
                             Log.i("count", String.valueOf(count));
 
                             insert(userId,getMSg,nickName,room);
+
                             ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                             Log.i("id" ,userId);
                             Log.i("msg",getMSg);
@@ -257,8 +257,22 @@ public class FriendTabFragment extends Fragment {
         values.put("ChatNickName",nickName);
         values.put("ChatText",text);
         values.put("type","0");
-
         db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+
+        try{
+            db = helper.getReadableDatabase();
+            String query = "select userId from oneUser where userId = '"+room+"';";
+            Cursor cursor = db.rawQuery(query,null);
+            cursor.moveToFirst();
+            String result = cursor.getString(0);
+
+        }catch (Exception e){
+            ContentValues values1 = new ContentValues();
+            values1.put("userId",room);
+            db.insert("oneUser",null,values1);
+        }
+
+
         Log.i("SaveCharInsert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
@@ -268,8 +282,5 @@ public class FriendTabFragment extends Fragment {
         items.remove(position);
         adapter.notifyItemRemoved(position);
         adapter.notifyItemRangeChanged(position, items.size());
-    }
-    public void refresh(){
-        adapter.notifyDataSetChanged();
     }
 }

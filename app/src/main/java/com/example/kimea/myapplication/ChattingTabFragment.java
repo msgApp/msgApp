@@ -78,59 +78,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
 
     }
 
-    public void insert(String id, String nickName, String text, String type, String room) {
-        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
-        ContentValues values = new ContentValues();
-        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
 
-        // 데이터의 삽입은 put을 이용한다.
-        values.put("ChatId", id);
-        values.put("ChatNickName", nickName);
-        values.put("ChatText", text);
-        values.put("type", type);
-        String[] array = room.split("@");
-        String ss = array[1];
-        String[] ary2 = ss.split("\\.");
-
-        String result = array[0] + ary2[0] + ary2[1];
-
-        db.insert("'" + result + "'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-        Log.i("insert", "insert");
-        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
-    }
-
-    private Emitter.Listener listener = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject jRoom = (JSONObject) args[0];
-                    Log.i("jRoom", jRoom.toString());
-                    try {
-                        String roomname = jRoom.getString("roomname");
-                        //insert("","","","0",roomname);
-                        db = helper.getWritableDatabase();
-                        String[] array = roomname.split("@");
-                        String ss = array[1];
-                        String[] ary2 = ss.split("\\.");
-                        String result = array[0] + ary2[0] + ary2[1];
-                        //db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text,type TEXT);");
-                        //insert("1","1","1","0",roomname);
-                        ChatRoomActivity cra = new ChatRoomActivity();
-                        //cra.insert2(roomname);
-                        addProfile("", "", "", "", roomname, email);
-                    } catch (Exception e) {
-
-                    }
-                }
-            });
-        }
-    };
-
-    public void addRoom() {
-
-    }
 
     @Override
     public void onResume() {
@@ -156,12 +104,16 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             String result = array[0] + ary2[0] + ary2[1];
             Log.i("userid 값 담은 변수", s);
             Log.i("userid 값 자른 변수", result);
-            String sql2 = "select ChatText from'" + result + "' where Chatseq = (select max(Chatseq) from '" + result + "');";
+
+
+            String sql2 = "select ChatText,ChatRoomNickName from'" + result + "' where Chatseq = (select max(Chatseq) from '" + result + "');";
             Cursor cur2 = db.rawQuery(sql2, null);
             while (cur2.moveToNext()) {
                 String rs2 = cur2.getString(0);
+                String rs3 = cur2.getString(1);
+                Log.i("select-ChatRoomNickName",rs3);
                 Log.e(TAG, "badge: " + badge);
-                addProfile(null, rs2, null, badge, s, email);
+                addProfile(null, rs2, null, badge, s, email, rs3);
             }
 
         }
@@ -230,8 +182,9 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         }
     }
 
-    public void addProfile(String setUserId, String setLastChat, String setChatImg, String setBadge, String setRoom, String setEmail) {
-        chatItems.add(new GetChatRoomItem(setUserId, setLastChat, setChatImg, setBadge, setRoom, setEmail));
+    public void addProfile(String setUserId, String setLastChat, String setChatImg, String setBadge, String setRoom, String setEmail, String setRoomNickName) {
+        Log.i("addProfile-roomNickName",setRoomNickName);
+        chatItems.add(new GetChatRoomItem(setUserId, setLastChat, setChatImg, setBadge, setRoom, setEmail, setRoomNickName));
         adapter.notifyDataSetChanged();
         for (int i = 0; i < chatItems.size(); i++) {
             Log.i("list", chatItems.get(i).toString());
@@ -239,10 +192,11 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     }
 
 
-    public void sendIntent(String email, String room) {
+    public void sendIntent(String email, String room, String roomNick) {
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         intent.putExtra("email", email);
         intent.putExtra("roomname", room);
+        intent.putExtra("roomNickName", roomNick);
         // intent.putExtra("myEmail",myEmail.getMyId());
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();

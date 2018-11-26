@@ -43,7 +43,7 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
     private DBHelper helper = new DBHelper(FriendPop.this);
     private Socket mSocket;
     Cursor cursor;
-    String room;
+    String room,roomNick;
 
     boolean intentCheck = true;
     private ArrayList<String> chatEmail = new ArrayList<>();
@@ -150,9 +150,12 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                     Log.i("jRoom",jRoom.toString());
                     try{
                         room = jRoom.getString("roomname");
+                        roomNick = jRoom.getString("groups");
                         Intent intent = new Intent(FriendPop.this, ChatRoomActivity.class);
                         intent.putExtra("roomname", room);
                         intent.putExtra("email","");
+                        intent.putExtra("roomNickName", roomNick);
+                        Log.i("roomNickName" ,roomNick);
                         if(intentCheck){
                             intentCheck = false;
                             startActivity(intent);

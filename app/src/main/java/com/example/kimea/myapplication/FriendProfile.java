@@ -85,6 +85,7 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
                 Intent intent = new Intent(FriendProfile.this, ChatRoomActivity.class);
                 intent.putExtra("email", email);
                 intent.putExtra("roomname", email);
+                intent.putExtra("roomNickName",nickname.getText());
                 SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString("email",email);

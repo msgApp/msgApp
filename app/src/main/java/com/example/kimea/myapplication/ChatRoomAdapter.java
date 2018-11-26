@@ -37,7 +37,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
     private  OnSendItem mCallback;
 
     public interface OnSendItem {
-        void sendIntent(String email, String room);
+        void sendIntent(String email, String room, String roomNick);
         void deleteRoom(JSONObject jsonObject);
     }
     public ChatRoomAdapter(ArrayList<GetChatRoomItem> list,OnSendItem listner){
@@ -52,6 +52,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         protected TextView chatLastText;
         protected TextView bagdeCount;
         protected TextView roomname;
+        protected TextView roomNickName;
 
 
 
@@ -62,6 +63,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             this.chatLastText = view.findViewById(R.id.chatLastText);
             this.bagdeCount = view.findViewById(R.id.badge_notification);
             this.roomname = view.findViewById(R.id.roomname);
+            this.roomNickName = view.findViewById(R.id.roomNickName);
 
             view.setOnCreateContextMenuListener(this);
         }
@@ -131,14 +133,15 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
             holder.bagdeCount.setVisibility(View.VISIBLE);
         }
         //holder.chatUserImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getChatImg()));
-        holder.chatRoomId.setText(Item.get(position).getRoomname());
+        holder.chatRoomId.setText(Item.get(position).getRoomNickName());
+        holder.roomNickName.setText(Item.get(position).getRoomname());
         holder.chatLastText.setText(Item.get(position).getLastChat());
         holder.roomname.setText(Item.get(position).getUserId());
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("xxxxx","room : "+holder.roomname.getText().toString()+" , chatId : "+holder.chatRoomId.getText().toString());
-                mCallback.sendIntent(holder.roomname.getText().toString(), holder.chatRoomId.getText().toString());
+                mCallback.sendIntent(holder.roomname.getText().toString(), holder.roomNickName.getText().toString(), holder.chatRoomId.getText().toString());
             }
         });
 

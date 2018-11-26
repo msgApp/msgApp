@@ -188,6 +188,7 @@ public class FriendTabFragment extends Fragment {
                     String nickName="";
                     String userId="";
                     String room = "";
+                    String roomNick = "";
 
                     try {
                         for(int i=0;i<msg.length();i++){
@@ -201,6 +202,8 @@ public class FriendTabFragment extends Fragment {
                             nickName = gets.getString("nickName");
                             userId = gets.getString("email");
                             room = gets.getString("room");
+                            roomNick = gets.getString("roomNickName");
+
                             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(room,Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             int count = Integer.valueOf(sharedPreferences.getString("badge_count","0"));
@@ -209,7 +212,7 @@ public class FriendTabFragment extends Fragment {
                             editor.commit();
                             Log.i("count", String.valueOf(count));
 
-                            insert(userId,getMSg,nickName,room);
+                            insert(userId,getMSg,nickName,room,roomNick);
 
                             ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                             Log.i("id" ,userId);
@@ -230,7 +233,7 @@ public class FriendTabFragment extends Fragment {
         items.add(new GetFriendListItem(setUserImg,setUserNickname,setProfileText,setEmail));
         adapter.notifyDataSetChanged ();
     }
-    public void insert(String id,String text,String nickName,String room) {
+    public void insert(String id,String text,String nickName,String room, String roomNickName) {
         String[] array = room.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
@@ -247,7 +250,7 @@ public class FriendTabFragment extends Fragment {
             String checkTB = c.getString(0);
         }catch(Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, type TEXT);");
+            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text, type TEXT);");
         }
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
@@ -256,6 +259,7 @@ public class FriendTabFragment extends Fragment {
         values.put("ChatId", id);
         values.put("ChatNickName",nickName);
         values.put("ChatText",text);
+        values.put("ChatRoomNickName", roomNickName);
         values.put("type","0");
         db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
 

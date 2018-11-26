@@ -56,6 +56,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String msgTitle = remoteMessage.getNotification().getTitle();
         String email = remoteMessage.getData().get("email");
         String f_email = remoteMessage.getData().get("f_email");
+        String roomNick = remoteMessage.getData().get("roomNickName");
         chatRoom = remoteMessage.getData().get("roomname");
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
@@ -75,8 +76,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, type TEXT);");
-            insert(email,msgTitle,msgBody,"0");
+            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text, type TEXT);");
+            insert(email,msgTitle,msgBody,"0",roomNick);
             insert2(chatRoom);
         }
         db = helper.getReadableDatabase();
@@ -108,7 +109,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor3.commit();
                 sendNotification(msgBody,msgTitle);
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
-                insert(email,msgTitle,msgBody,"0");
+                insert(email,msgTitle,msgBody,"0",roomNick);
                 Log.e(TAG,"email_badge_commit");
             }
 
@@ -138,7 +139,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     }
 
     //데이터 삽입
-    public void insert(String id,String nickName,String text,String type) {
+    public void insert(String id,String nickName,String text,String type,String roomNickName) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
@@ -148,6 +149,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         values.put("ChatNickName",nickName);
         values.put("ChatId", id);
         values.put("type",type);
+        values.put("ChatRoomNickName", roomNickName);
         values.put("ChatText",text);
         db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
         /*try{

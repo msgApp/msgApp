@@ -7,6 +7,7 @@ public class GetChatRoomItem {
     String badge;
     String roomname;
     String email;
+    String roomNickName;
     public String getUserId(){
         return userId;
     }
@@ -25,12 +26,16 @@ public class GetChatRoomItem {
     public String getEmail(){
         return email;
     }
-    public GetChatRoomItem(String userId, String lastChat,String chatImg,String badge,String roomname,String email){
+    public String getRoomNickName() {
+        return roomNickName;
+    }
+    public GetChatRoomItem(String userId, String lastChat,String chatImg,String badge,String roomname,String email,String roomNickName){
         this.userId = userId;
         this.lastChat = lastChat;
         this.chatImg = chatImg;
         this.badge = badge;
         this.roomname = roomname;
         this.email = email;
+        this.roomNickName = roomNickName;
     }
 }

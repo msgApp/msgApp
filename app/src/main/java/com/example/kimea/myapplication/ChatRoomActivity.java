@@ -36,7 +36,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private ArrayList<GetMessageItem> items;
     TextView msgInput;
     private Socket mSocket;
-    String email,result,my_email,roomname;
+    String email,result,my_email,roomname,roomNick;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
@@ -48,23 +48,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         super.onAttachedToWindow();
     }
 
-    /*@Override
-    protected void onStart() {
-        super.onStart();
-        db = helper.getReadableDatabase();
-        String query = "select user from divice";
-        Cursor cur = db.rawQuery(query, null);
-        cur.moveToFirst();
-        my_email = cur.getString(0);
-        JSONObject actData = new JSONObject();
 
-        try {
-            actData.put("email", my_email);
-            actData.put("activity", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -73,7 +57,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
         roomname = intent.getStringExtra("roomname");
-
+        roomNick = intent.getStringExtra("roomNickName");
+        Log.i("roomNickName2" ,roomNick);
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor emaile = pref.edit();
         emaile.putString("email",roomname);
@@ -129,7 +114,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text,type TEXT);");
+            db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,type TEXT);");
             Log.i("ChatDataBaseCreate","create");
         }
 
@@ -225,7 +210,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 }else{
                     insert2(roomname);
                 }
-                insert("me","me",msgInput.getText().toString(),"1");
+                insert("me","me",msgInput.getText().toString(),"1",roomNick);
                 msgInput.setText("");
 
                 scrollToBottom();
@@ -329,7 +314,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         mSocket.emit("outRoom", jsonObject);
     }
     //데이터 삽입
-    public void insert(String id,String nickName,String text,String type) {
+    public void insert(String id,String nickName,String text,String type,String roomNickName) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
@@ -338,8 +323,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         values.put("ChatId", id);
         values.put("ChatNickName",nickName);
         values.put("ChatText",text);
+        values.put("ChatRoomNickName", roomNickName);
+
         values.put("type",type);
         db.insert("'"+result+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        db = helper.getReadableDatabase();
+        String sql = "select ChatRoomNickName from '"+result+"';";
+        Cursor c = db.rawQuery(sql,null);
+        c.moveToFirst();
+        Log.i("insert-roomNickName", c.getString(0));
         Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }

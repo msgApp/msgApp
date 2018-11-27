@@ -1,32 +1,50 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout4"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/spacing"
-    android:paddingBottom="8dp">
+    android:layout_height="80dp"
+    tools:layout_editor_absoluteY="81dp">
 
     <TextView
         android:id="@+id/username"
         style="?android:textAppearanceMedium"
-        android:layout_width="wrap_content"
+        android:layout_width="121dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:gravity="right"
         android:singleLine="false"
         android:textColor="?android:textColorPrimary"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:text="1"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/setMsg"
+        app:layout_constraintTop_toTopOf="@+id/setMsg" />
 
     <TextView
         android:id="@+id/setMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:background="@drawable/chatbub2"
         android:gravity="left"
-        android:maxWidth="260dp"
+        android:maxWidth="255dp"
         android:paddingLeft="17dp"
         android:paddingRight="10dp"
-        android:text="1"
+        android:textColor="?android:textColorPrimary"
         android:textSize="15dp"
-        android:textColor="?android:textColorPrimary" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

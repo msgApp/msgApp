@@ -48,6 +48,7 @@ public class ViewPagerActivity extends AppCompatActivity{
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ViewPagerActivity.this);
     public static Context CONTEXT;
+    private BackPressCloseHandler backPressCloseHandler;
   //  MainActivity mainActivity = (MainActivity)MainActivity.mainac;
 
     @Override
@@ -58,6 +59,8 @@ public class ViewPagerActivity extends AppCompatActivity{
         mSocket = app.getSocket();
         mSocket.connect();
         CONTEXT = this;
+        backPressCloseHandler = new BackPressCloseHandler(this);
+
         //mainActivity.finish();
         ids = getIntent().getStringExtra("id");
         Log.i("intentIds",ids);
@@ -152,7 +155,7 @@ public class ViewPagerActivity extends AppCompatActivity{
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-
+        backPressCloseHandler.onBackPressed();
     }
 
 }

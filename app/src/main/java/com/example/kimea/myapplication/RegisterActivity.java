@@ -232,6 +232,11 @@ public class RegisterActivity extends AppCompatActivity{
 
             result = s;
             Log.i("result",result);
+            if(result.equals("[\"signUp success\"]")) {
+                Log.i("signUp success","true");
+                Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
             emailCheck.setText(s);
 
         }

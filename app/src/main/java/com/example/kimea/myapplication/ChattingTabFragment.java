@@ -194,13 +194,20 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
 
     public void sendIntent(String email, String room, String roomNick) {
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
-        intent.putExtra("email", email);
+        String[] splitRoomNick = roomNick.split(" ");
+        Log.i("length",String.valueOf(splitRoomNick.length));
+        Log.i("split",splitRoomNick[0]);
+        if(splitRoomNick.length>1){
+            intent.putExtra("email","none");
+        }else{
+            intent.putExtra("email", room);
+        }
         intent.putExtra("roomname", room);
         intent.putExtra("roomNickName", roomNick);
         // intent.putExtra("myEmail",myEmail.getMyId());
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("email", email);
+        editor.putString("email", room);
         editor.commit();
         startActivityForResult(intent, 1);
     }

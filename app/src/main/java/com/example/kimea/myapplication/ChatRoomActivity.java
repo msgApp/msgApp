@@ -149,7 +149,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String id = cursor.getString(1);
             String nickname = cursor.getString(2);
             String text = cursor.getString(3);
-            String type = cursor.getString(4);
+            String roomNickname = cursor.getString(4);
+            String type = cursor.getString(5);
             try {
                 if (type.equals("0")) {
                     addMsg(nickname, text, 0);
@@ -264,12 +265,13 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     String setMsg="";
                     String setRoom="";
                     try {
-                        setMsg =  msg.getString("message");
-                        setName = msg.getString("email");
-                        setNickName = msg.getString("nickName");
-                        setRoom = msg.getString("room");
+                        setMsg =  msg.getString("\"message\"");
+                        setName = msg.getString("\"email\"");
+                        setNickName = msg.getString("\"nickName\"");
+                        setRoom = msg.getString("\"room\"");
                         Log.i("msg",setMsg);
                         Log.i("닉네이이이이이이이임",setNickName);
+                        Log.i("roomname equals setRoom", roomname+" = "+setRoom);
 
 
                     }catch (JSONException e){
@@ -279,26 +281,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     if(roomname.equals(setRoom)) {
                         addMsg(setNickName, setMsg,0);
                         //insert(setName,setNickName,setMsg,"0");
-                   }else{
-                        //아니면 맞는 이메일에 인서트
-                        Log.i("엘즈","else");
-                        Log.i("엘즈",setRoom);
-                        String[] arrayy = setRoom.split("@");
-                        String sss = arrayy[1];
-                        String[] ary22 = sss.split("\\.");
-                        // String result = array[0]+array2[0]+array2[1];
-                        // Log.i("result3",ary2[0]);
-                        String result2 = arrayy[0]+ary22[0]+ary22[1];
-                        Log.i("엘즈",result);
-                        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
-                        ContentValues elseValue = new ContentValues();
-                        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-
-                        // 데이터의 삽입은 put을 이용한다.
-                        elseValue.put("ChatId", result2);
-                        elseValue.put("ChatText",setMsg);
-                        db.insert("'"+result2+"'", null, elseValue); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-                    }
+                   }
                 }
             });
         }

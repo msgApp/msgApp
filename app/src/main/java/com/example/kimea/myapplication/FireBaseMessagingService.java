@@ -77,8 +77,10 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         }catch (Exception e){
             db = helper.getWritableDatabase();
             db.execSQL("create table '"+result+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text, type TEXT);");
-            insert(email,msgTitle,msgBody,"0",roomNick);
+
             insert2(chatRoom);
+            Log.i("create table","create table");
+
         }
         db = helper.getReadableDatabase();
         String query = "select user from divice";
@@ -111,6 +113,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                 insert(email,msgTitle,msgBody,"0",roomNick);
                 Log.e(TAG,"email_badge_commit");
+            }else if(getEmail.getString("email","").equals(chatRoom)){
+                insert(email,msgTitle,msgBody,"0",roomNick);
             }
 
         }

@@ -140,7 +140,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("xxxxx","room : "+holder.roomname.getText().toString()+" , chatId : "+holder.chatRoomId.getText().toString());
+                Log.i("xxxxx","room : "+holder.roomname.getText().toString()+" , chatId : "+holder.roomNickName.getText().toString());
                 mCallback.sendIntent(holder.roomname.getText().toString(), holder.roomNickName.getText().toString(), holder.chatRoomId.getText().toString());
             }
         });

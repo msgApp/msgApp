@@ -250,7 +250,7 @@ public class FriendTabFragment extends Fragment {
             String checkTB = c.getString(0);
         }catch(Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text, type TEXT);");
+            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,room text, type TEXT);");
         }
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();

@@ -49,7 +49,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <ImageView
+    <com.example.kimea.myapplication.CircleImageView
         android:id="@+id/friendImg"
         android:layout_width="190dp"
         android:layout_height="190dp"
@@ -60,6 +60,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="40dp"
         android:visibility="gone"
+        app:civ_border_color="#D1D1D1"
+        app:civ_border_width="0.1px"
         app:layout_constraintBottom_toTopOf="@+id/friendName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

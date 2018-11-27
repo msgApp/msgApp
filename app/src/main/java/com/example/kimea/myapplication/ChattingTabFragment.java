@@ -83,6 +83,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public void onResume() {
         super.onResume();
+
         chatItems.clear();
         Log.i("visible", "visible");
         helper = new DBHelper(getActivity());
@@ -117,6 +118,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             }
 
         }
+
     }
 
     @Nullable

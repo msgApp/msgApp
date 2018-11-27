@@ -140,7 +140,6 @@ public class RegisterActivity extends AppCompatActivity{
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                emailCheck.setText(reData.toString());
                 url = "http://192.168.0.71:1300/signUp";
                 Log.i("email : ",email.getText().toString());
                 ServerTask serverTask = new ServerTask(url,reData.toString());

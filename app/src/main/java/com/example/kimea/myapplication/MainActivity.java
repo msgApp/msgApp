@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList userList;
     String result, result2, userId, msgToken="";
     int countItem = 0;
+    int go=0;
     private Socket mSocket;
     ArrayList<GetFriendListItem2> mainList;
     @Override
@@ -188,23 +189,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
                             mSocket.emit("sendUser",data2);
                             mSocket.on("friendList", listener);
-                            final Handler delayHandler2 = new Handler();
-                            delayHandler2.postDelayed(new Runnable() {
+
+                            final Handler delayHandler3 = new Handler();
+                            delayHandler3.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     friendInsert();
-                                }
-                            },1000);
-                            final Handler delayHandler3 = new Handler();
-                            delayHandler2.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
 
-                                    Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
-                                    intent2.putExtra("id", login_id.getText().toString());
-                                    startActivity(intent2);
+
                                 }
-                            },1000);
+                            },2000);
+
+
+
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                         }
@@ -253,6 +250,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
     };
+    public void goIntent(){
+        Intent intent2 = new Intent(MainActivity.this, ViewPagerActivity.class);
+        intent2.putExtra("id", login_id.getText().toString());
+        startActivity(intent2);
+    }
     private Emitter.Listener listener = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -278,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 data.put("index",i);
                                 mSocket.emit("sendProfile",data);
                                 countItem++;
+                                Log.e(TAG,"countItem = "+countItem );
                             }
                             fList = new JSONArray();
                             mSocket.on("sendProfile", listener2);
@@ -331,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void makeList(String img, String nick, String text, String email){
         Log.e(TAG,nick+text);
        mainList.add(new GetFriendListItem2(img,nick,text,email));
+
     }
     public void friendInsert(){
         db = helper.getWritableDatabase();
@@ -356,6 +360,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     values.put("friendimg", img);
                     values.put("friendText", text);
                     db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+                    go++;
+                    if(go==countItem){
+                        goIntent();
+                    }
                     Log.i("SaveCharInsert", "insert");
                 }
             }

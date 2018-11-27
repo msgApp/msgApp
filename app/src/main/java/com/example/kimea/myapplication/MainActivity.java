@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 delayHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO
+
                         try{
                         if(!result2.equals("false")){
                             //insert(result2);

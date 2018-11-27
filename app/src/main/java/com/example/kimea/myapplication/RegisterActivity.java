@@ -150,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity{
                 delayHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO
+
                         if(result.equals("signUp success")){
                             Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
                             startActivity(intent);

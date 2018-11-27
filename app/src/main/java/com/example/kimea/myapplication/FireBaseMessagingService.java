@@ -39,7 +39,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         sendRegistrationToServer(s);
     }
     private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
+
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("badge", badge);

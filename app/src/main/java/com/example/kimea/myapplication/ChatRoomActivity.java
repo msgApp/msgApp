@@ -72,6 +72,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         try {
             SharedPreferences emailBadge = getSharedPreferences(roomname, MODE_PRIVATE);
             String mailBadge = emailBadge.getString("badge_count", "0");
+            int badgeInt = Integer.valueOf(mailBadge);
+            /*
+            //TODO
+            if(badgeInt>0){
+                JSONObject intoAct = new JSONObject();
+                intoAct.put("roomname",roomname);
+                intoAct.put("readYN", "Y");
+
+            }*/
             Log.e(TAG, "mailBadge: " + mailBadge);
             SharedPreferences appBadge = getSharedPreferences("pref", MODE_PRIVATE);
             int apBadge = appBadge.getInt("badge", 0);

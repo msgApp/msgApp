@@ -46,6 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int go=0;
     private Socket mSocket;
     ArrayList<GetFriendListItem2> mainList;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        countItem=0;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,17 +197,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mSocket.emit("sendUser",data2);
                             mSocket.on("friendList", listener);
 
+                            final Handler delayHandler2 = new Handler();
+                            delayHandler2.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(countItem==0){
+                                        goIntent();
+                                    }
+                                }
+                            },500);
+
                             final Handler delayHandler3 = new Handler();
                             delayHandler3.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     friendInsert();
-
-
                                 }
                             },2000);
-
-
 
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();

@@ -1,7 +1,10 @@
 package com.example.kimea.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,27 +74,22 @@ public class RegisterActivity extends AppCompatActivity{
                     passCheck.setBackgroundColor(Color.RED);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 // 입력이 끝났을 때
             }
-
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // 입력하기 전에
             }
         });
-
         Date today = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String result = dateFormat.format(today);
 
         birthDay.setText(result);
     }
-
     public void onClick(View v){
-
         switch (v.getId()){
             case R.id.reSubmitBtn:
                 if (email.getText().toString().length()==0){
@@ -127,8 +127,7 @@ public class RegisterActivity extends AppCompatActivity{
                     emailCheck.requestFocus();
                     return;
                 }
-
-
+                
                 JSONObject reData = new JSONObject();
                 try{
                     reData.put("u_email",email.getText().toString());
@@ -196,13 +195,11 @@ public class RegisterActivity extends AppCompatActivity{
                 }
                 break;
         }
-
     }
     public void onBirthdayClicked (View v) {
         android.support.v4.app.DialogFragment newFragment = new DatePickerFragment();   //DatePickerFragment 객체 생성
         newFragment.show(getSupportFragmentManager(), "datePicker");                //프래그먼트 매니저를 이용하여 프래그먼트 보여주기
     }
-
     public class ServerTask extends AsyncTask<Void,Void,String> {
         private String url;
         private String str;
@@ -230,7 +227,7 @@ public class RegisterActivity extends AppCompatActivity{
             super.onPostExecute(s);
 
             result = s;
-            Log.i("result",result);
+
             if(result.equals("[\"signUp success\"]")) {
                 Log.i("signUp success","true");
                 Intent intent = new Intent(RegisterActivity.this,MainActivity.class);

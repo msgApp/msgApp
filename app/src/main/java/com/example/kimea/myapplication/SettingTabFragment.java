@@ -1,11 +1,10 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
-
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,15 +25,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
-
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class SettingTabFragment extends Fragment{
     JSONObject data = new JSONObject();
@@ -91,13 +90,25 @@ public class SettingTabFragment extends Fragment{
             SQLiteDatabase db;
             @Override
             public void onClick(View v) {
-                DBHelper helper2 =  new DBHelper(getActivity());
-                getActivity().deleteDatabase("divice.db");
+                try{
+                    DBHelper helper2 =  new DBHelper(getActivity());
+                    db = helper2.getReadableDatabase();
+                    String sql = "select user from divice";
+                    Cursor c = db.rawQuery(sql,null);
+                    c.moveToFirst();
+                    String user = c.getString(0);
+                    JSONObject logout = new JSONObject();
+                    logout.put("email",user);
+                    getActivity().deleteDatabase("divice.db");
+                    mSocket.emit("logout",logout);
                 /*db = helper2.getWritableDatabase();
                 db.execSQL("drop table if exists divice;");*/
-                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                //intent.putExtra("drop", "drop");
-                startActivity(intent);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                    //intent.putExtra("drop", "drop");
+                    startActivity(intent);
+                }catch (Exception e){
+                    Log.e(TAG,e.toString());
+                }
             }
         });
 

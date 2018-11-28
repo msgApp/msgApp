@@ -99,7 +99,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
             Log.i("mineCheck = email", mineCheck+" = "+email);
-            if(email.equals(mineCheck)&&!getEmail.getString("email","").equals(chatRoom)){
+            if((email.equals(mineCheck)&&!getEmail.getString("email","").equals(chatRoom))||(email.equals(mineCheck)&&getEmail.getString("email","").equals(chatRoom))){
                 Log.i("mine", "mine");
             }else if(!getEmail.getString("email","").equals(chatRoom)){
                 Log.i("getEmail = chatRoom", getEmail.getString("email","")+ " = "+chatRoom);

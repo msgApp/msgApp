@@ -152,12 +152,13 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String roomNickname = cursor.getString(4);
             String type = cursor.getString(5);
             try {
-                if (type.equals("0")) {
-                    addMsg(nickname, text, 0);
-                } else if (type.equals("1")) {
+                if (nickname.equals("me")) {
                     addMsg(nickname, text, 1);
+                } else {
+                    addMsg(nickname, text, 0);
                 }
             }catch (Exception e){
+                    Log.e(TAG,e.toString());
 
             }
         }

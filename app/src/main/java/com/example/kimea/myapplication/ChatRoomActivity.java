@@ -13,8 +13,12 @@ import android.os.Looper;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +42,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private Socket mSocket;
     String email,result,my_email,roomname,roomNick;
     SQLiteDatabase db;
+    Button sendBtn;
     DBHelper helper =  new DBHelper(ChatRoomActivity.this);
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
 
@@ -67,7 +72,35 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         msgInput = findViewById(R.id.message_input);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
+        sendBtn = findViewById(R.id.send_button);
+        msgInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (msgInput.getText().toString().replace(" ", "").equals("")){
+                    sendBtn.setEnabled(false);
+                }else{
+                    sendBtn.setEnabled(true);
+                }
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (msgInput.getText().toString().replace(" ", "").equals("")){
+                    sendBtn.setEnabled(false);
+                }else{
+                    sendBtn.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (msgInput.getText().toString().replace(" ", "").equals("")){
+                    sendBtn.setEnabled(false);
+                }else{
+                    sendBtn.setEnabled(true);
+                }
+            }
+        });
 
         try {
             SharedPreferences emailBadge = getSharedPreferences(roomname, MODE_PRIVATE);

@@ -78,10 +78,8 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         private final MenuItem.OnMenuItemClickListener onMenu = new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Log.i("MenuItem ID",String.valueOf(menuItem.getItemId()));
                 switch (menuItem.getItemId()){
                     case 1001:
-                        Log.i("into switch", String.valueOf(getAdapterPosition()));
                         String room = Item.get(getAdapterPosition()).getRoomname();
                         String userEmail = Item.get(getAdapterPosition()).getEmail();
 
@@ -91,7 +89,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
                             JSONObject delete = new JSONObject();
                             delete.put("u_email", userEmail);
                             delete.put("room", room);
-                            Log.i("deleteJSON" ,userEmail+"  "+room);
 
                             mCallback.deleteRoom(delete);
 
@@ -101,7 +98,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
                             //((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
 
                         }catch (Exception e){
-                            Log.d(TAG, "onMenuItemClick: ",e);
                         }
                         break;
 
@@ -140,7 +136,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.Recycl
         holder.chatRoomId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("xxxxx","room : "+holder.roomname.getText().toString()+" , chatId : "+holder.roomNickName.getText().toString());
                 mCallback.sendIntent(holder.roomname.getText().toString(), holder.roomNickName.getText().toString(), holder.chatRoomId.getText().toString());
             }
         });

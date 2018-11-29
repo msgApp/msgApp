@@ -116,7 +116,6 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                             try{
                                 JSONObject get = friend.getJSONObject(i);
                                 result = get.getString("img");
-                                Log.i("decode",result);
                                 img = result;
                                 dbemail = fEmail.getText().toString();
                                 dbnick = get.getString("nickName");
@@ -124,8 +123,6 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                                 byteArrayToBitmap(result);
                                 friendName =  get.getString("nickName");
                                 friendResult = get.getString("f_rs");
-                                Log.e(TAG,get.getString("text"));
-                                Log.i("rs",friendResult);
                                 checkFriend(friendResult);
                             }catch (Exception e){
                                 friendName = "검색한 유저가 존재하지 않습니다.";
@@ -172,12 +169,10 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         values.put("friendimg",img);
         values.put("friendText",dbtext);
         db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-        Log.e(TAG,"email = "+dbemail+" nick = "+dbnick);
         dbemail="";
         dbnick="";
         img="";
         dbtext="";
-        Log.e(TAG,"insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 

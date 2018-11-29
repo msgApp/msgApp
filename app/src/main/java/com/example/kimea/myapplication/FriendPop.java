@@ -128,15 +128,12 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         Cursor cursor = db.rawQuery(sql2,null);
         while(cursor.moveToNext()){
             String email = cursor.getString(0);
-            Log.e(TAG,"Cursor" + email);
             String nick = cursor.getString(1);
-            Log.e(TAG,"Cursor" + nick);
             String img = cursor.getString(2);
             // Log.e(TAG,"Cursor" + img);
           //  String text = cursor.getString(3);
             //Log.e(TAG,"Cursor" + text);
             addProfile(img, nick , email);
-            Log.e(TAG,"addSuccess");
         }
 
     }
@@ -147,7 +144,6 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
                 @Override
                 public void run() {
                     JSONObject jRoom = (JSONObject)args[0];
-                    Log.i("jRoom",jRoom.toString());
                     try{
                         room = jRoom.getString("roomname");
                         roomNick = jRoom.getString("groups");
@@ -182,7 +178,6 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         adapter.notifyDataSetChanged ();
     }
     public void listdel(String email){
-        Log.e(TAG,"DelEmail"+ email);
         int totalSize = chatEmail.size();
         for (int i = 0; i< totalSize; i++ ){
             if(chatEmail.get(i).equals(email)){
@@ -193,16 +188,12 @@ public class FriendPop extends AppCompatActivity implements FriendPopAdapter.OnS
         //mSocket.emit("group",ja);
     }
     public void listAdd(String email){
-        Log.e(TAG,"listADD" + email);
         chatEmail.add(email);
         int totalSize = chatEmail.size();
         for (int i = 0; i< totalSize; i++ ){
-            Log.e(TAG,"arrayEmail :"+chatEmail.get(i));
         }
     }
     public void addSelectList(String img, String email, String nick){
-        Log.e(TAG, "EMail  = "+email);
-        Log.e(TAG, "nick  = "+nick);
         sFpRecycler.setVisibility(View.VISIBLE);
         sFpItem.add(new GetFriendPopItem2(img,nick,email));
         sAdapter.notifyDataSetChanged();

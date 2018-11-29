@@ -35,7 +35,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
-        Log.e(TAG,"token "+s);
         sendRegistrationToServer(s);
     }
     private void sendRegistrationToServer(String token) {
@@ -49,15 +48,14 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d(TAG ,"From:" +remoteMessage.getNotification().getBody());
         // Map<String, String > rsmg = remoteMessage.getData();
-
-        String msgBody = remoteMessage.getNotification().getBody();
-        String msgTitle = remoteMessage.getNotification().getTitle();
-        String email = remoteMessage.getData().get("email");
-        String f_email = remoteMessage.getData().get("f_email");
-        String roomNick = remoteMessage.getData().get("roomNickName");
-        chatRoom = remoteMessage.getData().get("roomname");
+        Map<String, String> data = remoteMessage.getData();
+        String msgBody = data.get("body");
+        String msgTitle = data.get("title");
+        String email = data.get("email");
+        String f_email = data.get("f_email");
+        String roomNick = data.get("roomNickName");
+        chatRoom = data.get("roomname");
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
         SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
@@ -98,11 +96,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor.commit();
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
-            Log.i("mineCheck = email", mineCheck+" = "+email);
             if((email.equals(mineCheck)&&!getEmail.getString("email","").equals(chatRoom))||(email.equals(mineCheck)&&getEmail.getString("email","").equals(chatRoom))){
-                Log.i("mine", "mine");
             }else if(!getEmail.getString("email","").equals(chatRoom)){
-                Log.i("getEmail = chatRoom", getEmail.getString("email","")+ " = "+chatRoom);
                 SharedPreferences preferences = getSharedPreferences(chatRoom,MODE_PRIVATE);
                 int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
                 badge_int++;
@@ -110,9 +105,13 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 editor3.putString("badge_count",String.valueOf(badge_int));
                 editor3.commit();
                 sendNotification(msgBody,msgTitle);
-                ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
+                Log.e(TAG,"activity"+ac.get(0).topActivity.getClassName());
+                try {
+                    ((ViewPagerActivity) ViewPagerActivity.CONTEXT).reset();
+                }catch (Exception e){
+
+                }
                 insert(email,msgTitle,msgBody,"0",roomNick);
-                Log.e(TAG,"email_badge_commit");
             }else if(getEmail.getString("email","").equals(chatRoom)){
                 insert(email,msgTitle,msgBody,"0",roomNick);
             }
@@ -166,7 +165,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
             ctf.addProfile(id,text,null,"",chatRoom);
             Log.i("create","createGroup");
         }*/
-        Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
     public void insert2(String id) {
@@ -183,12 +181,9 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String sql = "select * from oneUser;";
         Cursor cursor2 = database.rawQuery(sql, null);
         while(cursor2.moveToNext()){
-            Log.i("id1",cursor2.getString(0));
-            Log.i("id1",cursor2.getString(1));
         }
     }
     public void set_badge_alarm(int badge_count){
-        Log.e(TAG , "badgeCount :"+badge_count);
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", badge_count);
         intent.putExtra("badge_count_package_name", getPackageName());

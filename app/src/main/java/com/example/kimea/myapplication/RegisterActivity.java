@@ -147,7 +147,6 @@ public class RegisterActivity extends AppCompatActivity{
                     e.printStackTrace();
                 }
                 url = "http://192.168.0.71:1300/signUp";
-                Log.i("email : ",email.getText().toString());
                 ServerTask serverTask = new ServerTask(url,reData.toString());
                 serverTask.execute();
 
@@ -168,17 +167,14 @@ public class RegisterActivity extends AppCompatActivity{
             case R.id.re_male:
                 female.setChecked(false);
                 check = "남성";
-                Log.i("checkBox",check);
                 break;
             case R.id.re_female:
                 male.setChecked(false);
                 check="여성";
-                Log.i("checkBox",check);
                 break;
             case R.id.mailSend:
 
                 url = "http://192.168.0.71:1300/overlapCheck";
-                Log.i("email : ",email.getText().toString());
 
                 JSONObject jemail = new JSONObject();
                 try{
@@ -237,7 +233,6 @@ public class RegisterActivity extends AppCompatActivity{
             result = s;
 
             if(result.equals("[\"signUp success\"]")) {
-                Log.i("signUp success","true");
                 Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
                 startActivity(intent);
             }

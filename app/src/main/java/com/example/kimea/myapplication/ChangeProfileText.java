@@ -38,7 +38,6 @@ public class ChangeProfileText extends AppCompatActivity{
                 Bundle bundle = new Bundle(1); // 파라미터는 전달할 데이터 개수
                 bundle.putString("text", text); // key , value
                 fragment.setArguments(bundle);
-                Log.e("asd","sda");
                 this.finish();
         }
         return super.onOptionsItemSelected(item);

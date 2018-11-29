@@ -63,7 +63,6 @@ public class ViewPagerActivity extends AppCompatActivity{
 
         //mainActivity.finish();
         ids = getIntent().getStringExtra("id");
-        Log.i("intentIds",ids);
         try {
             data.put("email", ids);
         } catch (JSONException e) {
@@ -75,7 +74,6 @@ public class ViewPagerActivity extends AppCompatActivity{
         if (pref.getString("email","").isEmpty()) {
             editor.putString("email", "none");
             editor.commit();
-            Log.e(TAG,"commit");
         }
 
         tabLayout = findViewById(R.id.tabLayout);
@@ -116,8 +114,7 @@ public class ViewPagerActivity extends AppCompatActivity{
         String sql = "select * from divice";
         Cursor cursor2 = database.rawQuery(sql, null);
         while(cursor2.moveToNext()){
-            Log.e(TAG ,cursor2.getString(0));
-            Log.e(TAG ,cursor2.getString(2));
+
         }
 
     }

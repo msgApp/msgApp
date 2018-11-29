@@ -99,7 +99,6 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
 //                    Glide.with(mContext).load(data.getData()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(imageView); // OOM 없애기위해 그레들사용
 
                 } catch (Exception e) {
-                    Log.e("test", e.getMessage());
                 }
             }
         }

@@ -68,7 +68,6 @@ public class SettingTabFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.i("createView3","createView");
 
         View view = inflater.inflate(R.layout.setting_fragment,container,false);
 
@@ -109,7 +108,6 @@ public class SettingTabFragment extends Fragment{
                     startActivity(intent);
                     getActivity().finish();
                 }catch (Exception e){
-                    Log.e(TAG,e.toString());
                 }
             }
         });
@@ -153,7 +151,6 @@ public class SettingTabFragment extends Fragment{
                     try {
                         setUserImg = pList.getString("u_pf_img");
                         profileText = pList.getString("u_pf_text");
-                        Log.i("text",profileText);
                         profile.setText(profileText);
                         // Log.i("nickName&img", setUserNickname+", "+setUserImg);
                     }catch (Exception e){
@@ -175,7 +172,6 @@ public class SettingTabFragment extends Fragment{
                     imgview.setImageBitmap(bitmap);
 //                    Glide.with(mContext).load(data.getData()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(imageView); // OOM 없애기위해 그레들사용
                 } catch (Exception e) {
-                    Log.e("test", e.getMessage());
                 }
             }
         }

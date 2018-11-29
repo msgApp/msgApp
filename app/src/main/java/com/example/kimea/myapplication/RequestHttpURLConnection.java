@@ -38,7 +38,6 @@ public class RequestHttpURLConnection {
 
         //outputstream 으로 json파일을 byte형태로 바꾼후 전송
         os = urlConn.getOutputStream();
-        Log.i("check2", str);
         os.write(str.getBytes());
         os.flush();
 
@@ -78,7 +77,6 @@ public class RequestHttpURLConnection {
             while ((line = reader.readLine()) != null) {
                 page += line;
             }
-            Log.i("page",page);
             return page;
         }
 

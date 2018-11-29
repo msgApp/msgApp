@@ -52,9 +52,7 @@ public class FriendProfile extends AppCompatActivity implements View.OnClickList
         nickname.setText(intent.getStringExtra("nickname"));
         profileText.setText(intent.getStringExtra("profileText"));
         email = intent.getStringExtra("email");
-        Log.i("fp-email",email);
         intentPosition = intent.getStringExtra("position");
-        Log.i("intent Position", intentPosition);
         position = Integer.valueOf(intentPosition);
 
         db = helper.getReadableDatabase();

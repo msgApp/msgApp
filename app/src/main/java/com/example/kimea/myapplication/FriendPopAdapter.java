@@ -84,7 +84,6 @@ public class FriendPopAdapter extends RecyclerView.Adapter<FriendPopAdapter.Recy
                     }
 
                 } else {
-                    Log.i("check","chekcEmail : "+fpItem.get(pos).getFriendEmail());
                     fpItem.get(pos).setSelected(true);
                     mCallback.listAdd(fpItem.get(pos).getFriendEmail());
 

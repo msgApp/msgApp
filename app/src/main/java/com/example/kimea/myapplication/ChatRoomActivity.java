@@ -63,12 +63,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         email = intent.getStringExtra("email");
         roomname = intent.getStringExtra("roomname");
         roomNick = intent.getStringExtra("roomNickName");
-        Log.i("roomNickName2" ,roomNick);
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor emaile = pref.edit();
         emaile.putString("email",roomname);
         emaile.commit();
-        Log.e(TAG,"prefEmail "+pref.getString("email",""));
         msgInput = findViewById(R.id.message_input);
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
@@ -114,23 +112,17 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 intoAct.put("readYN", "Y");
 
             }*/
-            Log.e(TAG, "mailBadge: " + mailBadge);
             SharedPreferences appBadge = getSharedPreferences("pref", MODE_PRIVATE);
             int apBadge = appBadge.getInt("badge", 0);
-            Log.e(TAG, "appBadge: " + apBadge);
             int badgeResult = apBadge - Integer.parseInt(mailBadge);
-            Log.e(TAG, "badgeResult: " + badgeResult);
 
             SharedPreferences.Editor editor = appBadge.edit();
             editor.putInt("badge", badgeResult);
             editor.commit();
-            Log.e(TAG, "commit1 ");
             SharedPreferences.Editor editor2 = emailBadge.edit();
             editor2.putString("badge_count", "0");
             editor2.commit();
-            Log.e(TAG, "commit2");
             set_badge_alarm(badgeResult);
-            Log.e(TAG, "badge_send");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -143,15 +135,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         result = array[0]+ary2[0]+ary2[1];
         db = helper.getWritableDatabase();
        // db.execSQL("drop table '"+result+"'");
-        Log.i("result4",result);
         try {
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select * from '" + result + "'";
             Cursor cursor2 = database.rawQuery(sql, null);
             while(cursor2.moveToNext()){
-                Log.e(TAG,"chatId"+cursor2.getString(0));
-                Log.e(TAG,"chatnick"+cursor2.getString(1));
-                Log.e(TAG,"chattext"+cursor2.getString(2));
             }
 
         }catch (Exception e){
@@ -176,7 +164,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         SQLiteDatabase database = helper.getReadableDatabase();
         String sql = "select * from '"+result+"'";
         Cursor cursor = database.rawQuery(sql,null);
-        Log.i("ChatDataBaseSelect","select");
         while(cursor.moveToNext()){
             int seq = cursor.getInt(0);
             String id = cursor.getString(1);
@@ -191,7 +178,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     addMsg(nickname, text, 0);
                 }
             }catch (Exception e){
-                    Log.e(TAG,e.toString());
 
             }
         }
@@ -209,7 +195,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 String sql = "select * from divice";
                 Cursor cursor2 = database.rawQuery(sql, null);
                 while(cursor2.moveToNext()){
-                    Log.e(TAG ,cursor2.getString(0));
                     myEmail = cursor2.getString(0);
                 }
                 Log.i("ChatRoomAct-myEmail", myEmail);
@@ -218,16 +203,13 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 JSONObject pushData = new JSONObject();
                 try{
                     msgData.put("message",msgInput.getText().toString());
-                    Log.i("inputMsg",msgInput.getText().toString());
                     msgData.put("u_email",email);
                     msgData.put("my_email", myEmail);
                     msgData.put("room", roomname);
                     if(email.equals(roomname)){
                         pushData.put("roomname", myEmail);
-                        Log.i("roomname is my", myEmail);
                     }else {
                         pushData.put("roomname",roomname);
-                        Log.i("roomname is room", roomname);
                     }
                     pushData.put("message",msgInput.getText().toString());
                     pushData.put("u_email",myEmail);
@@ -247,7 +229,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 cur = db.rawQuery(sql3,null);
                 if(cur.moveToFirst()) {
                     for (; ; ) {
-                        Log.i("table name : ", cur.getString(0));
                         if (!cur.moveToNext())
                             break;
                     }
@@ -285,7 +266,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private Emitter.Listener listener = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            Log.i("listener check", "check!!!!!!");
                 runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -293,7 +273,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Iterator i = msg.keys();
                     ArrayList<String> keys = null;
                     ArrayList<String> values = null;
-                    Log.i("제이슨",msg.toString());
                     String setName ="";
                     String setNickName="";
                     String setMsg="";
@@ -303,9 +282,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         setName = msg.getString("\"email\"");
                         setNickName = msg.getString("\"nickName\"");
                         setRoom = msg.getString("\"room\"");
-                        Log.i("msg",setMsg);
-                        Log.i("닉네이이이이이이이임",setNickName);
-                        Log.i("roomname equals setRoom", roomname+" = "+setRoom);
 
 
                     }catch (JSONException e){
@@ -357,8 +333,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         String sql = "select ChatRoomNickName from '"+result+"';";
         Cursor c = db.rawQuery(sql,null);
         c.moveToFirst();
-        Log.i("insert-roomNickName", c.getString(0));
-        Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
     //채팅방 유저 확인 테이블 삽입
@@ -370,14 +344,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         // 데이터의 삽입은 put을 이용한다.
         values2.put("userId", id);
         db.insert("oneUser", null, values2); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-        Log.i("insert","insert");
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
         SQLiteDatabase database = helper.getReadableDatabase();
         String sql = "select * from oneUser;";
         Cursor cursor2 = database.rawQuery(sql, null);
         while(cursor2.moveToNext()){
-            Log.i("id1",cursor2.getString(0));
-            Log.i("id1",cursor2.getString(1));
         }
     }
 
@@ -415,7 +386,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         editor.commit();
     }
     public void set_badge_alarm(int badge_count){
-        Log.e(TAG , "badgeCount :"+badge_count);
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", badge_count);
         intent.putExtra("badge_count_package_name", getPackageName());

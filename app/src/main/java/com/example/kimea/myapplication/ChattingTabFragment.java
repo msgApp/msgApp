@@ -70,7 +70,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         CONTEXT = getContext();
         //refresh();
 
-        Log.i("create", "create");
 
        // mSocket.on("createRoom", listener);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("myEmail", Context.MODE_PRIVATE);
@@ -85,26 +84,19 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         super.onResume();
 
         chatItems.clear();
-        Log.i("visible", "visible");
         helper = new DBHelper(getActivity());
         db = helper.getWritableDatabase();
         String sql = "select userId from oneUser";
 
         cur = db.rawQuery(sql, null);
-        Log.i("채팅텝 select", "select");
         while (cur.moveToNext()) {
-            Log.i("hihi", "hihi2222");
-            Log.i("useIdData", cur.getString(0));
             SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0), Context.MODE_PRIVATE);
             String badge = preferences.getString("badge_count", "");
             String s = cur.getString(0);
-            Log.i("roomID", s);
             String[] array = s.split("@");
             String ss = array[1];
             String[] ary2 = ss.split("\\.");
             String result = array[0] + ary2[0] + ary2[1];
-            Log.i("userid 값 담은 변수", s);
-            Log.i("userid 값 자른 변수", result);
 
 
             String sql2 = "select ChatText,ChatRoomNickName from'" + result + "' where Chatseq = (select max(Chatseq) from '" + result + "');";
@@ -112,8 +104,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             while (cur2.moveToNext()) {
                 String rs2 = cur2.getString(0);
                 String rs3 = cur2.getString(1);
-                Log.i("select-ChatRoomNickName",rs3);
-                Log.e(TAG, "badge: " + badge);
                 addProfile(null, rs2, null, badge, s, email, rs3);
             }
 
@@ -125,7 +115,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chatting_fragment, container, false);
-        Log.i("createView2", "createView");
 
 
         fab_open = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.fab_open);
@@ -164,7 +153,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         fRecyclerView.setAdapter(adapter);
         int index = chatItems.size();
         SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
-        Log.e(TAG, "id" + pref.getString("email", ""));
 
 
         return view;
@@ -185,11 +173,9 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     }
 
     public void addProfile(String setUserId, String setLastChat, String setChatImg, String setBadge, String setRoom, String setEmail, String setRoomNickName) {
-        Log.i("addProfile-roomNickName",setRoomNickName);
         chatItems.add(new GetChatRoomItem(setUserId, setLastChat, setChatImg, setBadge, setRoom, setEmail, setRoomNickName));
         adapter.notifyDataSetChanged();
         for (int i = 0; i < chatItems.size(); i++) {
-            Log.i("list", chatItems.get(i).toString());
         }
     }
 
@@ -197,8 +183,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     public void sendIntent(String email, String room, String roomNick) {
         Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
         String[] splitRoomNick = roomNick.split(" ");
-        Log.i("length",String.valueOf(splitRoomNick.length));
-        Log.i("split",splitRoomNick[0]);
         if(splitRoomNick.length>1){
             intent.putExtra("email","none");
         }else{
@@ -218,7 +202,6 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
     public void deleteRoom(JSONObject jsonObject) {
 
         try {
-            Log.i("delete Room", jsonObject.toString());
             db = helper.getWritableDatabase();
             String room = jsonObject.getString("room");
             String[] array = room.split("@");

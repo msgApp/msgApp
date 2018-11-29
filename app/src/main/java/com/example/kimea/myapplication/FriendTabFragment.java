@@ -72,7 +72,6 @@ public class FriendTabFragment extends Fragment {
         String msgToken="";
         String id = "";
         while(cursor2.moveToNext()){
-            Log.e(TAG ,cursor2.getString(2));
             id = cursor2.getString(0);
             msgToken = cursor2.getString(2);
         }
@@ -88,7 +87,6 @@ public class FriendTabFragment extends Fragment {
             e.printStackTrace();
         }
         mSocket.emit("sendUser",data);
-        Log.i("ids",ids);
         mSocket.on("messageAfter",Lmsg);
         items = new ArrayList<>();
 
@@ -114,7 +112,6 @@ public class FriendTabFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("boolean",String.valueOf(isFabOpen));
                 if (isFabOpen) {
                     fab1.startAnimation(fab_close);
                     isFabOpen = false;
@@ -156,22 +153,17 @@ public class FriendTabFragment extends Fragment {
             position = Integer.valueOf(pos);
             adapter.itemRemove(position);
         }catch (Exception e) {
-            Log.e("block Intent", e.toString());
         }
         db = helper.getWritableDatabase();
         String sql2 = "select * from friend";
         Cursor cursor = db.rawQuery(sql2,null);
         while(cursor.moveToNext()){
             String email = cursor.getString(0);
-            Log.e(TAG,"Cursor" + email);
             String nick = cursor.getString(1);
-            Log.e(TAG,"Cursor" + nick);
             String img = cursor.getString(2);
             // Log.e(TAG,"Cursor" + img);
             String text = cursor.getString(3);
-            Log.e(TAG,"Cursor" + text);
             addProfile(img, nick, text, email);
-            Log.e(TAG,"addSuccess");
         }
         return view;
     }
@@ -183,7 +175,6 @@ public class FriendTabFragment extends Fragment {
                 @Override
                 public void run() {
                     msg = (JSONArray)args[0];
-                    Log.e(TAG,"Array "+ msg);
                     String getMSg="";
                     String nickName="";
                     String userId="";
@@ -195,7 +186,6 @@ public class FriendTabFragment extends Fragment {
 
                             String get = msg.getString(i);
                             //JSONObject gets = msg.getJSONObject(i);
-                            Log.i("msg",get);
                             JSONObject gets = new JSONObject(get);
 
                             getMSg = gets.getString("message");
@@ -204,24 +194,12 @@ public class FriendTabFragment extends Fragment {
                             room = gets.getString("room");
                             roomNick = gets.getString("roomNickName");
 
-                            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(room,Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            int count = Integer.valueOf(sharedPreferences.getString("badge_count","0"));
-                            count++;
-                            editor.putString("badge_count",String.valueOf(count));
-                            editor.commit();
-                            Log.i("count", String.valueOf(count));
-
-                            insert(userId,getMSg,nickName,room,roomNick);
+                            //insert(userId,getMSg,nickName,room,roomNick);
 
                             ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
-                            Log.i("id" ,userId);
-                            Log.i("msg",getMSg);
-                            Log.i("name",nickName);
 
                         }
                     }catch (Exception e){
-                        Log.e("msgERROR", String.valueOf(e));
                         e.printStackTrace();
                     }
 
@@ -240,7 +218,6 @@ public class FriendTabFragment extends Fragment {
         // String result = array[0]+array2[0]+array2[1];
         // Log.i("result3",ary2[0]);
         tableResult = array[0]+ary2[0]+ary2[1];
-        Log.i("tableResult", tableResult);
 
         try{
             db = helper.getReadableDatabase();
@@ -282,7 +259,6 @@ public class FriendTabFragment extends Fragment {
 
     }
     public void removed (int position){
-        Log.i("items", String.valueOf(items.size()));
         items.remove(position);
         adapter.notifyItemRemoved(position);
         adapter.notifyItemRangeChanged(position, items.size());

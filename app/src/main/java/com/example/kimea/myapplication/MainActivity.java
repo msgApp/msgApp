@@ -66,10 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String sql = "select user from divice";
             Cursor cursor = database.rawQuery(sql,null);
             boolean tf = cursor.moveToFirst();
-            Log.i("tf",String.valueOf(tf));
 
             if(String.valueOf(tf).equals("true")){
-                Log.i("idssss","is not null");
 
                 cursor = database.rawQuery(sql,null);
                 while(cursor.moveToNext()){
@@ -79,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }else if(String.valueOf(tf).equals("false")){
                 userId = "";
-                Log.i("idssss","is null");
+
             }
 
             if (userId.equals("")||userId=="") {
@@ -94,10 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }catch (Exception e){
             db = helper.getWritableDatabase();
             db.execSQL("create table divice(user text,token text,msgToken text);");
-            Log.i("createDivice","create");
+
         }
 
-        Log.i("select","select");
+
 
 
 
@@ -143,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String url = "http://192.168.0.71:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
-                Log.i("server","dasdasdas");
                 db = helper.getWritableDatabase();
                 db.execSQL("delete from token where token is not null");
 
@@ -179,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             msgToken = instanceIdResult.getToken();
                                             contentValues.put("msgToken",msgToken);
                                             db.insert("divice","null",contentValues);
-                                            Log.e("DiviceInsertNewToken",newToken);
                                         }
                                     });
                             //contentValues.put("msgToken",msgToken);
@@ -258,9 +254,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         setProfileText = pList.getString("u_pf_text");
                         setEmail = pList.getString("u_email");
                         // Log.i("nickName&img", setUserNickname+", "+setUserImg);
-                        Log.e(TAG,"setUserNickname "+setUserNickname);
-                        Log.e(TAG,"setProfileText "+setProfileText);
-                        Log.e(TAG,"setEmail "+setEmail);
 
                     }catch (Exception e){
                         e.printStackTrace();
@@ -284,17 +277,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i("countItem",String.valueOf(countItem));
 
                     fList = (JSONArray) args[0];
-                    Log.e(TAG,"fList = "+fList);
-                    Log.e(TAG,"length"+fList.length());
                     userList = new ArrayList();
                     if(countItem < fList.length()){
                         try {
                             for(int i = 0; i<fList.length(); i++){
-                                Log.i("fList length", String.valueOf(fList.length()));
-                                Log.i("listener1",fList.toString());
                                 JSONObject jo = fList.getJSONObject(i);
                                 JSONObject data = new JSONObject();
                                 //Log.i("fListArray", jo.toString());
@@ -304,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 data.put("index",i);
                                 mSocket.emit("sendProfile",data);
                                 countItem++;
-                                Log.e(TAG,"countItem = "+countItem );
                             }
                             fList = new JSONArray();
                             mSocket.on("sendProfile", listener2);
@@ -347,14 +334,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(s);
             result = s;
             result2 = result.substring(2,result.length()-2);
-            Log.i("chat",result2);
 
             //insert
 
         }
     }
     public void makeList(String img, String nick, String text, String email){
-        Log.e(TAG,nick+text);
        mainList.add(new GetFriendListItem2(img,nick,text,email));
 
     }
@@ -362,16 +347,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         db = helper.getWritableDatabase();
         String query2 = "select friendemail from friend";
         Cursor cur3 = db.rawQuery(query2, null);
-        Log.e(TAG,"0");
         if (!cur3.moveToFirst()){
-            Log.e(TAG,"1");
             if(mainList.size()!=0) {
-                Log.e(TAG,"2");
                 for (int i = 0; i < mainList.size(); i++) {
-                    Log.e(TAG,"3");
                     ContentValues values = new ContentValues();
                     String email = mainList.get(i).getEmail();
-                    Log.e(TAG,mainList.get(i).getEmail());
                     String nick = mainList.get(i).getUserNickname();
                     String img = mainList.get(i).getUserImgI();
                     String text = mainList.get(i).getProfileText();
@@ -386,7 +366,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if(go==countItem){
                         goIntent();
                     }
-                    Log.i("SaveCharInsert", "insert");
                 }
             }
         }else{

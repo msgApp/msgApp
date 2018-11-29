@@ -194,8 +194,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }catch (Exception e){
 
                             }
+                            String listnerCheck = "";
                             mSocket.emit("sendUser",data2);
-                            mSocket.on("friendList", listener);
+                            String first = getIntent().getStringExtra("first");
+                            try {
+                                if (first.isEmpty()) {
+
+                                }
+                            }catch (Exception e){
+                                mSocket.on("friendList", listener);
+                            }
 
                             final Handler delayHandler2 = new Handler();
                             delayHandler2.postDelayed(new Runnable() {
@@ -268,17 +276,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent2.putExtra("id", login_id.getText().toString());
         startActivity(intent2);
     }
+    Handler handler = new Handler(Looper.getMainLooper());
+
     private Emitter.Listener listener = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
+           handler.post(new Runnable() {
                 @Override
                 public void run() {
                     Log.i("countItem",String.valueOf(countItem));
-                    fList = (JSONArray)args[0];
 
+                    fList = (JSONArray) args[0];
+                    Log.e(TAG,"fList = "+fList);
+                    Log.e(TAG,"length"+fList.length());
                     userList = new ArrayList();
-
                     if(countItem < fList.length()){
                         try {
                             for(int i = 0; i<fList.length(); i++){
@@ -305,8 +316,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }else{
 
                     }
-
-
                 }
             });
         }

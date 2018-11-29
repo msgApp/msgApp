@@ -103,9 +103,11 @@ public class SettingTabFragment extends Fragment{
                     mSocket.emit("logout",logout);
                 /*db = helper2.getWritableDatabase();
                 db.execSQL("drop table if exists divice;");*/
+
                     Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                     //intent.putExtra("drop", "drop");
                     startActivity(intent);
+                    getActivity().finish();
                 }catch (Exception e){
                     Log.e(TAG,e.toString());
                 }

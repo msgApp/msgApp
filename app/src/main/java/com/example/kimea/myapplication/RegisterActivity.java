@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -129,7 +130,14 @@ public class RegisterActivity extends AppCompatActivity{
                 }
                 
                 JSONObject reData = new JSONObject();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Drawable drawable = getResources().getDrawable(R.drawable.default_profile);
+                Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] photo = baos.toByteArray();
+                String encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
                 try{
+                    reData.put("img",encodeImg);
                     reData.put("u_email",email.getText().toString());
                     reData.put("u_passwd",password.getText().toString());
                     reData.put("u_nickname",nickName.getText().toString());
@@ -151,6 +159,7 @@ public class RegisterActivity extends AppCompatActivity{
 
                         if(result.equals("signUp success")){
                             Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+                            intent.putExtra("first","first");
                             startActivity(intent);
                         }
                     }

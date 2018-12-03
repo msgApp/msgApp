@@ -32,6 +32,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     String result, chatRoom;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(this);
+
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
@@ -56,6 +57,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         String f_email = data.get("f_email");
         String roomNick = data.get("roomNickName");
         chatRoom = data.get("roomname");
+        String intentRoomName = chatRoom;
+
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
         SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
@@ -104,7 +107,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                 SharedPreferences.Editor editor3 = preferences.edit();
                 editor3.putString("badge_count",String.valueOf(badge_int));
                 editor3.commit();
-                sendNotification(msgBody,msgTitle);
+                sendNotification(msgBody, msgTitle,email, roomNick, intentRoomName);
                 Log.e(TAG,"activity"+ac.get(0).topActivity.getClassName());
                 try {
                     ((ViewPagerActivity) ViewPagerActivity.CONTEXT).reset();
@@ -123,9 +126,12 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
 
 
     }
-    private void sendNotification(String messageBody,String messageTitle) {
-        Intent intent = new Intent(this, ChatRoomActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+    private void sendNotification(String messageBody,String messageTitle, String intentEmail, String intentRoomNick, String intentRoomName) {
+        Intent chatroomIntent = new Intent(this, ChatRoomActivity.class);
+        chatroomIntent.putExtra("email",intentEmail);
+        chatroomIntent.putExtra("roomname",intentRoomName);
+        chatroomIntent.putExtra("roomNick",intentRoomNick);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chatroomIntent, PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this);
-    TextView search_pw, search_id, register, login_id, login_pw, tx_view, clickAble;
+    TextView search_pw, search_id, register, login_id, login_pw, tx_view;
     JSONArray fList;
     JSONObject pList;
     ArrayList userList;
@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login_id = findViewById(R.id.login_id);
         login_pw = findViewById(R.id.login_pw);
         tx_view= findViewById(R.id.tx_view);
-        clickAble = findViewById(R.id.clickAble);
 
         search_id.setOnClickListener(this);
         search_pw.setOnClickListener(this);

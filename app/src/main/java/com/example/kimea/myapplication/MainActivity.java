@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     JSONObject data = new JSONObject();
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this);
-    TextView search_pw, search_id, register, login_id, login_pw, tx_view;
+    TextView search_pw, search_id, register, login_id, login_pw, tx_view, clickAble;
     JSONArray fList;
     JSONObject pList;
     ArrayList userList;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login_id = findViewById(R.id.login_id);
         login_pw = findViewById(R.id.login_pw);
         tx_view= findViewById(R.id.tx_view);
+        clickAble = findViewById(R.id.clickAble);
 
         search_id.setOnClickListener(this);
         search_pw.setOnClickListener(this);
@@ -131,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.login_btn:
                 //insert
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 final JSONObject loginData = new JSONObject();
                 try{
                     loginData.put("login_id",login_id.getText().toString());
@@ -153,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if(!result2.equals("false")){
                             //insert(result2);
                             mSocket.connect();
+
                             final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                             db = helper.getWritableDatabase();
                             db.execSQL(DATABASE_TABLE_ONEUSER);
@@ -221,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         }
                         }catch (Exception e){
                             Toast.makeText(MainActivity.this, "서버에 문제가 있습니다", Toast.LENGTH_SHORT).show();

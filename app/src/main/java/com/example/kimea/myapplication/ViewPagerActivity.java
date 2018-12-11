@@ -68,9 +68,20 @@ public class ViewPagerActivity extends AppCompatActivity{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        try{
+
 
         db = helper.getWritableDatabase();
-        db.execSQL("update divice set loginYn='y'");
+        String query22 = "select loginyn from divice";
+        Cursor cur33 = db.rawQuery(query22, null);
+        if (cur33.moveToFirst()){
+            while(cur33.moveToNext()){
+                Log.e(TAG,"LoginCur ="+cur33.getString(0));
+            }
+        }
+        }catch (Exception e){
+
+        }
 
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();

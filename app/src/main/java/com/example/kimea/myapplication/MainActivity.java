@@ -95,14 +95,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table divice(user text,token text,msgToken text,loginYn text Default 'n');");
+            db.execSQL("create table divice(user text,token text,msgToken text,loginyn text Default 'n');");
 
         }
-
-
-
-
-
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
                 .permitDiskWrites()
@@ -370,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         values.put("friendnick", nick);
         values.put("friendimg", img);
         values.put("friendText", text);
-        String query2 = "select loginYn from divice";
+        String query2 = "select loginyn from divice";
         Cursor cur3 = db.rawQuery(query2, null);
         String Yn="";
         if(cur3.moveToFirst()){

@@ -373,6 +373,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+    }
+    @Override
     protected void onStop() {
         super.onStop();
         SharedPreferences preferences = getSharedPreferences("chatEmail",MODE_PRIVATE);

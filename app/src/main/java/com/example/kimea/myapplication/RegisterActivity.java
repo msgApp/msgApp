@@ -146,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity{
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-                url = "http://122.40.72.34:1301/signUp";
+                url = "http://122.40.72.34:1300/signUp";
                 ServerTask serverTask = new ServerTask(url,reData.toString());
                 serverTask.execute();
 
@@ -174,7 +174,7 @@ public class RegisterActivity extends AppCompatActivity{
                 break;
             case R.id.mailSend:
 
-                url = "http://122.40.72.34:1301/overlapCheck";
+                url = "http://122.40.72.34:1300/overlapCheck";
 
                 JSONObject jemail = new JSONObject();
                 try{

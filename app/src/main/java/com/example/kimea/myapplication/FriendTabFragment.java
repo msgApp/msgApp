@@ -87,7 +87,7 @@ public class FriendTabFragment extends Fragment {
             e.printStackTrace();
         }
         mSocket.emit("sendUser",data);
-        //mSocket.on("messageAfter",Lmsg);
+        mSocket.on("messageAfter",Lmsg);
         items = new ArrayList<>();
 
     }

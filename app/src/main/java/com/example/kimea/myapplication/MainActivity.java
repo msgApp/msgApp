@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  }catch (JSONException e){
                     e.printStackTrace();
                 }
-                String url = "http://122.40.72.34:1301/login";
+                String url = "http://122.40.72.34:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
                 db = helper.getWritableDatabase();

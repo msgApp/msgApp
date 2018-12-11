@@ -176,5 +176,6 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 
+
 }
 

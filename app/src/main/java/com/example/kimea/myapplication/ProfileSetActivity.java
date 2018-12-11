@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,6 +42,8 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
     String email;
+    SQLiteDatabase db;
+    DBHelper helper =  new DBHelper(ProfileSetActivity.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -69,6 +69,9 @@ public class ViewPagerActivity extends AppCompatActivity{
             e.printStackTrace();
         }
 
+        db = helper.getWritableDatabase();
+        db.execSQL("update divice set loginYn='y'");
+
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         if (pref.getString("email","").isEmpty()) {
@@ -154,5 +157,6 @@ public class ViewPagerActivity extends AppCompatActivity{
         //super.onBackPressed();
         backPressCloseHandler.onBackPressed();
     }
+
 
 }

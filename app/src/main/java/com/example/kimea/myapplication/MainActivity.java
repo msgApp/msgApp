@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }catch (Exception e){
             db = helper.getWritableDatabase();
-            db.execSQL("create table divice(user text,token text,msgToken text);");
+            db.execSQL("create table divice(user text,token text,msgToken text,loginYn text Default 'n');");
 
         }
 
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  }catch (JSONException e){
                     e.printStackTrace();
                 }
-                String url = "http://122.40.72.34:1300/login";
+                String url = "http://122.40.72.34:1301/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
                 db = helper.getWritableDatabase();
@@ -218,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             },500);
 
                             final Handler delayHandler3 = new Handler();
-                            Log.i("friendInsert","Insert");
                             delayHandler3.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -249,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     pList = (JSONObject) args[0];
-
-                    Log.i("pList", pList.toString());
+                    Log.e(TAG,"pList = "+pList);
+                    //Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String setUserNickname ="";
                     String setProfileText = "";
@@ -280,6 +279,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent2 = new Intent(MainActivity.this, ViewPagerActivity.class);
         intent2.putExtra("id", login_id.getText().toString());
         startActivity(intent2);
+        fList = new JSONArray();
+        pList = new JSONObject();
     }
     Handler handler = new Handler(Looper.getMainLooper());
 
@@ -298,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             for(int i = 0; i<fList.length(); i++){
                                 JSONObject jo = fList.getJSONObject(i);
                                 JSONObject data = new JSONObject();
-                                Log.i("fListArray", jo.toString());
+                                //Log.i("fListArray", jo.toString());
                                 userList.add(fList.getJSONObject(i).getString("f_email"));
                                 //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
                                 data.put("u_email",userList.get(i).toString());
@@ -369,12 +370,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         values.put("friendnick", nick);
         values.put("friendimg", img);
         values.put("friendText", text);
-        db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-        go++;
-        if(listenCount==cCount){
-            goIntent();
-        }else{
-            cCount++;
+        String query2 = "select loginYn from divice";
+        Cursor cur3 = db.rawQuery(query2, null);
+        String Yn="";
+        if(cur3.moveToFirst()){
+            Yn = cur3.getString(0);
+        }
+        if(Yn.equals("n")){
+            db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+
+             if(listenCount==cCount){
+                goIntent();
+             }else{
+                cCount++;
+             }
         }
         /*String query2 = "select friendemail from friend";
         Cursor cur3 = db.rawQuery(query2, null);
@@ -407,11 +416,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.i("SaveCharInsert","insert");
                 }
             }
-            *//*
-        }*/
+            */
+        }
 
          // db 객체를 얻어온다. 쓰기 가능
-    }
+
     public void insert(String token) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();

@@ -10,11 +10,13 @@
         android:id="@+id/userImg"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         app:civ_border_color="#D1D1D1"
         app:civ_border_width="0.1px"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,14 +35,17 @@
 
     <TextView
         android:id="@+id/profileText"
-        android:layout_width="178dp"
+        android:layout_width="156dp"
         android:layout_height="41dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:gravity="right|center"
-        android:text="asd"
         android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/userNickname"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -51,7 +56,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

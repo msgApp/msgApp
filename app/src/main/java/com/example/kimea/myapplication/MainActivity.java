@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int go=0;
     private Socket mSocket;
     ArrayList<GetFriendListItem2> mainList;
+    String fEmail,fNickName,fImg,fText;
+    int listenCount = 0;
+    int cCount = 0;
 
     @Override
     protected void onResume() {
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                  }catch (JSONException e){
                     e.printStackTrace();
                 }
-                String url = "http://192.168.0.71:1300/login";
+                String url = "http://122.40.72.34:1300/login";
                 ServerTask serverTask = new ServerTask(url,loginData.toString());
                 serverTask.execute();
                 db = helper.getWritableDatabase();
@@ -203,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }catch (Exception e){
                                 mSocket.on("friendList", listener);
                             }
-
+                            /*
                             final Handler delayHandler2 = new Handler();
                             delayHandler2.postDelayed(new Runnable() {
                                 @Override
@@ -215,12 +218,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             },500);
 
                             final Handler delayHandler3 = new Handler();
+                            Log.i("friendInsert","Insert");
                             delayHandler3.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     friendInsert();
                                 }
-                            },2000);
+                            },2000);*/
 
                         }else{
                             Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     pList = (JSONObject) args[0];
 
-                    //Log.i("pList", pList.toString());
+                    Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String setUserNickname ="";
                     String setProfileText = "";
@@ -262,8 +266,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-
-                    makeList(setUserImg, setUserNickname, setProfileText, setEmail);
+                    fEmail = setEmail;
+                    fNickName = setUserNickname;
+                    fText = setProfileText;
+                    fImg = setUserImg;
+                    friendInsert();
+                    //makeList(setUserImg, setUserNickname, setProfileText, setEmail);
                 }
             });
         }
@@ -284,12 +292,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     fList = (JSONArray) args[0];
                     userList = new ArrayList();
+                    listenCount = (fList.length()-1);
                     if(countItem < fList.length()){
                         try {
                             for(int i = 0; i<fList.length(); i++){
                                 JSONObject jo = fList.getJSONObject(i);
                                 JSONObject data = new JSONObject();
-                                //Log.i("fListArray", jo.toString());
+                                Log.i("fListArray", jo.toString());
                                 userList.add(fList.getJSONObject(i).getString("f_email"));
                                 //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
                                 data.put("u_email",userList.get(i).toString());
@@ -349,31 +358,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void friendInsert(){
         db = helper.getWritableDatabase();
-        String query2 = "select friendemail from friend";
+        ContentValues values = new ContentValues();
+        String email = fEmail;
+        String nick = fNickName;
+        String img = fImg;
+        String text = fText;
+        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+        // 데이터의 삽입은 put을 이용한다.
+        values.put("friendemail", email);
+        values.put("friendnick", nick);
+        values.put("friendimg", img);
+        values.put("friendText", text);
+        db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        go++;
+        if(listenCount==cCount){
+            goIntent();
+        }else{
+            cCount++;
+        }
+        /*String query2 = "select friendemail from friend";
         Cursor cur3 = db.rawQuery(query2, null);
         if (!cur3.moveToFirst()){
             if(mainList.size()!=0) {
                 for (int i = 0; i < mainList.size(); i++) {
-                    ContentValues values = new ContentValues();
-                    String email = mainList.get(i).getEmail();
-                    String nick = mainList.get(i).getUserNickname();
-                    String img = mainList.get(i).getUserImgI();
-                    String text = mainList.get(i).getProfileText();
-                    // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-                    // 데이터의 삽입은 put을 이용한다.
-                    values.put("friendemail", email);
-                    values.put("friendnick", nick);
-                    values.put("friendimg", img);
-                    values.put("friendText", text);
-                    db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-                    go++;
-                    if(go==countItem){
-                        goIntent();
-                    }
+
                 }
             }
         }else{
-            /*
+            *//*
             Log.e(TAG,"asdasdasda");
             while(cur3.moveToNext()){
                 Log.e(TAG,"qwerqwerqewrqwe");
@@ -395,8 +407,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.i("SaveCharInsert","insert");
                 }
             }
-            */
-        }
+            *//*
+        }*/
 
          // db 객체를 얻어온다. 쓰기 가능
     }

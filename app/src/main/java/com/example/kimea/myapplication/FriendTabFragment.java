@@ -44,10 +44,7 @@ public class FriendTabFragment extends Fragment {
     private LinearLayoutManager fLayoutManager;
     private FriendListAdapter adapter;
     private ArrayList<GetFriendListItem> items;
-    JSONArray msg;
-    JSONArray fList;
-    JSONObject pList;
-    ArrayList userList;
+
     String ids,tableResult,intentPosition;
     int ps;
     private Animation fab_open, fab_close;
@@ -58,15 +55,21 @@ public class FriendTabFragment extends Fragment {
     int position = -1;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-
+        Log.e(TAG,"create");
         //내아이디
         helper =  new DBHelper(getActivity().getApplicationContext());
         ids = getActivity().getIntent().getStringExtra("id");
-        SQLiteDatabase database = helper.getReadableDatabase();
+        SQLiteDatabase database = helper.getWritableDatabase();
         String sql = "select * from divice";
         Cursor cursor2 = database.rawQuery(sql, null);
         String msgToken="";
@@ -86,8 +89,7 @@ public class FriendTabFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("sendUser",data);
-        mSocket.on("messageAfter",Lmsg);
+
         items = new ArrayList<>();
 
     }
@@ -168,96 +170,13 @@ public class FriendTabFragment extends Fragment {
         return view;
     }
 
-    private Emitter.Listener Lmsg = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    msg = (JSONArray)args[0];
-                    String getMSg="";
-                    String nickName="";
-                    String userId="";
-                    String room = "";
-                    String roomNick = "";
 
-                    try {
-                        for(int i=0;i<msg.length();i++){
-
-                            String get = msg.getString(i);
-                            //JSONObject gets = msg.getJSONObject(i);
-                            JSONObject gets = new JSONObject(get);
-
-                            getMSg = gets.getString("message");
-                            nickName = gets.getString("nickName");
-                            userId = gets.getString("email");
-                            room = gets.getString("room");
-                            roomNick = gets.getString("roomNickName");
-
-                            //insert(userId,getMSg,nickName,room,roomNick);
-
-                            ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
-
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-
-                }
-            });
-        }
-    };
     public void addProfile(String setUserImg,String setUserNickname,String setProfileText, String setEmail){
         items.add(new GetFriendListItem(setUserImg,setUserNickname,setProfileText,setEmail));
         adapter.notifyDataSetChanged ();
     }
-    public void insert(String id,String text,String nickName,String room, String roomNickName) {
-        String[] array = room.split("@");
-        String ss = array[1];
-        String[] ary2 = ss.split("\\.");
-        // String result = array[0]+array2[0]+array2[1];
-        // Log.i("result3",ary2[0]);
-        tableResult = array[0]+ary2[0]+ary2[1];
+            // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
 
-        try{
-            db = helper.getReadableDatabase();
-            String query = "select * from '"+tableResult+"'";
-            Cursor c = db.rawQuery(query, null);
-            c.moveToFirst();
-            String checkTB = c.getString(0);
-        }catch(Exception e){
-            db = helper.getWritableDatabase();
-            db.execSQL("create table '"+tableResult+"'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,room text, type TEXT);");
-        }
-        db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
-        ContentValues values = new ContentValues();
-        // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-        // 데이터의 삽입은 put을 이용한다.
-        values.put("ChatId", id);
-        values.put("ChatNickName",nickName);
-        values.put("ChatText",text);
-        values.put("ChatRoomNickName", roomNickName);
-        values.put("type","0");
-        db.insert("'"+tableResult+"'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-
-        try{
-            db = helper.getReadableDatabase();
-            String query = "select userId from oneUser where userId = '"+room+"';";
-            Cursor cursor = db.rawQuery(query,null);
-            cursor.moveToFirst();
-            String result = cursor.getString(0);
-
-        }catch (Exception e){
-            ContentValues values1 = new ContentValues();
-            values1.put("userId",room);
-            db.insert("oneUser",null,values1);
-        }
-
-
-        Log.i("SaveCharInsert","insert");
-        // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
-
-    }
     public void removed (int position){
         items.remove(position);
         adapter.notifyItemRemoved(position);

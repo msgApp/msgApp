@@ -91,21 +91,21 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
 
 
         if(email!=null){
-            SharedPreferences pref = getSharedPreferences(chatRoom,MODE_PRIVATE);
+            SharedPreferences pref = getSharedPreferences("pref",MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
-            String badge_check = pref.getString("badge_count","");
+            String badge_check = pref.getString(chatRoom,"");
             if(badge_check.isEmpty()){
-                editor.putString("badge_count","0");
+                editor.putString(chatRoom,"0");
                 editor.commit();
             }
             //현재 상대방의 채팅방에 들어와있으면 메세지를 받지 않음
             if((email.equals(mineCheck)&&!getEmail.getString("email","").equals(chatRoom))||(email.equals(mineCheck)&&getEmail.getString("email","").equals(chatRoom))){
             }else if(!getEmail.getString("email","").equals(chatRoom)){
-                SharedPreferences preferences = getSharedPreferences(chatRoom,MODE_PRIVATE);
-                int badge_int = Integer.parseInt(preferences.getString("badge_count",""));
+                SharedPreferences preferences = getSharedPreferences("pref",MODE_PRIVATE);
+                int badge_int = Integer.parseInt(preferences.getString(chatRoom,""));
                 badge_int++;
                 SharedPreferences.Editor editor3 = preferences.edit();
-                editor3.putString("badge_count",String.valueOf(badge_int));
+                editor3.putString(chatRoom,String.valueOf(badge_int));
                 editor3.commit();
                 sendNotification(msgBody, msgTitle,email, roomNick, intentRoomName);
                 Log.e(TAG,"activity"+ac.get(0).topActivity.getClassName());

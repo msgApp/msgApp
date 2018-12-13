@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView search_pw, search_id, register, login_id, login_pw, tx_view;
     JSONArray fList;
     JSONObject pList;
+    JSONArray msg;
     ArrayList userList;
     String result, result2, userId, msgToken="";
     int countItem = 0;
@@ -64,27 +66,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         mainList = new ArrayList<>();
+        Log.e(TAG,"CREATEMSGARRAY " + msg);
         try {
-
-            SQLiteDatabase database = helper.getReadableDatabase();
+            db = helper.getWritableDatabase();
             String sql = "select user from divice";
-            Cursor cursor = database.rawQuery(sql,null);
-            boolean tf = cursor.moveToFirst();
-
-            if(String.valueOf(tf).equals("true")){
-
-                cursor = database.rawQuery(sql,null);
-                while(cursor.moveToNext()){
-                    userId = cursor.getString(0);
-                    //Log.i("idssss",userId);
-                }
-
-            }else if(String.valueOf(tf).equals("false")){
-                userId = "";
-
+            Cursor cursor = db.rawQuery(sql,null);
+            if(cursor.moveToFirst()){
+                Log.e(TAG,"DIVICESEARCHsuccess");
+                Log.e(TAG,"DIVICESEARCHsuccess "+cursor.getString(0));
+                userId = cursor.getString(0);
+            }else{
+                Log.e(TAG,"DIVICESEARCHfailed");
+                userId = null;
             }
-
-            if (userId.equals("")||userId=="") {
+            if (userId==null) {
 
             }else{
                 mSocket.connect();
@@ -92,10 +87,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent2.putExtra("id", userId);
                 startActivity(intent2);
             }
-
         }catch (Exception e){
+            Log.e(TAG," "+e);
             db = helper.getWritableDatabase();
             db.execSQL("create table divice(user text,token text,msgToken text,loginyn text Default 'n');");
+            Log.e(TAG,"DIVICETABLECREATE");
 
         }
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -135,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try{
                     loginData.put("login_id",login_id.getText().toString());
                     loginData.put("login_pw",login_pw.getText().toString());
-                 }catch (JSONException e){
+                }catch (JSONException e){
                     e.printStackTrace();
                 }
                 String url = "http://122.40.72.34:1300/login";
@@ -148,59 +144,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 delayHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
                         try{
-                        if(!result2.equals("false")){
-                            //insert(result2);
-                            mSocket.connect();
+                            if(!result2.equals("false")){
+                                //insert(result2);
 
-                            final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
-                            db = helper.getWritableDatabase();
-                            db.execSQL(DATABASE_TABLE_ONEUSER);
+                                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(MainActivity.this,
+                                        new OnSuccessListener<InstanceIdResult>() {
+                                            @Override
+                                            public void onSuccess(InstanceIdResult instanceIdResult) {
+                                                getToken(instanceIdResult.getToken());
+                                                SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = pref.edit();
+                                                editor.putString("msgToken", instanceIdResult.getToken()).apply();
+                                                Log.e(TAG, pref.getString("msgToken",""));
+                                                Log.e(TAG,"FIREBASETOKEN = "+instanceIdResult.getToken());
+                                                JSONObject data2 = new JSONObject();
+                                                try {
+                                                    data2.put("email", login_id.getText().toString());
+                                                    data2.put("divice", instanceIdResult.getToken());
+                                                }catch (Exception e){
 
-                            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = pref.edit();
-                            editor.putString("userId", login_id.getText().toString());
-                            editor.commit();
+                                                }
+                                                mSocket.emit("sendFriend",data2);
+                                                ContentValues contentValues = new ContentValues();
+                                                contentValues.put("user",login_id.getText().toString());
+                                                String newToken = instanceIdResult.getToken();
+                                                msgToken = instanceIdResult.getToken();
+                                                contentValues.put("msgToken",newToken);
+                                                Log.e(TAG,"login_id = "+login_id.getText().toString()+" newToken = "+newToken);
+                                                db.insert("divice","null",contentValues);
+                                                Log.e(TAG,"DBINSERT");
 
-                            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(MainActivity.this,
-                                    new OnSuccessListener<InstanceIdResult>() {
-                                        @Override
-                                        public void onSuccess(InstanceIdResult instanceIdResult) {
-                                            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = pref.edit();
-                                            editor.putString("msgToken", instanceIdResult.getToken());
-                                            editor.commit();
-                                            ContentValues contentValues = new ContentValues();
-                                            contentValues.put("user",login_id.getText().toString());
-                                            String newToken = instanceIdResult.getToken();
-                                            msgToken = instanceIdResult.getToken();
-                                            contentValues.put("msgToken",msgToken);
-                                            db.insert("divice","null",contentValues);
-                                        }
-                                    });
-                            //contentValues.put("msgToken",msgToken);
-                            FirebaseMessaging.getInstance().subscribeToTopic("ALL");
-                            SharedPreferences pref2 = getSharedPreferences("pref",MODE_PRIVATE);
-                            String userid =  pref2.getString("userId",null);
-                            String msgT =  pref2.getString("msgToken",null);
-                            JSONObject data2 = new JSONObject();
-                            try {
-                                data2.put("email", userid);
-                                data2.put("divice", msgT);
-                            }catch (Exception e){
+                                            }
+                                        });
+                                mSocket.connect();
 
-                            }
-                            String listnerCheck = "";
-                            mSocket.emit("sendUser",data2);
-                            String first = getIntent().getStringExtra("first");
-                            try {
-                                if (first.isEmpty()) {
+                                final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
+                                db = helper.getWritableDatabase();
+                                db.execSQL(DATABASE_TABLE_ONEUSER);
+
+                                SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("userId", login_id.getText().toString());
+                                editor.commit();
+
+
+                                //contentValues.put("msgToken",msgToken);
+                                FirebaseMessaging.getInstance().subscribeToTopic("ALL");
+
+                                SharedPreferences pref2 = getSharedPreferences("pref",MODE_PRIVATE);
+                                String userid =  pref2.getString("userId",null);
+                                msgToken =  pref2.getString("msgToken",null);
+
+                                Log.e(TAG,"TOKEN = "+msgToken);
+                                JSONObject data2 = new JSONObject();
+                                try {
+                                    data2.put("email", userid);
+                                    data2.put("divice", msgToken);
+                                }catch (Exception e){
 
                                 }
-                            }catch (Exception e){
-                                mSocket.on("friendList", listener);
-                            }
+                                String listnerCheck = "";
+
+                               // mSocket.emit("sendUser",data2);
+                                Log.e(TAG,"friend");
+                                mSocket.on("messageAfter", Lmsg);
+                                String first = getIntent().getStringExtra("first");
+                                try {
+                                    if (first.isEmpty()) {
+
+                                    }
+                                }catch (Exception e){
+                                    mSocket.on("friendList", listener);
+                                }
                             /*
                             final Handler delayHandler2 = new Handler();
                             delayHandler2.postDelayed(new Runnable() {
@@ -220,10 +236,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             },2000);*/
 
-                        }else{
-                            Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
-                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        }
+                            }else{
+                                Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
+                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                            }
                         }catch (Exception e){
                             Toast.makeText(MainActivity.this, "서버에 문제가 있습니다", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
@@ -236,6 +253,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+    public void getToken(String token){
+        Log.e(TAG,"GETTOKEN = "+token);
+    }
     private Emitter.Listener listener2 = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -243,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     pList = (JSONObject) args[0];
-                    Log.e(TAG,"pList = "+pList);
                     //Log.i("pList", pList.toString());
                     String setUserImg ="";
                     String setUserNickname ="";
@@ -274,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent2 = new Intent(MainActivity.this, ViewPagerActivity.class);
         intent2.putExtra("id", login_id.getText().toString());
         startActivity(intent2);
+        Log.e(TAG,"goIntent");
         fList = new JSONArray();
         pList = new JSONObject();
     }
@@ -282,11 +302,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener listener = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-           handler.post(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
 
                     fList = (JSONArray) args[0];
+                    Log.e(TAG,"FList" + fList);
                     userList = new ArrayList();
                     listenCount = (fList.length()-1);
                     if(countItem < fList.length()){
@@ -343,19 +364,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(s);
             result = s;
             result2 = result.substring(2,result.length()-2);
+            Log.e(TAG, "RESULT = "+result2);
 
             //insert
 
         }
     }
-    public void makeList(String img, String nick, String text, String email){
-       mainList.add(new GetFriendListItem2(img,nick,text,email));
-
-    }
     public void friendInsert(){
         db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         String email = fEmail;
+        Log.e(TAG,"CHECKID = "+email);
         String nick = fNickName;
         String img = fImg;
         String text = fText;
@@ -369,17 +388,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Cursor cur3 = db.rawQuery(query2, null);
         String Yn="";
         if(cur3.moveToFirst()){
+            Log.e(TAG,"YN = "+ cur3.getString(0));
             Yn = cur3.getString(0);
         }
-        if(Yn.equals("n")){
+        if (Yn.equals("n")) {
             db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-
-             if(listenCount==cCount){
+            Log.e(TAG, "LISTC = " + listenCount + " cCount " + countItem);
+            if (listenCount == cCount) {
                 goIntent();
-             }else{
+            } else {
                 cCount++;
-             }
+            }
         }
+
+
+
+
         /*String query2 = "select friendemail from friend";
         Cursor cur3 = db.rawQuery(query2, null);
         if (!cur3.moveToFirst()){
@@ -412,9 +436,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             */
-        }
+    }
 
-         // db 객체를 얻어온다. 쓰기 가능
+    // db 객체를 얻어온다. 쓰기 가능
 
     public void insert(String token) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
@@ -449,10 +473,96 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //mSocket.disconnect();
 
-       // Intent intent = new Intent(getApplicationContext(),SocketService.class); // 이동할 컴포넌트
+        // Intent intent = new Intent(getApplicationContext(),SocketService.class); // 이동할 컴포넌트
 
-       // stopService(intent);
+        // stopService(intent);
     }
+    private Emitter.Listener Lmsg = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    if (go==0) {
+                        msg = (JSONArray) args[0];
+                        go++;
+                        Log.e(TAG, "LMSGLISTENER = " + msg);
+                        String getMSg = "";
+                        String nickName = "";
+                        String userId = "";
+                        String room = "";
+                        String roomNick = "";
+                        try {
+                            for (int i = 0; i < msg.length(); i++) {
+                                String get = msg.getString(i);
+                                //JSONObject gets = msg.getJSONObject(i);
+                                JSONObject gets = new JSONObject(get);
+                                getMSg = gets.getString("message");
+                                nickName = gets.getString("nickName");
+                                userId = gets.getString("email");
+                                room = gets.getString("room");
+                                roomNick = gets.getString("roomNickName");
+                                Log.e(TAG, "friendTab = " + getMSg + " " + nickName + " " + room);
+                                msgInsert(userId, getMSg, nickName, room, roomNick);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    };
+    public void msgInsert(String id,String text,String nickName,String room, String roomNickName) throws Exception {
+        db.close();
+        String[] array = room.split("@");
+        String ss = array[1];
+        String[] ary2 = ss.split("\\.");
+        // String result = array[0]+array2[0]+array2[1];
+        // Log.i("result3",ary2[0]);
+        String tableResult = array[0] + ary2[0] + ary2[1];
 
+        try {
+            db = helper.getReadableDatabase();
+            String query = "select * from '" + tableResult + "'";
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+
+        } catch (Exception e) {
+            db = helper.getWritableDatabase();
+            db.execSQL("create table '" + tableResult + "'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,room text, type TEXT);");
+            Log.e(TAG,"CREATETABLERESULT");
+        }
+        ContentValues values = new ContentValues();
+        values.put("ChatId", id);
+        values.put("ChatNickName", nickName);
+        values.put("ChatText", text);
+        values.put("ChatRoomNickName", roomNickName);
+        values.put("type", "0");
+        db = helper.getWritableDatabase();
+        db.insert("'" + tableResult + "'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.i("SaveCharInsert", "insertㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+        SharedPreferences preferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        int badge_int = Integer.parseInt(preferences.getString(room, "0"));
+        badge_int++;
+        SharedPreferences.Editor editor3 = preferences.edit();
+        editor3.putString(room, String.valueOf(badge_int));
+        editor3.apply();
+        Log.e(TAG, "ㅡㅡㅡbadgeInsertㅡㅡㅡ = " + badge_int);
+        try {
+            db = helper.getWritableDatabase();
+            String query = "select userId from oneUser where userId = '" + room + "';";
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToFirst();
+            String result = cursor.getString(0);
+            Log.e(TAG,"TRY");
+        } catch (Exception e) {
+            ContentValues values1 = new ContentValues();
+            values1.put("userId", room);
+            db.insert("oneUser", null, values1);
+            Log.e(TAG,"CATCH");
+        }
+
+    }
 
 }

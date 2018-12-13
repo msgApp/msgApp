@@ -101,8 +101,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         });
 
         try {
-            SharedPreferences emailBadge = getSharedPreferences(roomname, MODE_PRIVATE);
-            String mailBadge = emailBadge.getString("badge_count", "0");
+            SharedPreferences emailBadge = getSharedPreferences("pref", MODE_PRIVATE);
+            String mailBadge = emailBadge.getString(roomname, "0");
             int badgeInt = Integer.valueOf(mailBadge);
             /*
             //TODO
@@ -120,13 +120,13 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             editor.putInt("badge", badgeResult);
             editor.commit();
             SharedPreferences.Editor editor2 = emailBadge.edit();
-            editor2.putString("badge_count", "0");
+            editor2.putString(roomname, "0");
             editor2.commit();
             set_badge_alarm(badgeResult);
         }catch (Exception e){
             e.printStackTrace();
         }
-//        Log.i("상대방 아이디",email);
+//        Log.i("상대방 아이디",email);.
         String[] array = roomname.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");

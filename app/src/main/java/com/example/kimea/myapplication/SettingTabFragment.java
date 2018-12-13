@@ -61,8 +61,6 @@ public class SettingTabFragment extends Fragment{
             e.printStackTrace();
         }
         mSocket.emit("sendMyProfile",data2);
-
-
         mSocket.on("sendMyProfile",profile2);
     }
     @Nullable
@@ -105,8 +103,15 @@ public class SettingTabFragment extends Fragment{
 
                     Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                     //intent.putExtra("drop", "drop");
-                    startActivity(intent);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    SharedPreferences pref = getActivity().getSharedPreferences("pref",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.clear().apply();
+                    db.close();
+                    mSocket.disconnect();
+                    mSocket = null;
                     getActivity().finish();
+                    startActivity(intent);
                 }catch (Exception e){
                 }
             }

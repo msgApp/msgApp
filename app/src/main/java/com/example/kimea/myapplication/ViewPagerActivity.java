@@ -83,6 +83,10 @@ public class ViewPagerActivity extends AppCompatActivity{
 
         }
 
+        ContentValues values = new ContentValues();
+        values.put("loginyn", "y");
+        db.insert("divice", null, values);
+
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         if (pref.getString("email","").isEmpty()) {

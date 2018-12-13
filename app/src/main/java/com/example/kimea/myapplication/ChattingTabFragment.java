@@ -90,8 +90,8 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
 
         cur = db.rawQuery(sql, null);
         while (cur.moveToNext()) {
-            SharedPreferences preferences = getActivity().getSharedPreferences(cur.getString(0), Context.MODE_PRIVATE);
-            String badge = preferences.getString("badge_count", "");
+            SharedPreferences preferences = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
+            String badge = preferences.getString(cur.getString(0), "");
             String s = cur.getString(0);
             String[] array = s.split("@");
             String ss = array[1];

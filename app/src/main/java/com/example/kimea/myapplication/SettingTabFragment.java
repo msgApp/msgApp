@@ -108,8 +108,8 @@ public class SettingTabFragment extends Fragment{
                     SharedPreferences.Editor editor = pref.edit();
                     editor.clear().apply();
                     db.close();
-                    mSocket.disconnect();
-                    mSocket = null;
+                    //mSocket.disconnect();
+                   // mSocket = null;
                     getActivity().finish();
                     startActivity(intent);
                 }catch (Exception e){

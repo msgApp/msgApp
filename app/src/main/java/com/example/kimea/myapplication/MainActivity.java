@@ -66,17 +66,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         mainList = new ArrayList<>();
-        Log.e(TAG,"CREATEMSGARRAY " + msg);
+     //   Log.e(TAG,"CREATEMSGARRAY " + msg);
         try {
             db = helper.getWritableDatabase();
             String sql = "select user from divice";
             Cursor cursor = db.rawQuery(sql,null);
             if(cursor.moveToFirst()){
-                Log.e(TAG,"DIVICESEARCHsuccess");
-                Log.e(TAG,"DIVICESEARCHsuccess "+cursor.getString(0));
+              //  Log.e(TAG,"DIVICESEARCHsuccess");
+              //  Log.e(TAG,"DIVICESEARCHsuccess "+cursor.getString(0));
                 userId = cursor.getString(0);
             }else{
-                Log.e(TAG,"DIVICESEARCHfailed");
+               // Log.e(TAG,"DIVICESEARCHfailed");
                 userId = null;
             }
             if (userId==null) {
@@ -88,10 +88,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent2);
             }
         }catch (Exception e){
-            Log.e(TAG," "+e);
+            //Log.e(TAG," "+e);
             db = helper.getWritableDatabase();
             db.execSQL("create table divice(user text,token text,msgToken text,loginyn text Default 'n');");
-            Log.e(TAG,"DIVICETABLECREATE");
+           // Log.e(TAG,"DIVICETABLECREATE");
 
         }
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -187,8 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("userId", login_id.getText().toString());
                                 editor.commit();
-
-
                                 //contentValues.put("msgToken",msgToken);
                                 FirebaseMessaging.getInstance().subscribeToTopic("ALL");
 
@@ -196,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 String userid =  pref2.getString("userId",null);
                                 msgToken =  pref2.getString("msgToken",null);
 
-                                Log.e(TAG,"TOKEN = "+msgToken);
+                           //     Log.e(TAG,"TOKEN = "+msgToken);
                                 JSONObject data2 = new JSONObject();
                                 try {
                                     data2.put("email", userid);
@@ -206,8 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                                 String listnerCheck = "";
 
-                               // mSocket.emit("sendUser",data2);
-                                Log.e(TAG,"friend");
+                           //     Log.e(TAG,"friend");
                                 mSocket.on("messageAfter", Lmsg);
                                 String first = getIntent().getStringExtra("first");
                                 try {
@@ -217,29 +214,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }catch (Exception e){
                                     mSocket.on("friendList", listener);
                                 }
-                            /*
-                            final Handler delayHandler2 = new Handler();
-                            delayHandler2.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(countItem==0){
-                                        goIntent();
-                                    }
-                                }
-                            },500);
-
-                            final Handler delayHandler3 = new Handler();
-                            delayHandler3.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    friendInsert();
-                                }
-                            },2000);*/
-
                             }else{
                                 Toast.makeText(MainActivity.this, "로그인 실패!", Toast.LENGTH_SHORT).show();
                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                             }
                         }catch (Exception e){
                             Toast.makeText(MainActivity.this, "서버에 문제가 있습니다", Toast.LENGTH_SHORT).show();
@@ -247,11 +224,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }, 500);
-
                 break;
-
         }
-
     }
     public void getToken(String token){
         Log.e(TAG,"GETTOKEN = "+token);
@@ -364,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(s);
             result = s;
             result2 = result.substring(2,result.length()-2);
-            Log.e(TAG, "RESULT = "+result2);
+          //  Log.e(TAG, "RESULT = "+result2);
 
             //insert
 
@@ -387,6 +361,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String query2 = "select loginyn from divice";
         Cursor cur3 = db.rawQuery(query2, null);
         String Yn="";
+        String query3 = "select user,loginyn from divice";
+        Cursor cur = db.rawQuery(query3, null);
+        while (cur.moveToFirst()){
+            Log.e(TAG,"SelectDivice = "+cur.getString(0)+"/"+cur.getString(1));
+            break;
+        }
+
         if(cur3.moveToFirst()){
             Log.e(TAG,"YN = "+ cur3.getString(0));
             Yn = cur3.getString(0);
@@ -401,41 +382,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-
-
-
-        /*String query2 = "select friendemail from friend";
-        Cursor cur3 = db.rawQuery(query2, null);
-        if (!cur3.moveToFirst()){
-            if(mainList.size()!=0) {
-                for (int i = 0; i < mainList.size(); i++) {
-
-                }
-            }
-        }else{
-            *//*
-            Log.e(TAG,"asdasdasda");
-            while(cur3.moveToNext()){
-                Log.e(TAG,"qwerqwerqewrqwe");
-
-                String query22 = "select friendemail from friend";
-                Cursor cur33 = db.rawQuery(query22, null);
-                Log.e(TAG,cur3.getString(0));
-                if (cur33.getString(0).equals(email)){
-
-                }else{
-                    ContentValues values = new ContentValues();
-                    // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
-                    // 데이터의 삽입은 put을 이용한다.
-                    values.put("friendemail", email);
-                    values.put("friendnick",nick);
-                    values.put("friendimg",img);
-                    values.put("friendText", text);
-                    db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
-                    Log.i("SaveCharInsert","insert");
-                }
-            }
-            */
     }
 
     // db 객체를 얻어온다. 쓰기 가능
@@ -471,11 +417,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSocket.disconnect();
         super.onDestroy();
 
-        //mSocket.disconnect();
-
-        // Intent intent = new Intent(getApplicationContext(),SocketService.class); // 이동할 컴포넌트
-
-        // stopService(intent);
     }
     private Emitter.Listener Lmsg = new Emitter.Listener() {
         @Override
@@ -502,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 userId = gets.getString("email");
                                 room = gets.getString("room");
                                 roomNick = gets.getString("roomNickName");
-                                Log.e(TAG, "friendTab = " + getMSg + " " + nickName + " " + room);
+                          //      Log.e(TAG, "friendTab = " + getMSg + " " + nickName + " " + room);
                                 msgInsert(userId, getMSg, nickName, room, roomNick);
                             }
                         } catch (Exception e) {
@@ -518,8 +459,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String[] array = room.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
-        // String result = array[0]+array2[0]+array2[1];
-        // Log.i("result3",ary2[0]);
         String tableResult = array[0] + ary2[0] + ary2[1];
 
         try {
@@ -560,7 +499,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ContentValues values1 = new ContentValues();
             values1.put("userId", room);
             db.insert("oneUser", null, values1);
-            Log.e(TAG,"CATCH");
+           Log.e(TAG,"CATCH");
         }
 
     }

@@ -96,6 +96,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 mSocket.emit("sendProfile", data2);
                 Toast.makeText(getApplicationContext(),"친구 추가 되었습니다!",Toast.LENGTH_SHORT).show();
                 insert();
+                Log.e(TAG,"INSERT");
                 ((ViewPagerActivity)ViewPagerActivity.CONTEXT).reset();
                 this.finish();
                 break;
@@ -108,7 +109,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void run() {
                     friend = (JSONArray) args[0];
-                  //  Log.i("list",friend.toString());
+                    Log.e(TAG,"list "+friend.toString());
                     String friendName="";
                     String resultText;
                     try {
@@ -162,6 +163,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
 
     }
     public void insert() {
+
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         values.put("friendemail", dbemail);

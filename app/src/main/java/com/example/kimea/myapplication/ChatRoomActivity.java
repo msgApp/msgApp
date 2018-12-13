@@ -194,9 +194,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 SQLiteDatabase database = helper.getReadableDatabase();
                 String sql = "select * from divice";
                 Cursor cursor2 = database.rawQuery(sql, null);
-                while(cursor2.moveToNext()){
-                    myEmail = cursor2.getString(0);
-                }
+                cursor2.moveToNext();
+                myEmail = cursor2.getString(0);
+
                 Log.i("ChatRoomAct-myEmail", myEmail);
 
                 JSONObject msgData = new JSONObject();

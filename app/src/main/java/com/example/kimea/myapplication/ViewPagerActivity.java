@@ -68,24 +68,21 @@ public class ViewPagerActivity extends AppCompatActivity{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         try{
 
-
         db = helper.getWritableDatabase();
-        String query22 = "select loginyn from divice";
+        String query22 = "select user from divice";
         Cursor cur33 = db.rawQuery(query22, null);
-        if (cur33.moveToFirst()){
-            while(cur33.moveToNext()){
-                Log.e(TAG,"LoginCur ="+cur33.getString(0));
-            }
-        }
+        cur33.moveToNext();
+        String id = cur33.getString(0);
+        Log.e(TAG,"LoginCur ="+cur33.getString(0));
+        db.execSQL("update divice set loginyn = 'y' where user = '"+id+"'");
         }catch (Exception e){
 
         }
 
-        ContentValues values = new ContentValues();
-        values.put("loginyn", "y");
-        db.insert("divice", null, values);
+
 
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();

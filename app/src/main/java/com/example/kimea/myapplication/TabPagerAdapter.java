@@ -11,10 +11,14 @@ import java.util.ArrayList;
 public class TabPagerAdapter extends FragmentStatePagerAdapter {
     private int tabCount;
     //private ArrayList<GetChatRoomItem> complimentList;
+    private TabPagerAdapter.OnSendPop mCallback;
+    public interface OnSendPop {
 
-    public TabPagerAdapter(FragmentManager fm, int tabCount) {
+    }
+    public TabPagerAdapter(FragmentManager fm, int tabCount, OnSendPop listner) {
         super(fm);
         this.tabCount = tabCount;
+        this.mCallback = listner;
     }
 
     @Override

@@ -37,13 +37,14 @@ import java.io.ByteArrayOutputStream;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-public class ViewPagerActivity extends AppCompatActivity{
+public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdapter.OnSendPop{
     private static final String TAG = "ViewPagerActivity";
     JSONObject data = new JSONObject();
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Socket mSocket;
     String ids;
+    String noti;
     TabPagerAdapter pagerAdapter;
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(ViewPagerActivity.this);
@@ -63,6 +64,15 @@ public class ViewPagerActivity extends AppCompatActivity{
 
         //mainActivity.finish();
         ids = getIntent().getStringExtra("id");
+        noti = getIntent().getStringExtra("noti");
+        Log.e(TAG,"VIEWNOTI = "+noti);
+        if (noti!=null){
+            Intent intent = new Intent(ViewPagerActivity.this,ChatRoomActivity.class);
+            intent.putExtra("email",getIntent().getStringExtra("email"));
+            intent.putExtra("roomname",getIntent().getStringExtra("roomname"));
+            intent.putExtra("roomNickName",getIntent().getStringExtra("roomNickName"));
+            startActivity(intent);
+        }
         try {
             data.put("email", ids);
         } catch (JSONException e) {
@@ -102,7 +112,7 @@ public class ViewPagerActivity extends AppCompatActivity{
         viewPager = findViewById(R.id.viewPager);
 
         //Creating adapter
-        pagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        pagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount(),this);
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         //Set TabSelectedListener

@@ -84,7 +84,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else{
                 mSocket.connect();
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
+                intent2.putExtra("noti",getIntent().getStringExtra("noti"));
+                intent2.putExtra("email",getIntent().getStringExtra("email"));
+                intent2.putExtra("roomNick",getIntent().getStringExtra("roomNick"));
+                intent2.putExtra("roomname", getIntent().getStringExtra("roomname"));
                 intent2.putExtra("id", userId);
+                Log.e(TAG,"NOTI = "+getIntent().getStringExtra("noti"));
                 startActivity(intent2);
             }
         }catch (Exception e){
@@ -155,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 getToken(instanceIdResult.getToken());
                                                 SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                                                 SharedPreferences.Editor editor = pref.edit();
-                                                editor.putString("msgToken", instanceIdResult.getToken()).apply();
+                                                editor.putString("msgToken", instanceIdResult.getToken());
+                                                editor.putString("myEmail", login_id.getText().toString());
+                                                editor.apply();
                                                 Log.e(TAG, pref.getString("msgToken",""));
                                                 Log.e(TAG,"FIREBASETOKEN = "+instanceIdResult.getToken());
                                                 JSONObject data2 = new JSONObject();

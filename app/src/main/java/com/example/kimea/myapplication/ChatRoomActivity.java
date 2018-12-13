@@ -47,29 +47,38 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
   //  DBHelper helper2 =  new DBHelper(ChatRoomActivity.this, "token.db",null,1);
 
     Cursor cur;
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
+        ChatApplication app = (ChatApplication) getApplication();
+        mSocket = app.getSocket();
         Intent intent = getIntent();
+        //!!상대 이메일 입니다!!
         email = intent.getStringExtra("email");
         roomname = intent.getStringExtra("roomname");
         roomNick = intent.getStringExtra("roomNickName");
+        JSONObject intoChat = new JSONObject();
+        try{
+            SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+
+            intoChat.put("myEmail", pref.getString("myEmail",null));
+        }catch (Exception e){
+
+        }
+        mSocket.emit("intoChat", intoChat);
+        Log.e(TAG, "ROOMDATA = "+email+" "+roomname+" "+ roomNick);
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor emaile = pref.edit();
         emaile.putString("email",roomname);
         emaile.commit();
         msgInput = findViewById(R.id.message_input);
-        ChatApplication app = (ChatApplication) getApplication();
-        mSocket = app.getSocket();
+
         sendBtn = findViewById(R.id.send_button);
         msgInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -181,7 +190,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
             }
         }
-
         mSocket.on("message",listener);
         scrollToBottom();
     }
@@ -206,6 +214,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     msgData.put("u_email",email);
                     msgData.put("my_email", myEmail);
                     msgData.put("room", roomname);
+                    Log.e(TAG,"RoomName = "+roomname);
                     if(email.equals(roomname)){
                         pushData.put("roomname", myEmail);
                     }else {
@@ -219,8 +228,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 addMsg("me",msgInput.getText().toString(),1);
-                mAdapter.notifyItemInserted(items.size());
-
+                //mAdapter.notifyItemInserted(items.size());
+                mAdapter.notifyDataSetChanged();
                 mSocket.emit("pushMsg",pushData);
                 mSocket.emit("sendMsg",msgData);
                 //채팅방 목록 테이블에 존재하는지 확인
@@ -255,8 +264,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_MYMSG).username(setName).userMessage(setMsg).build());
             //insert(setName,setMsg,"1");
         }
-        mAdapter.notifyItemInserted(items.size());
-
+       // mAdapter.notifyItemInserted(items.size());
+        mAdapter.notifyDataSetChanged();
         scrollToBottom();
     }
     private void scrollToBottom() {
@@ -370,12 +379,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         String rs2 = "";
 
         finish();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-
     }
     @Override
     protected void onStop() {

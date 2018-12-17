@@ -247,11 +247,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 String sql3 = "select userID from oneUser where userId = '"+roomname+"';"; //where userId = '"+email+"';";
                 cur = db.rawQuery(sql3,null);
                 if(cur.moveToFirst()) {
-                    for (; ; ) {
-                        if (!cur.moveToNext())
-                            break;
-                    }
+                    Log.e(TAG, "ChatRoomActivity break check "+roomname);
                 }else{
+                    Log.e(TAG, "ChatRoomActivity insert2 check "+roomname);
                     insert2(roomname);
                 }
                 insert("me","me",msgInput.getText().toString(),"1",roomNick);
@@ -334,6 +332,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
+        Log.e(TAG,"ChatRoomActivity-insert-roomNickName "+roomNickName);
 
         // 데이터의 삽입은 put을 이용한다.
         values.put("ChatId", id);

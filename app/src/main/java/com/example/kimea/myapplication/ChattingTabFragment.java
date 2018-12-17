@@ -151,8 +151,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
         chatItems = new ArrayList<>();
         adapter = new ChatRoomAdapter(chatItems, this);
         fRecyclerView.setAdapter(adapter);
-        int index = chatItems.size();
-        SharedPreferences pref = getActivity().getSharedPreferences("chatEmail", Context.MODE_PRIVATE);
+
 
 
         return view;

@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                 intent2.putExtra("noti",getIntent().getStringExtra("noti"));
                 intent2.putExtra("email",getIntent().getStringExtra("email"));
-                intent2.putExtra("roomNick",getIntent().getStringExtra("roomNick"));
+                intent2.putExtra("roomNickName",getIntent().getStringExtra("roomNickName"));
                 intent2.putExtra("roomname", getIntent().getStringExtra("roomname"));
                 intent2.putExtra("id", userId);
                 Log.e(TAG,"NOTI = "+getIntent().getStringExtra("noti"));

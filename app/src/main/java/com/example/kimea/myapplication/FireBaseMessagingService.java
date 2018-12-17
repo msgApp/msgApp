@@ -128,9 +128,10 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
     }
     private void sendNotification(String messageBody,String messageTitle, String intentEmail, String intentRoomNick, String intentRoomName) {
         Intent chatroomIntent = new Intent(this, MainActivity.class);
+        Log.e(TAG,"FCMSERVICE-rooomnickname-check "+intentRoomNick);
         chatroomIntent.putExtra("email",intentEmail);
         chatroomIntent.putExtra("roomname",intentRoomName);
-        chatroomIntent.putExtra("roomNick",intentRoomNick);
+        chatroomIntent.putExtra("roomNickName",intentRoomNick);
         chatroomIntent.putExtra("noti","1");
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, chatroomIntent, PendingIntent.FLAG_ONE_SHOT);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

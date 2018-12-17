@@ -14,6 +14,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -96,6 +98,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     sendBtn.setEnabled(false);
                 }else{
                     sendBtn.setEnabled(true);
+                }
+                if(s.length()>500){
+                    Toast.makeText(ChatRoomActivity.this,"500자 제한",Toast.LENGTH_SHORT).show();
+                    InputFilter[] FilterArray = new InputFilter[1];
+                    FilterArray[0] = new InputFilter.LengthFilter(500);
+                    msgInput.setFilters(FilterArray);
+                }else{
+
                 }
             }
 

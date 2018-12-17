@@ -14,6 +14,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -42,6 +44,7 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
     JSONObject data = new JSONObject();
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    JSONObject pList;
     private Socket mSocket;
     String ids;
     String noti;
@@ -60,8 +63,17 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
         mSocket = app.getSocket();
         mSocket.connect();
         CONTEXT = this;
+        helper =  new DBHelper(ViewPagerActivity.this);
         backPressCloseHandler = new BackPressCloseHandler(this);
-
+        db = helper.getWritableDatabase();
+        try {
+            String sql = "select * from myprofile";
+            Cursor cur = db.rawQuery(sql, null);
+            Log.e(TAG,"select");
+        }catch (Exception e){
+            db.execSQL("create table myprofile(myimg text, mytext text);");
+            Log.e(TAG,"create");
+        }
         //mainActivity.finish();
         ids = getIntent().getStringExtra("id");
         noti = getIntent().getStringExtra("noti");
@@ -91,8 +103,17 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
         }catch (Exception e){
 
         }
-
-
+        JSONObject data2 = new JSONObject();
+        SharedPreferences preferences = getSharedPreferences("pref",Context.MODE_PRIVATE);
+        String myEmail = preferences.getString("myEmail","");
+        Log.e(TAG,"myEmail = "+myEmail);
+        try {
+            data2.put("u_email", myEmail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("sendMyProfile",data2);
+        mSocket.on("sendMyProfile",profile2);
 
         SharedPreferences pref = getSharedPreferences("chatEmail",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -179,6 +200,44 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
         //super.onBackPressed();
         backPressCloseHandler.onBackPressed();
     }
+    private Emitter.Listener profile2 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    pList = (JSONObject) args[0];
 
+                    //f      Log.i("pList", pList.toString());
+                    String setUserImg ="";
+                    String profileText ="";
+                    try {
+                        setUserImg = pList.getString("u_pf_img");
+                        profileText = pList.getString("u_pf_text");
+                        myProfileInsert(setUserImg,profileText);
+                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }
+    };
+    public void myProfileInsert(String img, String text){
+        db = helper.getWritableDatabase();
+        String sql = "select * from myprofile";
+        Cursor cursor = db.rawQuery(sql,null);
+        if (cursor.moveToFirst()){
+
+        }else{
+            ContentValues values = new ContentValues();
+            values.put("myimg", img);
+            values.put("mytext", text);
+            db.insert("myprofile",null,values);
+            Log.e(TAG,"ProfileInsert");
+        }
+
+    }
 
 }

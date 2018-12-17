@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,10 +42,13 @@ public class SettingTabFragment extends Fragment{
     Button setImg,profileSend,logout;
     ImageView imgview,imgview2;
     TextView profile;
-    JSONObject pList;
+
     final int REQ_CODE_SELECT_IMAGE=100;
     String encodeImg;
     private Socket mSocket;
+    private static final String TAG = "SettingTabFragment";
+    SQLiteDatabase db;
+    DBHelper helper = new DBHelper(getActivity());
     String myEmail;
 
     @Override
@@ -52,16 +56,18 @@ public class SettingTabFragment extends Fragment{
         super.onCreate(savedInstanceState);
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
-        SharedPreferences preferences = getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
-        myEmail = preferences.getString("email","");
-        String ids = getActivity().getIntent().getStringExtra("id");
+        helper = new DBHelper(getActivity().getApplicationContext());
+        db = helper.getWritableDatabase();
+
+        SharedPreferences preferences = getActivity().getSharedPreferences("pref",Context.MODE_PRIVATE);
+        myEmail = preferences.getString("myEmail","");
+        Log.e(TAG,"myEmail = "+myEmail);
         try {
-            data2.put("u_email", ids);
+            data2.put("u_email", myEmail);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         mSocket.emit("sendMyProfile",data2);
-        mSocket.on("sendMyProfile",profile2);
     }
     @Nullable
     @Override
@@ -126,6 +132,10 @@ public class SettingTabFragment extends Fragment{
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] photo = baos.toByteArray();
                 encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
+                String myText = profile.getText().toString();
+                db = helper.getWritableDatabase();
+                db.execSQL("update myprofile set myimg = '"+encodeImg+"', mytext = '"+myText+"'");
+                Log.e(TAG,"DBUpdateProfile");
                 try {
                     //String result = new String(photo,"utf-8");
                     // Log.i("asdas",result);
@@ -137,35 +147,23 @@ public class SettingTabFragment extends Fragment{
                     e.printStackTrace();
                 }
                 mSocket.emit("setProfile",data);
+                Log.e(TAG,"SendUpdateProfile");
             }
         });
+        try {
+            db = helper.getWritableDatabase();
+            String sql = "select * from myprofile";
+            Cursor cursor = db.rawQuery(sql, null);
+            cursor.moveToFirst();
+            byteArrayToBitmap(cursor.getString(0));
+            profile.setText(cursor.getString(1));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return view;
     }
 
-    private Emitter.Listener profile2 = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    pList = (JSONObject) args[0];
 
-              //f      Log.i("pList", pList.toString());
-                    String setUserImg ="";
-                    String profileText ="";
-                    try {
-                        setUserImg = pList.getString("u_pf_img");
-                        profileText = pList.getString("u_pf_text");
-                        profile.setText(profileText);
-                        // Log.i("nickName&img", setUserNickname+", "+setUserImg);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    byteArrayToBitmap(setUserImg);
-                }
-            });
-        }
-    };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_SELECT_IMAGE) {

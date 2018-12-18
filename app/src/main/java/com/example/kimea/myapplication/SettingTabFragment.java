@@ -129,7 +129,7 @@ public class SettingTabFragment extends Fragment{
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 Drawable d = imgview.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] photo = baos.toByteArray();
                 encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
                 String myText = profile.getText().toString();

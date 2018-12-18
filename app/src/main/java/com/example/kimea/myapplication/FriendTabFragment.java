@@ -44,9 +44,8 @@ public class FriendTabFragment extends Fragment {
     private LinearLayoutManager fLayoutManager;
     private FriendListAdapter adapter;
     private ArrayList<GetFriendListItem> items;
-
-    String ids,tableResult,intentPosition;
-    int ps;
+    Cursor curso2r;
+    String ids;
     private Animation fab_open, fab_close;
     private boolean isFabOpen = false;
     private FloatingActionButton  fab1, fab2, fab;
@@ -78,6 +77,7 @@ public class FriendTabFragment extends Fragment {
             id = cursor2.getString(0);
             msgToken = cursor2.getString(2);
         }
+        cursor2.close();
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email", id);
@@ -150,23 +150,27 @@ public class FriendTabFragment extends Fragment {
         fRecyclerView.setAdapter(adapter);
 
         try{
+            db = helper.getWritableDatabase();
+            String sql2 = "select * from friend";
+            curso2r = db.rawQuery(sql2,null);
+            while(curso2r.moveToNext()){
+                String email = curso2r.getString(0);
+                String nick = curso2r.getString(1);
+                String img = curso2r.getString(2);
+                // Log.e(TAG,"Cursor" + img);
+                String text = curso2r.getString(3);
+                addProfile(img, nick, text, email);
+            }
+            /*
             String pos = getArguments().getString("position");
             Log.i("Arguments position", pos);
             position = Integer.valueOf(pos);
             adapter.itemRemove(position);
+            */
         }catch (Exception e) {
+            e.printStackTrace();
         }
-        db = helper.getWritableDatabase();
-        String sql2 = "select * from friend";
-        Cursor cursor = db.rawQuery(sql2,null);
-        while(cursor.moveToNext()){
-            String email = cursor.getString(0);
-            String nick = cursor.getString(1);
-            String img = cursor.getString(2);
-            // Log.e(TAG,"Cursor" + img);
-            String text = cursor.getString(3);
-            addProfile(img, nick, text, email);
-        }
+
         return view;
     }
 

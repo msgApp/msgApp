@@ -73,7 +73,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         Bitmap bitmap = null;
         byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
         bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
         return bitmap;
     }
 
@@ -87,7 +86,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
     public void onBindViewHolder(final RecyclerViewHolder holder, final int position) {
 
         holder.userImg.setImageBitmap(byteArrayToBitmap(Item.get(position).getUserImgI()));
-
         holder.userNickname.setText(Item.get(position).getUserNickname());
         holder.profileText.setText(Item.get(position).getProfileText());
         holder.email.setText(Item.get(position).getEmail());
@@ -118,17 +116,12 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Re
         holder.userImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 Drawable d = holder.userImg.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                 ByteArrayOutputStream bs = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bs);
 
-
                 Intent intent = new Intent(v.getContext(), FriendProfile.class);
-
                 intent.putExtra("email", holder.email.getText());
                 intent.putExtra("nickname", holder.userNickname.getText());
                 intent.putExtra("profileText", holder.profileText.getText());

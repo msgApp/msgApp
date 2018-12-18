@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
               //  Log.e(TAG,"DIVICESEARCHsuccess");
               //  Log.e(TAG,"DIVICESEARCHsuccess "+cursor.getString(0));
                 userId = cursor.getString(0);
+                cursor.close();
             }else{
                // Log.e(TAG,"DIVICESEARCHfailed");
                 userId = null;
@@ -83,6 +84,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }else{
                 mSocket.connect();
+                SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("email",  pref.getString("myEmail",null));
+                    data.put("divice", pref.getString("msgToken",null));
+                }catch (Exception e){
+                }
+                mSocket.emit("sendFriend",data);
+                mSocket.on("friendList", listener);
+
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
                 intent2.putExtra("noti",getIntent().getStringExtra("noti"));
                 intent2.putExtra("email",getIntent().getStringExtra("email"));
@@ -167,12 +178,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 Log.e(TAG,"FIREBASETOKEN = "+instanceIdResult.getToken());
                                                 JSONObject data2 = new JSONObject();
                                                 try {
-                                                    data2.put("email", login_id.getText().toString());
+                                                    data2.put("email", pref.getString("myEmail",null));
                                                     data2.put("divice", instanceIdResult.getToken());
                                                 }catch (Exception e){
 
                                                 }
                                                 mSocket.emit("sendFriend",data2);
+
                                                 ContentValues contentValues = new ContentValues();
                                                 contentValues.put("user",login_id.getText().toString());
                                                 String newToken = instanceIdResult.getToken();
@@ -256,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         setProfileText = pList.getString("u_pf_text");
                         setEmail = pList.getString("u_email");
                         // Log.i("nickName&img", setUserNickname+", "+setUserImg);
-
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -264,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fNickName = setUserNickname;
                     fText = setProfileText;
                     fImg = setUserImg;
+                    Log.e(TAG,"DetailFriend " + fEmail+" "+fNickName);
                     friendInsert();
                     //makeList(setUserImg, setUserNickname, setProfileText, setEmail);
                 }
@@ -299,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 //Log.i("fListArray", jo.toString());
                                 userList.add(fList.getJSONObject(i).getString("f_email"));
                                 //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                                Log.e(TAG,"FriendList = "+userList.get(i).toString());
                                 data.put("u_email",userList.get(i).toString());
                                 data.put("index",i);
                                 mSocket.emit("sendProfile",data);
@@ -339,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return result;
         }
-
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
@@ -353,6 +365,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void friendInsert(){
         db = helper.getWritableDatabase();
+        Log.e(TAG,"GetProfile" + fEmail +" "+fNickName+" "+fText);
+        try {
+            String sql = "select friendemail, friendnick, friendimg, friendText from friend where friendemail = '" + fEmail + "'";
+            Cursor fcur = db.rawQuery(sql, null);
+            if (fcur.moveToFirst()) {
+                Log.e(TAG, "UpdateSelect " + fcur.getString(1) + " " + fcur.getString(3));
+                if (!fcur.getString(1).equals(fNickName)) {
+                    db.execSQL("update friend set friendnick = '" + fNickName + "' where friendemail ='" + fEmail + "'");
+                    Log.e(TAG, "UpdateFriendNick");
+                }
+                if (!fcur.getString(2).equals(fImg)) {
+                    db.execSQL("update friend set friendimg = '" + fImg + "' where friendemail ='" + fEmail + "'");
+                    Log.e(TAG, "UpdateFriendImg");
+                }
+                if (!fcur.getString(3).equals(fText)) {
+                    db.execSQL("update friend set friendText = '" + fText + "' where friendemail ='" + fEmail + "'");
+                    Log.e(TAG, "UpdateFriendText");
+                }
+            }
+        }catch (Exception e){
+
+        }
         ContentValues values = new ContentValues();
         String email = fEmail;
         Log.e(TAG,"CHECKID = "+email);
@@ -363,7 +397,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 데이터의 삽입은 put을 이용한다.
         values.put("friendemail", email);
         values.put("friendnick", nick);
+
         values.put("friendimg", img);
+
         values.put("friendText", text);
         String query2 = "select loginyn from divice";
         Cursor cur3 = db.rawQuery(query2, null);
@@ -374,7 +410,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG,"SelectDivice = "+cur.getString(0)+"/"+cur.getString(1));
             break;
         }
-
         if(cur3.moveToFirst()){
             Log.e(TAG,"YN = "+ cur3.getString(0));
             Yn = cur3.getString(0);
@@ -502,6 +537,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             cursor.moveToFirst();
             String result = cursor.getString(0);
             Log.e(TAG,"TRY");
+            cursor.close();
         } catch (Exception e) {
             ContentValues values1 = new ContentValues();
             values1.put("userId", room);

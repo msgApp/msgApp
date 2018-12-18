@@ -132,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity{
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 Drawable drawable = getResources().getDrawable(R.drawable.default_profile);
                 Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] photo = baos.toByteArray();
                 String encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
                 try{

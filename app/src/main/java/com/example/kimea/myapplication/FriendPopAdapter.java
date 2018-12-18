@@ -50,7 +50,6 @@ public class FriendPopAdapter extends RecyclerView.Adapter<FriendPopAdapter.Recy
         Bitmap bitmap = null;
         byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
         bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
         return bitmap;
     }
     @Override

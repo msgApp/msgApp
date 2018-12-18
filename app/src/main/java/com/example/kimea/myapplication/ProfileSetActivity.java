@@ -69,9 +69,16 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 Drawable d = imgview.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] photo = baos.toByteArray();
-                encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 3;
+                Bitmap src = BitmapFactory.decodeByteArray(photo, 0, photo.length, options);
+                Bitmap resized = Bitmap.createScaledBitmap(src, 300, 300, true);
+                imgview.setImageBitmap(resized);
+                resized.compress(Bitmap.CompressFormat.JPEG,100,baos);
+                byte[] resize = baos.toByteArray();
+                encodeImg = Base64.encodeToString(resize, Base64.DEFAULT);
                 byteArrayToBitmap(encodeImg);
               // for (byte b:photo){
                 //  Log.i("img",String.valueOf(b));
@@ -90,13 +97,12 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_SELECT_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
-
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-
 //                    배치해놓은 ImageView에 이미지를 넣어봅시다.
                     imgview.setImageBitmap(bitmap);
 //                    Glide.with(mContext).load(data.getData()).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(imageView); // OOM 없애기위해 그레들사용

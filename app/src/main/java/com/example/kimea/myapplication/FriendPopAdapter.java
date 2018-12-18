@@ -89,7 +89,7 @@ public class FriendPopAdapter extends RecyclerView.Adapter<FriendPopAdapter.Recy
                     Drawable d = holder.friendImg.getDrawable();
                     Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                     ByteArrayOutputStream bs = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 0, bs);
                     byte[] photo = bs.toByteArray();
                     String encodeImg = Base64.encodeToString(photo, Base64.DEFAULT);
 

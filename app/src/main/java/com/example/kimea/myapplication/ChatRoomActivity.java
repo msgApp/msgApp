@@ -61,8 +61,19 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
+
         //!!상대 이메일 입니다!!
         email = intent.getStringExtra("email");
+        try {
+            String[] ay = email.split("@");
+            String getSplitResult = ay[1];
+            String[] ay2 = getSplitResult.split("\\.");
+            if (ay2[0].equals("asd")) {
+                email = "1";
+            }
+        }catch (Exception e){
+
+        }
         roomname = intent.getStringExtra("roomname");
         roomNick = intent.getStringExtra("roomNickName");
         JSONObject intoChat = new JSONObject();
@@ -222,6 +233,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 try{
                     msgData.put("message",msgInput.getText().toString());
                     msgData.put("u_email",email);
+                    Log.e(TAG,"RoomName = "+email);
                     msgData.put("my_email", myEmail);
                     msgData.put("room", roomname);
                     Log.e(TAG,"RoomName = "+roomname);

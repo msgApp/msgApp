@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 editor.putString("msgToken", instanceIdResult.getToken());
                                                 editor.putString("myEmail", login_id.getText().toString());
                                                 editor.apply();
-                                                Log.e(TAG, pref.getString("msgToken",""));
+                                                Log.e(TAG, pref.getString("msgToken","") +  pref.getString("myEmail",null));
                                                 Log.e(TAG,"FIREBASETOKEN = "+instanceIdResult.getToken());
                                                 JSONObject data2 = new JSONObject();
                                                 try {

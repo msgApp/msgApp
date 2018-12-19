@@ -1,4 +1,4 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.item;
 
 public class GetMessageItem {
     public static final int TYPE_MESSAGE = 0;

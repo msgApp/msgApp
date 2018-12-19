@@ -1,4 +1,4 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.item;
 
 public class GetFriendPopItem2 {
     String sFriendImg;

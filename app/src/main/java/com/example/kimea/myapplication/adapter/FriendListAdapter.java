@@ -1,15 +1,11 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.adapter;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -22,11 +18,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.kimea.myapplication.FriendProfile;
+import com.example.kimea.myapplication.item.GetFriendListItem;
+import com.example.kimea.myapplication.R;
 
 import java.io.ByteArrayOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 
 

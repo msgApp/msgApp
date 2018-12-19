@@ -1,7 +1,6 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,8 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,15 +23,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class SettingTabFragment extends Fragment{
     JSONObject data = new JSONObject();

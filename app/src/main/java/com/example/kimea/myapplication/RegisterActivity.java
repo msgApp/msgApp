@@ -13,13 +13,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.kimea.myapplication.util.DatePickerFragment;
+import com.example.kimea.myapplication.util.RequestHttpURLConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +28,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity{
     TextView email;
@@ -203,6 +201,9 @@ public class RegisterActivity extends AppCompatActivity{
     public void onBirthdayClicked (View v) {
         android.support.v4.app.DialogFragment newFragment = new DatePickerFragment();   //DatePickerFragment 객체 생성
         newFragment.show(getSupportFragmentManager(), "datePicker");                //프래그먼트 매니저를 이용하여 프래그먼트 보여주기
+    }
+    public void getDate(String date){
+        birthDay.setText(date);
     }
     public class ServerTask extends AsyncTask<Void,Void,String> {
         private String url;

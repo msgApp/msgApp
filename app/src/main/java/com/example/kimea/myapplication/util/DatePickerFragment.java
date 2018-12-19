@@ -1,10 +1,12 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.util;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
+
+import com.example.kimea.myapplication.RegisterActivity;
 
 import java.util.Calendar;
 
@@ -24,8 +26,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
        // MainActivity activity = (MainActivity) getActivity();              // MainActivity의 birthday 버튼에 접근하기 위해 액티비티 객체 선언
-        RegisterActivity activity = (RegisterActivity) getActivity();
-
-        activity.birthDay.setText(year+"-"+String.format("%02d",month+1)+"-"+String.format("%02d",day)); // 유저가 선택한 날짜로 버튼 텍스트 변경
+        RegisterActivity activity = (RegisterActivity) getContext();
+        activity.getDate(year+"-"+String.format("%02d",month+1)+"-"+String.format("%02d",day)); // 유저가 선택한 날짜로 버튼 텍스트 변경
     }
 }

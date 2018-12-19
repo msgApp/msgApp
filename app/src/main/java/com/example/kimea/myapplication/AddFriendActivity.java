@@ -1,12 +1,10 @@
 package com.example.kimea.myapplication;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -16,13 +14,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;

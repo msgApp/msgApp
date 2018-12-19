@@ -1,4 +1,4 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,13 +7,16 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.kimea.myapplication.item.GetFriendPopItem;
+import com.example.kimea.myapplication.item.GetFriendPopItem2;
+import com.example.kimea.myapplication.R;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -72,7 +75,7 @@ public class FriendPopAdapter extends RecyclerView.Adapter<FriendPopAdapter.Recy
 
                     int size = sfpItem.size();
                     for (int i=0;i<size;i++){
-                        if(sfpItem.get(i).sFriendEmail.equals(holder.friendEmail.getText().toString())){
+                        if(sfpItem.get(i).getSFriendEmail().equals(holder.friendEmail.getText().toString())){
                             sfpItem.remove(i);
                             mCallback.refresh();
                             break;

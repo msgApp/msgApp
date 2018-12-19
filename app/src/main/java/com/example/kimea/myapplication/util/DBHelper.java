@@ -1,4 +1,4 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.util;
 
 
 import android.content.Context;

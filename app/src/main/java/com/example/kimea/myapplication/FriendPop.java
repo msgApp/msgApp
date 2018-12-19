@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,9 +15,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import org.json.JSONArray;
+import com.example.kimea.myapplication.adapter.FriendPopAdapter;
+import com.example.kimea.myapplication.adapter.FriendPopAdapter2;
+import com.example.kimea.myapplication.item.GetFriendPopItem;
+import com.example.kimea.myapplication.item.GetFriendPopItem2;
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;

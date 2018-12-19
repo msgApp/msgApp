@@ -1,29 +1,26 @@
 package com.example.kimea.myapplication;
 
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.kimea.myapplication.adapter.ChatRoomAdapter;
+import com.example.kimea.myapplication.item.GetChatRoomItem;
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
 import com.github.clans.fab.FloatingActionButton;
 
 import org.json.JSONException;
@@ -32,7 +29,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnSendItem {
     SQLiteDatabase db;

@@ -1,36 +1,22 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.adapter;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.nfc.Tag;
-import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.kimea.myapplication.ChatRoomActivity;
+import com.example.kimea.myapplication.item.GetChatRoomItem;
+import com.example.kimea.myapplication.R;
+
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-
-import io.socket.client.Socket;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.RecyclerViewHolder>{
     private ArrayList<GetChatRoomItem> Item;

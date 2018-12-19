@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:layout_editor_absoluteY="81dp">
 
-    <com.example.kimea.myapplication.CircleImageView
+    <com.example.kimea.myapplication.util.CircleImageView
         android:id="@+id/userImg"
         android:layout_width="60dp"
         android:layout_height="60dp"

@@ -1,37 +1,29 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 
-import android.os.Handler;
-import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONException;
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
+
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URISyntaxException;
 
-import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class ProfileSetActivity extends AppCompatActivity implements View.OnClickListener {
@@ -72,9 +64,9 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] photo = baos.toByteArray();
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 3;
+                options.inSampleSize = 8;
                 Bitmap src = BitmapFactory.decodeByteArray(photo, 0, photo.length, options);
-                Bitmap resized = Bitmap.createScaledBitmap(src, 300, 300, true);
+                Bitmap resized = Bitmap.createScaledBitmap(src, 200, 200, true);
                 imgview.setImageBitmap(resized);
                 resized.compress(Bitmap.CompressFormat.JPEG,100,baos);
                 byte[] resize = baos.toByteArray();

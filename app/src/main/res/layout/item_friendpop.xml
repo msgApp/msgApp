@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.example.kimea.myapplication.CircleImageView
+    <com.example.kimea.myapplication.util.CircleImageView
         android:id="@+id/sFpImg"
         android:layout_width="60dp"
         android:layout_height="60dp"

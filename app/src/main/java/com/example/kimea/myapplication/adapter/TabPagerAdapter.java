@@ -1,12 +1,12 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import com.example.kimea.myapplication.ChattingTabFragment;
+import com.example.kimea.myapplication.FriendTabFragment;
+import com.example.kimea.myapplication.SettingTabFragment;
 
 public class TabPagerAdapter extends FragmentStatePagerAdapter {
     private int tabCount;

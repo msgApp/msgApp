@@ -10,13 +10,14 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONException;
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
+
 import org.json.JSONObject;
 
 import io.socket.client.Socket;

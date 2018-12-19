@@ -1,14 +1,11 @@
 package com.example.kimea.myapplication;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,17 +19,18 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 
+import com.example.kimea.myapplication.adapter.FriendListAdapter;
+import com.example.kimea.myapplication.item.GetFriendListItem;
+import com.example.kimea.myapplication.util.ChatApplication;
+import com.example.kimea.myapplication.util.DBHelper;
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 public class FriendTabFragment extends Fragment {
     private  static final String TAG = "FriendTabFragment";

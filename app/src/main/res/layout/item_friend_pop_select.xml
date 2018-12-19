@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.kimea.myapplication.CircleImageView
+    <com.example.kimea.myapplication.util.CircleImageView
         android:id="@+id/sFpImg"
         android:layout_width="50dp"
         android:layout_height="50dp"

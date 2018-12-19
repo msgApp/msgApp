@@ -1,24 +1,20 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.w3c.dom.Text;
+import com.example.kimea.myapplication.item.GetFriendPopItem;
+import com.example.kimea.myapplication.item.GetFriendPopItem2;
+import com.example.kimea.myapplication.R;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class FriendPopAdapter2 extends RecyclerView.Adapter<FriendPopAdapter2.RecyclerViewHolder> {
@@ -57,9 +53,9 @@ public class FriendPopAdapter2 extends RecyclerView.Adapter<FriendPopAdapter2.Re
     }
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewHolder holder, final int position) {
-        holder.pfImg.setImageBitmap(byteArrayToBitmap(sfpItem.get(position).sFriendImg));
-        holder.email.setText(sfpItem.get(position).sFriendEmail);
-        holder.nick.setText(sfpItem.get(position).sFriendNickname);
+        holder.pfImg.setImageBitmap(byteArrayToBitmap(sfpItem.get(position).getSFriendImg()));
+        holder.email.setText(sfpItem.get(position).getSFriendEmail());
+        holder.nick.setText(sfpItem.get(position).getSFriendNickname());
         holder.xButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -68,9 +64,9 @@ public class FriendPopAdapter2 extends RecyclerView.Adapter<FriendPopAdapter2.Re
                     notifyItemRangeChanged(position, sfpItem.size());
                     int size = fpItem.size();
                     for (int i=0;i<size;i++){
-                        if(fpItem.get(i).friendEmail.equals(holder.email.getText().toString())){
+                        if(fpItem.get(i).getFriendEmail().equals(holder.email.getText().toString())){
                             fpItem.get(i).setSelected(false);
-                            mCallback.listdel(fpItem.get(i).friendEmail);
+                            mCallback.listdel(fpItem.get(i).getFriendEmail());
                             mCallback.refresh();
                         }
                     }

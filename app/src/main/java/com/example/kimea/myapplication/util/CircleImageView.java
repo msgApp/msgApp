@@ -1,4 +1,4 @@
-package com.example.kimea.myapplication;
+package com.example.kimea.myapplication.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -20,6 +20,8 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import com.example.kimea.myapplication.R;
 
 public class CircleImageView extends android.support.v7.widget.AppCompatImageView {
 

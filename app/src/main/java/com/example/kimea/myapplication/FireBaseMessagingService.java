@@ -2,7 +2,6 @@ package com.example.kimea.myapplication;
 
 
 import android.app.ActivityManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -14,11 +13,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 
+import com.example.kimea.myapplication.util.DBHelper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

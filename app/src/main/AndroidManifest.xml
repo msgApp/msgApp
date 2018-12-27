@@ -72,6 +72,14 @@
             android:name=".FriendPop"
             android:configChanges="screenSize|orientation"
             />
+        <activity
+            android:name=".SearchId"
+            android:configChanges="screenSize|orientation"
+            />
+        <activity
+            android:name=".SearchPw"
+            android:configChanges="screenSize|orientation"
+            />
         <service
             android:name=".FireBaseMessagingService">
             <intent-filter>

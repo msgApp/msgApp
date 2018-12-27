@@ -133,10 +133,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v){
         switch (v.getId()){
             case R.id.search_id :
-
+                Intent searchIdIntent = new Intent(MainActivity.this,SearchId.class);
+                startActivity(searchIdIntent);
                 break;
             case R.id.search_pw:
-
+                Intent searchPwIntent = new Intent(MainActivity.this,SearchPw.class);
+                startActivity(searchPwIntent);
                 break;
 
             case R.id.register:
@@ -306,29 +308,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.e(TAG,"FList" + fList);
                     userList = new ArrayList();
                     listenCount = (fList.length()-1);
-                    if(countItem < fList.length()){
-                        try {
-                            for(int i = 0; i<fList.length(); i++){
-                                JSONObject jo = fList.getJSONObject(i);
-                                JSONObject data = new JSONObject();
-                                //Log.i("fListArray", jo.toString());
-                                userList.add(fList.getJSONObject(i).getString("f_email"));
-                                //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
-                                Log.e(TAG,"FriendList = "+userList.get(i).toString());
-                                data.put("u_email",userList.get(i).toString());
-                                data.put("index",i);
-                                mSocket.emit("sendProfile",data);
-                                countItem++;
+                    int count = 0;
+                    if (count == 0) {
+                        if (countItem < fList.length()) {
+                            try {
+                                for (int i = 0; i < fList.length(); i++) {
+                                    JSONObject jo = fList.getJSONObject(i);
+                                    JSONObject data = new JSONObject();
+                                    //Log.i("fListArray", jo.toString());
+                                    userList.add(fList.getJSONObject(i).getString("f_email"));
+                                    //  Log.i("msg",fList.getJSONObject(i).getString("f_email"));
+                                    Log.e(TAG, "FriendList = " + userList.get(i).toString());
+                                    data.put("u_email", userList.get(i).toString());
+                                    data.put("index", i);
+                                    mSocket.emit("sendProfile", data);
+                                    countItem++;
+                                }
+                                fList = new JSONArray();
+                                mSocket.on("sendProfile", listener2);
+                                count++;
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            fList = new JSONArray();
-                            mSocket.on("sendProfile", listener2);
 
-                        }catch (Exception e){
-                            e.printStackTrace();
+                        } else {
+
                         }
-
-                    }else{
-
                     }
                 }
             });

@@ -205,6 +205,7 @@ public class RegisterActivity extends AppCompatActivity{
     public void getDate(String date){
         birthDay.setText(date);
     }
+
     public class ServerTask extends AsyncTask<Void,Void,String> {
         private String url;
         private String str;

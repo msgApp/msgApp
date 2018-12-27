@@ -11,7 +11,7 @@ import com.example.kimea.myapplication.SearchId;
 
 import java.util.Calendar;
 
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePickerFragment2 extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
@@ -27,9 +27,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
        // MainActivity activity = (MainActivity) getActivity();              // MainActivity의 birthday 버튼에 접근하기 위해 액티비티 객체 선언
-        RegisterActivity activity = (RegisterActivity) getContext();
+
         SearchId activity2 = (SearchId) getContext();
-        activity.getDate(year+"-"+String.format("%02d",month+1)+"-"+String.format("%02d",day)); // 유저가 선택한 날짜로 버튼 텍스트 변경
+       // 유저가 선택한 날짜로 버튼 텍스트 변경
         activity2.getDate(year+"-"+String.format("%02d",month+1)+"-"+String.format("%02d",day));
     }
 }

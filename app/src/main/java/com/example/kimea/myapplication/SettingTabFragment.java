@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import io.socket.client.Socket;
 
@@ -92,10 +93,13 @@ public class SettingTabFragment extends Fragment{
             public void onClick(View v) {
                 try{
                     DBHelper helper2 =  new DBHelper(getActivity());
-                    db = helper2.getReadableDatabase();
+                    db = helper2.getWritableDatabase();
                     String sql = "select user from divice";
                     Cursor c = db.rawQuery(sql,null);
                     c.moveToFirst();
+                    String mPath = "/data/data/" + getActivity().getPackageName() + "/databases";
+                    File mFile = new File(mPath);
+                    mFile.delete();
                     String user = c.getString(0);
                     JSONObject logout = new JSONObject();
                     logout.put("email",user);
@@ -116,6 +120,7 @@ public class SettingTabFragment extends Fragment{
                     getActivity().finish();
                     startActivity(intent);
                 }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         });

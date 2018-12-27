@@ -31,7 +31,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     TextView fEmail,fName,friendText;
     Button addFriend;
     ImageView imgview;
-    JSONArray friend = new JSONArray();
+    JSONObject friend;
     String result,friendResult;
     String ids;
     static String img;
@@ -105,34 +105,28 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    friend = (JSONArray) args[0];
+                    friend = (JSONObject) args[0];
                     Log.e(TAG,"list "+friend.toString());
                     String friendName="";
                     String resultText;
-                    try {
-                        for(int i=0;i<friend.length();i++){
                             try{
-                                JSONObject get = friend.getJSONObject(i);
-                                result = get.getString("img");
+                                result = friend.getString("img");
                                 img = result;
                                 dbemail = fEmail.getText().toString();
-                                dbnick = get.getString("nickName");
-                                dbtext = get.getString("text");
+                                dbnick = friend.getString("nickName");
+                                dbtext = friend.getString("text");
                                 byteArrayToBitmap(result);
-                                friendName =  get.getString("nickName");
-                                friendResult = get.getString("f_rs");
+                                Log.e(TAG,"FRIENDPROFILE = "+ dbnick+" "+dbtext);
+                                friendName =  friend.getString("nickName");
+                                friendResult = friend.getString("f_rs");
                                 checkFriend(friendResult);
-                            }catch (Exception e){
+                            }catch (Exception e) {
                                 friendName = "검색한 유저가 존재하지 않습니다.";
                                 imgview.setVisibility(View.GONE);
                                 friendText.setVisibility(View.GONE);
                                 addFriend.setVisibility(View.GONE);
                             }
 
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
                     fName.setText(friendName);
                 }
             });

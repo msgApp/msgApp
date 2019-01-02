@@ -40,13 +40,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="+"
+            android:onClick="onClick"
             tools:layout_editor_absoluteY="467dp" />
 
         <EditText
             android:id="@+id/message_input"
             android:layout_width="253dp"
-            android:layout_height="43dp"
-
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/prompt_message"
             android:imeActionId="@+id/send"
@@ -54,6 +54,7 @@
             android:imeOptions="actionSend"
             android:inputType="textMultiLine"
             android:onClick="onClick"
+            android:maxHeight="100dp"
             tools:ignore="InvalidImeActionId"
             tools:layout_editor_absoluteX="35dp"
             tools:layout_editor_absoluteY="468dp" />

@@ -270,6 +270,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             case R.id.message_input:
                 scrollToBottom();
                 break;
+            case R.id.message_menu:
+                Toast.makeText(ChatRoomActivity.this,"클릭 했네요?",Toast.LENGTH_SHORT).show();
+                break;
         }
 
     }

@@ -4,63 +4,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout6"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="81dp">
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="464dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:background="#E0EBFF"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-
-    <EditText
-        android:id="@+id/message_input"
-        android:layout_width="253dp"
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:hint="@string/prompt_message"
-        android:imeActionId="@+id/send"
-        android:imeActionLabel="@string/action_send"
-        android:imeOptions="actionSend"
-        android:inputType="textMultiLine"
-        android:onClick="onClick"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/message_menu"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_view"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="InvalidImeActionId" />
-
-    <Button
-        android:id="@+id/send_button"
-        android:layout_width="67dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/action_send"
-        android:enabled="false"
-        android:onClick="onClick"
-        android:text="전송"
-        app:layout_constraintBaseline_toBaselineOf="@+id/message_input"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.727"
-        app:layout_constraintStart_toEndOf="@+id/message_input" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <Button
-        android:id="@+id/message_menu"
-        android:layout_width="35dp"
-        android:layout_height="wrap_content"
-        android:text="+"
-        app:layout_constraintBaseline_toBaselineOf="@+id/message_input"
-        app:layout_constraintStart_toStartOf="parent" />
+        <Button
+            android:id="@+id/message_menu"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="+"
+            tools:layout_editor_absoluteY="467dp" />
+
+        <EditText
+            android:id="@+id/message_input"
+            android:layout_width="253dp"
+            android:layout_height="43dp"
+
+            android:layout_weight="1"
+            android:hint="@string/prompt_message"
+            android:imeActionId="@+id/send"
+            android:imeActionLabel="@string/action_send"
+            android:imeOptions="actionSend"
+            android:inputType="textMultiLine"
+            android:onClick="onClick"
+            tools:ignore="InvalidImeActionId"
+            tools:layout_editor_absoluteX="35dp"
+            tools:layout_editor_absoluteY="468dp" />
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="67dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/action_send"
+            android:enabled="false"
+            android:onClick="onClick"
+            android:text="전송"
+            tools:layout_editor_absoluteX="293dp"
+            tools:layout_editor_absoluteY="467dp" />
+
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

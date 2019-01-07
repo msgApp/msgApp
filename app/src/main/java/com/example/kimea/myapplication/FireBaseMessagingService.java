@@ -20,6 +20,8 @@ import com.example.kimea.myapplication.util.DBHelper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.Map;
 

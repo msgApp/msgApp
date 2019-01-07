@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.kimea.myapplication.item.GetMessageItem;
@@ -32,6 +33,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.RecyclerViewHo
             case GetMessageItem.TYPE_MYMSG:
                 layout = R.layout.itme_mychat;
                 break;
+            case GetMessageItem.TYPE_MYIMG:
+                layout = R.layout.itme_mychatimg;
+                break;
+            case GetMessageItem.TYPE_IMG:
+                layout = R.layout.item_messageimg;
+                break;
         }
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(layout, viewGroup, false);
@@ -46,15 +53,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.RecyclerViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder viewholder, int position) {
         GetMessageItem gm = Item.get(position);
-        viewholder.message.setText(Item.get(position).getMessage());
         viewholder.name.setText(Item.get(position).getName());
+        if (Item.get(position).getmType()<=1) {
+            viewholder.message.setText(Item.get(position).getMessage());
+        }
+        if (Item.get(position).getmType()>1){
+            viewholder.chatImg.setImageBitmap(Item.get(position).getBitmap());
+        }
     }
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         protected TextView message;
         protected TextView name;
-
+        protected ImageView chatImg;
         public RecyclerViewHolder(View view) {
             super(view);
+            this.chatImg = view.findViewById(R.id.chat_img);
             this.message = view.findViewById(R.id.setMsg);
             this.name = view.findViewById(R.id.username);
         }

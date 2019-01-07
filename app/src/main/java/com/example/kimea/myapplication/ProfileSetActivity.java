@@ -58,20 +58,24 @@ public class ProfileSetActivity extends AppCompatActivity implements View.OnClic
                 startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
                 break;
             case R.id.profileSend:
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 Drawable d = imgview.getDrawable();
                 Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                 byte[] photo = baos.toByteArray();
+
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 8;
+                options.inSampleSize = 100000;
                 Bitmap src = BitmapFactory.decodeByteArray(photo, 0, photo.length, options);
                 Bitmap resized = Bitmap.createScaledBitmap(src, 200, 200, true);
                 imgview.setImageBitmap(resized);
+
                 resized.compress(Bitmap.CompressFormat.JPEG,100,baos);
                 byte[] resize = baos.toByteArray();
                 encodeImg = Base64.encodeToString(resize, Base64.DEFAULT);
                 byteArrayToBitmap(encodeImg);
+
               // for (byte b:photo){
                 //  Log.i("img",String.valueOf(b));
            //   }

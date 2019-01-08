@@ -42,6 +42,7 @@ import com.example.kimea.myapplication.item.GetMessageItem;
 import com.example.kimea.myapplication.util.ChatApplication;
 import com.example.kimea.myapplication.util.DBHelper;
 import com.example.kimea.myapplication.util.RequestHttpURLConnection;
+import com.sun.mail.iap.ByteArray;
 
 import org.apache.http.HttpConnection;
 import org.json.JSONException;
@@ -56,8 +57,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -123,7 +126,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         JSONObject intoChat = new JSONObject();
         try {
             SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
-
             intoChat.put("myEmail", pref.getString("myEmail", null));
         } catch (Exception e) {
 
@@ -177,14 +179,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             SharedPreferences emailBadge = getSharedPreferences("pref", MODE_PRIVATE);
             String mailBadge = emailBadge.getString(roomname, "0");
             int badgeInt = Integer.valueOf(mailBadge);
-            /*
-            //TODO
-            if(badgeInt>0){
-                JSONObject intoAct = new JSONObject();
-                intoAct.put("roomname",roomname);
-                intoAct.put("readYN", "Y");
-
-            }*/
             SharedPreferences appBadge = getSharedPreferences("pref", MODE_PRIVATE);
             int apBadge = appBadge.getInt("badge", 0);
             int badgeResult = apBadge - Integer.parseInt(mailBadge);
@@ -203,8 +197,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         String[] array = roomname.split("@");
         String ss = array[1];
         String[] ary2 = ss.split("\\.");
-        // String result = array[0]+array2[0]+array2[1];
-        // Log.i("result3",ary2[0]);
         result = array[0] + ary2[0] + ary2[1];
         db = helper.getWritableDatabase();
         // db.execSQL("drop table '"+result+"'");
@@ -228,7 +220,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         items = new ArrayList();
-
         // RecyclerView를 위해 CustomAdapter를 사용합니다.
         mAdapter = new ChatAdapter(items);
         mRecyclerView.setAdapter(mAdapter);
@@ -243,11 +234,17 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String nickname = cursor.getString(2);
             String text = cursor.getString(3);
             String roomNickname = cursor.getString(4);
-            String type = cursor.getString(5);
+            byte[] getImg = cursor.getBlob(5);
+            String type = cursor.getString(6);
+            Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
             try {
-                if (nickname.equals("me")) {
+                if (type.equals("2")){
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(getImg,0,getImg.length);
+                    addMsg("me",null,2,bitmap);
+                }
+                if (type.equals("1")) {
                     addMsg(nickname, text, 1,null);
-                } else {
+                } else if (type.equals("0")){
                     addMsg(nickname, text, 0,null);
                 }
             } catch (Exception e) {
@@ -270,11 +267,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 Cursor cursor2 = database.rawQuery(sql, null);
                 cursor2.moveToNext();
                 myEmail = cursor2.getString(0);
-
                 Log.i("ChatRoomAct-myEmail", myEmail);
-
-
-
                 addMsg("me", msgInput.getText().toString(), 1,null);
                 //mAdapter.notifyItemInserted(items.size());
                 mAdapter.notifyDataSetChanged();
@@ -289,7 +282,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Log.e(TAG, "ChatRoomActivity insert2 check " + roomname);
                     insert2(roomname);
                 }
-                insert("me", "me", msgInput.getText().toString(), "1", roomNick);
+                insert("me", "me", msgInput.getText().toString(), "1", roomNick,null);
                 emitMsg(msgInput.getText().toString(),"text");
                 msgInput.setText("");
                 scrollToBottom();
@@ -299,7 +292,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.message_menu:
                 CharSequence info[] = new CharSequence[] {"갤러리에서 불러오기", "카메라로 찍기" };
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("사진 보내기");
                 builder.setItems(info, new DialogInterface.OnClickListener() {
@@ -397,6 +389,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
+
                     }
                     //상대방 이메일이 맞으면 테이블 인서트
                     if (roomname.equals(setRoom)) {
@@ -423,7 +416,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     }
 
     //데이터 삽입
-    public void insert(String id, String nickName, String text, String type, String roomNickName) {
+    public void insert(String id, String nickName, String text, String type, String roomNickName, byte[] img) {
         db = helper.getWritableDatabase(); // db 객체를 얻어온다. 쓰기 가능
         ContentValues values = new ContentValues();
         // db.insert의 매개변수인 values가 ContentValues 변수이므로 그에 맞춤
@@ -434,9 +427,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         values.put("ChatNickName", nickName);
         values.put("ChatText", text);
         values.put("ChatRoomNickName", roomNickName);
-
         values.put("type", type);
+        values.put("ChatImg",img);
+
         db.insert("'" + result + "'", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+        Log.e(TAG,"-----------insert----------");
         db = helper.getReadableDatabase();
         String sql = "select ChatRoomNickName from '" + result + "';";
         Cursor c = db.rawQuery(sql, null);
@@ -563,28 +558,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         cropIntent.putExtra("output", photoURI2);
         startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
     }
-    private void galleryAddPic(){
-        Log.i("galleryAddPic", "Call");
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        // 해당 경로에 있는 파일을 객체화(새로 파일을 만든다는 것으로 이해하면 안 됨)
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        sendBroadcast(mediaScanIntent);
-       // Toast.makeText(this, "사진이 앨범에 저장되었습니다.", Toast.LENGTH_SHORT).show();
-    }
-    @Nullable
-    public String getRealPathFromURI(Uri contentUri){
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        cursor.moveToFirst();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.close();
-        return cursor.getString(column_index);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int check = 0;
         if (resultCode != RESULT_OK) {
            // Toast.makeText(getApplicationContext(), "onActivityResult : RESULT_NOT_OK", Toast.LENGTH_LONG).show();
         } else {
@@ -596,55 +572,33 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     cropImage();
                     break;
                 case REQUEST_IMAGE_CROP:
+                    Log.e(TAG,"---------------Crop Photo----------------");
                     BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 2;
-                    Log.e(TAG,"GetPath"+ photoURI2.getPath());
+                    options.inSampleSize = 4;
+                    Log.e(TAG,"GetPath = "+ photoURI2.getPath());
                     Bitmap photo = BitmapFactory.decodeFile(photoURI2.getPath(),options);
-                    if (photo!=null){
-                        ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(photoURI2.getPath());
-                        serverTask.execute();
-                        //Bitmap resized = Bitmap.createScaledBitmap(photo, 255, 255, true);
-                        addMsg("me",null,2,photo);
-                        //encodeImg.length()
-                        /*
-                        JSONObject inputData = new JSONObject();
-                        JSONObject pushData = new JSONObject();
-
-                        try{
-                            inputData.put("message", encodeImg);
-                            inputData.put("u_email", email);
-                            Log.e(TAG, "RoomName = " + email);
-                            //inputData.put("my_email", myEmail);
-                            inputData.put("room", roomname);
-                            if (email.equals(roomname)) {
-                                //pushData.put("roomname", myEmail);
-                            } else {
-                                pushData.put("roomname", roomname);
-                            }
-                            pushData.put("message", encodeImg);
-                          //  pushData.put("u_email", myEmail);
-                            pushData.put("f_email", email);
-                            pushData.put("isPicture",true);
-                        }catch (Exception e){
-
+                    byte[] getByte = getByteArrayFromDrawable(photo);
+                    Log.e(TAG,"Photo = "+ photo);
+                    Log.e(TAG,"getByte = "+getByte.toString());
+                    ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(photoURI2.getPath());
+                    serverTask.execute();
+                    //Bitmap resized = Bitmap.createScaledBitmap(photo, 255, 255, true);
+                   // addMsg("me",null,2,photo);
+                    Log.e(TAG,"---------------Go Insert----------------");
+                    insert("me", "me", "사진", "2", roomNick, getByte);
+                    //encodeImg.length()
+                    File photo2 = new File(photoURI2.getPath());
+                    if (!album){
+                        File photo1 = new File(realURI.getPath());
+                        if (photo1.exists()){
+                            photo1.delete();
                         }
-                        //mSocket.emit("sendMsg",inputData);
-                        //mSocket.emit("pushMsg", pushData);
-                        */
-                        File photo2 = new File(photoURI2.getPath());
-                        if (!album){
-                            File photo1 = new File(realURI.getPath());
-                            if (photo1.exists()){
-                                photo1.delete();
-                            }
-                        }
-                        if (photo2.exists()){
-                            photo2.delete();
-                        }
+                    }
+                    if (photo2.exists()){
+                        photo2.delete();
                     }
                     //checkPicture.setImageBitmap(photo);
                     Log.e(TAG,"CropPhoto = " +photoURI.getPath()+" "+photoURI2.getPath());
-
                     break;
             }
         }
@@ -716,7 +670,9 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         stringBuffer.append(line);
                     }
                     String log = stringBuffer.toString();
+
                     emitMsg(log, "picture");
+
                     Log.e("LOG"," "+log);
 
                     mFileInputStream.close();
@@ -728,15 +684,12 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             return null;
         }
     }
-    /*
-    public byte[] getByteArrayFromDrawable(Drawable d) {
-        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+    public byte[] getByteArrayFromDrawable(Bitmap d) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        d.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] data = stream.toByteArray();
         return data;
     }
-    */
     private void checkPermission(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // 처음 호출시엔 if()안의 부분은 false로 리턴 됨 -> else{..}의 요청으로 넘어감

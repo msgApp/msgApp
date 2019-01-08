@@ -92,7 +92,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     JSONObject msgData = new JSONObject();
     JSONObject pushData = new JSONObject();
     Cursor cur;
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -218,7 +217,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         } catch (Exception e) {
             db = helper.getWritableDatabase();
-            db.execSQL("create table '" + result + "'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,type TEXT);");
+            db.execSQL("create table '" + result + "'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,ChatImg BLOB ,type TEXT);");
             Log.i("ChatDataBaseCreate", "create");
         }
 
@@ -598,7 +597,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     break;
                 case REQUEST_IMAGE_CROP:
                     BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 4;
+                    options.inSampleSize = 2;
                     Log.e(TAG,"GetPath"+ photoURI2.getPath());
                     Bitmap photo = BitmapFactory.decodeFile(photoURI2.getPath(),options);
                     if (photo!=null){
@@ -606,11 +605,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         serverTask.execute();
                         //Bitmap resized = Bitmap.createScaledBitmap(photo, 255, 255, true);
                         addMsg("me",null,2,photo);
-
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        photo.compress(Bitmap.CompressFormat.JPEG,100,baos);
-                        byte[] resize = baos.toByteArray();
-                        String encodeImg = Base64.encodeToString(resize, Base64.DEFAULT);
                         //encodeImg.length()
                         /*
                         JSONObject inputData = new JSONObject();
@@ -734,11 +728,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             return null;
         }
     }
-
-    public void HttpFileUpload(String fileName){
-
-
+    /*
+    public byte[] getByteArrayFromDrawable(Drawable d) {
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] data = stream.toByteArray();
+        return data;
     }
+    */
     private void checkPermission(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // 처음 호출시엔 if()안의 부분은 false로 리턴 됨 -> else{..}의 요청으로 넘어감

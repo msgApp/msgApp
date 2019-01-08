@@ -42,6 +42,7 @@ import com.example.kimea.myapplication.item.GetMessageItem;
 import com.example.kimea.myapplication.util.ChatApplication;
 import com.example.kimea.myapplication.util.DBHelper;
 import com.example.kimea.myapplication.util.RequestHttpURLConnection;
+import com.squareup.picasso.Picasso;
 import com.sun.mail.iap.ByteArray;
 
 import org.apache.http.HttpConnection;
@@ -54,12 +55,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -236,7 +240,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String roomNickname = cursor.getString(4);
             byte[] getImg = cursor.getBlob(5);
             String type = cursor.getString(6);
-            Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
+            //Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
             try {
                 if (type.equals("2")){
                     Bitmap bitmap = BitmapFactory.decodeByteArray(getImg,0,getImg.length);
@@ -386,16 +390,24 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         setNickName = msg.getString("\"nickName\"");
                         setRoom = msg.getString("\"room\"");
 
+                        String[] getMsg = setMsg.split("_");
+                        if (getMsg[0].equals("MsgApp")){
+                            String url = "http://122.40.72.34:1300/download";
+                            ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(setMsg,url,"download");
+                            serverTask.execute();
+                        }
+
+                        if (roomname.equals(setRoom)) {
+                            addMsg(setNickName, setMsg, 0,null);
+                            //insert(setName,setNickName,setMsg,"0");
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
 
                     }
                     //상대방 이메일이 맞으면 테이블 인서트
-                    if (roomname.equals(setRoom)) {
-                        addMsg(setNickName, setMsg, 0,null);
-                        //insert(setName,setNickName,setMsg,"0");
-                    }
+
                 }
             });
         }
@@ -505,11 +517,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     private void sendTakePhotoIntent() {
         //카메라 호출
         album = false;
-
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-
             File photoFile = null;
             photoFile = createImageFile();
             Log.e(TAG,"File = "+photoFile);
@@ -532,6 +541,18 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
         File imageFile = new File(storageDir, imageFileName);
         return imageFile;
+
+        // 특정 경로와 폴더를 지정하지 않고, 메모리 최상 위치에 저장 방법
+    }
+    private File downloadImg(){
+        File storageDir = new File(Environment.getExternalStorageDirectory()+ "/Pictures", "MsgApp");
+
+        if (!storageDir.exists()) {
+            Log.i("mCurrentPhotoPath1", storageDir.toString());
+            storageDir.mkdirs();
+        }
+
+        return storageDir;
 
         // 특정 경로와 폴더를 지정하지 않고, 메모리 최상 위치에 저장 방법
     }
@@ -567,6 +588,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             switch (requestCode) {
                 case REQUEST_TAKE_PHOTO: // 앨범 이미지 가져오기
                     photoURI = data.getData(); // 앨범 이미지의 경로
+                    Log.e(TAG,"gallary get picture = "+ photoURI);
                     // break; REQUEST_IMAGE_CAPTURE로 전달하여 Crop
                 case REQUEST_IMAGE_CAPTURE:
                     cropImage();
@@ -574,16 +596,23 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 case REQUEST_IMAGE_CROP:
                     Log.e(TAG,"---------------Crop Photo----------------");
                     BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 4;
+                    if (album){
+                        options.inSampleSize = 5;
+                    }else{
+                        options.inSampleSize = 3;
+                    }
                     Log.e(TAG,"GetPath = "+ photoURI2.getPath());
                     Bitmap photo = BitmapFactory.decodeFile(photoURI2.getPath(),options);
                     byte[] getByte = getByteArrayFromDrawable(photo);
                     Log.e(TAG,"Photo = "+ photo);
                     Log.e(TAG,"getByte = "+getByte.toString());
-                    ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(photoURI2.getPath());
+
+                    String url = "http://122.40.72.34:1300/upload";
+                    ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(photoURI2.getPath(),url,"upload");
                     serverTask.execute();
+
                     //Bitmap resized = Bitmap.createScaledBitmap(photo, 255, 255, true);
-                   // addMsg("me",null,2,photo);
+                    addMsg("me",null,2,photo);
                     Log.e(TAG,"---------------Go Insert----------------");
                     insert("me", "me", "사진", "2", roomNick, getByte);
                     //encodeImg.length()
@@ -603,42 +632,47 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             }
         }
     }
+
     public class ServerTask extends AsyncTask<Void,Void,Void> {
-        private String path;
-        public ServerTask(String path){
-            this.path = path;
+        private String Data;
+        private String url;
+        private String Check;
+        public ServerTask(String Data, String url, String Check){
+            this.Data = Data;
+            this.url = url;
+            this.Check = Check;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            String URL = "http://122.40.72.34:1300/upload";
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "*****";
-
             try{
-                File file = new File(path);
+                if (Check.equals("upload")){
+                File file = new File(Data);
                 DataOutputStream dos;
                 if (file.isFile()){
                     FileInputStream mFileInputStream = new FileInputStream(file);
-                    URL connectUrl = new URL(URL);
+                    URL connectUrl = new URL(url);
                     HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
                     conn.setDoInput(true);
                     conn.setDoOutput(true);
                     conn.setUseCaches(false);
                     conn.setRequestMethod("POST");
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
                     conn.setRequestProperty("Connection", "Keep-Alive");
                     conn.setRequestProperty("ENCTYPE", "Multipart/form-data");
                     conn.setRequestProperty("Accept-Encoding", "gzip");
                     conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                    conn.setRequestProperty("uploaded_file", path);
-
-                    Log.e("file"," "+path);
+                    conn.setRequestProperty("uploaded_file", Data);
 
 
+                    Log.e("file"," "+Data);
                     dos = new DataOutputStream(conn.getOutputStream());
                     dos.writeBytes(twoHyphens + boundary + lineEnd);
-                    dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + path + "\"" + lineEnd);
+                    dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + Data  + "\"" + lineEnd);
                     dos.writeBytes(lineEnd);
                     Log.e(TAG,"LineEnd = "+lineEnd);
 
@@ -662,6 +696,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                    // Log.e(TAG,"dos ="+Conva -);
                     dos.flush(); // finish upload...
                     Log.e(TAG,"UploadFinish");
+
                     InputStream tmp = new BufferedInputStream(conn.getInputStream());
                     BufferedReader reader = new BufferedReader(new InputStreamReader(tmp));
                     StringBuffer stringBuffer = new StringBuffer();
@@ -670,13 +705,50 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         stringBuffer.append(line);
                     }
                     String log = stringBuffer.toString();
-
                     emitMsg(log, "picture");
-
                     Log.e("LOG"," "+log);
-
                     mFileInputStream.close();
                     dos.close();
+                    conn.disconnect();
+                    }
+                }else if (Check.equals("download")){
+                    Log.e("DOWNLOAD", Data);
+                    URL connectUrl = new URL(url);
+                    HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Cache-Control", "no-cache");
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setRequestProperty("Accept", "application/json");
+
+                    OutputStream out = conn.getOutputStream();
+                    JSONObject jsonObject = new JSONObject();
+                    try{
+                        jsonObject.put("filename",Data);
+                    }catch (Exception e){
+
+                    }
+                    out.write(jsonObject.toString().getBytes()); // 출력 스트림에 출력.
+                    Log.e("ASDASDAS"," "+jsonObject.getString("filename"));
+                    out.flush(); // 출력 스트림을 플러시(비운다)하고 버퍼링 된 모든 출력 바이트를 강제 실행.
+                    out.close(); // 출력 스트림을 닫고 모든 시스템 자원을 해제.
+
+                    InputStream tmp = conn.getInputStream();
+                    File file = new File(downloadImg(),Data);
+                    OutputStream outputStream = new FileOutputStream(file);
+                    byte data[] = new byte[1024*1024];
+                    int res = 1;
+                    // write to file's outputStream
+                    while ((res = tmp.read(data)) > 0) {
+                        // Don't use outputStream.write(data) !!!
+                        outputStream.write(data, 0, res);
+                    }
+                    // clean
+                    outputStream.flush();
+                    outputStream.close();
+                    tmp.close();
+                    conn.disconnect();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

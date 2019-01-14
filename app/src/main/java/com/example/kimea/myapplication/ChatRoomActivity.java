@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -84,14 +85,14 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     Boolean album = false;
     Boolean picture = false;
     Uri realURI,photoURI, photoURI2;
-
+    public static Context CONTEXT;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
     private ArrayList<GetMessageItem> items;
     TextView msgInput;
     private Socket mSocket;
-    String email, result, my_email, roomname, roomNick;
+    String email, result, my_email, roomname, roomNick, setNickName;
     SQLiteDatabase db;
     Button sendBtn;
     DBHelper helper = new DBHelper(ChatRoomActivity.this);
@@ -111,7 +112,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
         Intent intent = getIntent();
-
+        CONTEXT = this;
         //!!상대 이메일 입니다!!
         email = intent.getStringExtra("email");
         try {
@@ -216,6 +217,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             db.execSQL("create table '" + result + "'(Chatseq integer primary key autoincrement, ChatId text,ChatNickName text, ChatText text, ChatRoomNickName text,ChatImg BLOB ,type TEXT);");
             Log.i("ChatDataBaseCreate", "create");
         }
+        db.close();
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
@@ -240,11 +242,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String roomNickname = cursor.getString(4);
             byte[] getImg = cursor.getBlob(5);
             String type = cursor.getString(6);
-            //Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
+           // Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
             try {
                 if (type.equals("2")){
                     Bitmap bitmap = BitmapFactory.decodeByteArray(getImg,0,getImg.length);
                     addMsg("me",null,2,bitmap);
+                }
+                if (type.equals("3")){
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(getImg,0,getImg.length);
+                    addMsg(nickname,null,3,bitmap);
                 }
                 if (type.equals("1")) {
                     addMsg(nickname, text, 1,null);
@@ -255,6 +261,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
             }
         }
+        database.close();
         mSocket.on("message", listener);
         scrollToBottom();
         checkPermission();
@@ -290,6 +297,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 emitMsg(msgInput.getText().toString(),"text");
                 msgInput.setText("");
                 scrollToBottom();
+                database.close();
+                db.close();
                 break;
             case R.id.message_input:
                 scrollToBottom();
@@ -360,11 +369,30 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_MYIMG).username(setName).userMessage(setMsg).userBitmap(bitmap).build());
             //insert(setName,setMsg,"1");
         }
+        else if(type == 3) {
+            items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_IMG).username(setName).userMessage(setMsg).userBitmap(bitmap).build());
+            //insert(setName,setMsg,"1");
+        }
         // mAdapter.notifyItemInserted(items.size());
         mAdapter.notifyDataSetChanged();
         scrollToBottom();
     }
-
+    public void reset(final String nick, final Bitmap bitmaps){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        // 해당 작업을 처리함
+                        addMsg(nick,"사진",3,bitmaps);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
+        Log.e(TAG,"GET RESET BITMAP = "+bitmaps);
+    }
     private void scrollToBottom() {
         mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
     }
@@ -381,7 +409,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     ArrayList<String> keys = null;
                     ArrayList<String> values = null;
                     String setName = "";
-                    String setNickName = "";
+                    setNickName = "";
                     String setMsg = "";
                     String setRoom = "";
                     try {
@@ -391,16 +419,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                         setRoom = msg.getString("\"room\"");
 
                         String[] getMsg = setMsg.split("_");
-                        if (getMsg[0].equals("MsgApp")){
+                        if (getMsg[0].equals("MsgApp")&&roomname.equals(setRoom)) {
                             String url = "http://122.40.72.34:1300/download";
-                            ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(setMsg,url,"download");
+                            ChatRoomActivity.ServerTask serverTask = new ChatRoomActivity.ServerTask(setMsg, url, "download");
                             serverTask.execute();
                         }
-
-                        if (roomname.equals(setRoom)) {
-                            addMsg(setNickName, setMsg, 0,null);
+                        if (roomname.equals(setRoom)&&!getMsg[0].equals("MsgApp")) {
+                                addMsg(setNickName, setMsg, 0,null);
+                            }
                             //insert(setName,setNickName,setMsg,"0");
-                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -420,6 +447,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         Cursor cur = db.rawQuery(query, null);
         cur.moveToFirst();
         String user = cur.getString(0);
+        db.close();
         return user;
     }
 
@@ -448,6 +476,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         String sql = "select ChatRoomNickName from '" + result + "';";
         Cursor c = db.rawQuery(sql, null);
         c.moveToFirst();
+        db.close();
         // tip : 마우스를 db.insert에 올려보면 매개변수가 어떤 것이 와야 하는지 알 수 있다.
     }
 
@@ -464,8 +493,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         SQLiteDatabase database = helper.getReadableDatabase();
         String sql = "select * from oneUser;";
         Cursor cursor2 = database.rawQuery(sql, null);
+
         while (cursor2.moveToNext()) {
         }
+        db.close();
+        database.close();
     }
 
     //채팅방 목록 갱신시 필요한 데이터
@@ -489,7 +521,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         Intent intent = new Intent();
         String rs2 = "";
-
+        db.close();
         finish();
     }
 
@@ -501,7 +533,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         editor.putString("email", "none");
         editor.commit();
     }
-
     public void set_badge_alarm(int badge_count) {
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
         intent.putExtra("badge_count", badge_count);
@@ -633,7 +664,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public class ServerTask extends AsyncTask<Void,Void,Void> {
+    public class ServerTask extends AsyncTask<Void,Void,Bitmap> {
         private String Data;
         private String url;
         private String Check;
@@ -644,10 +675,11 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Bitmap doInBackground(Void... params) {
             String lineEnd = "\r\n";
             String twoHyphens = "--";
             String boundary = "*****";
+            Bitmap bitmap = null;
             try{
                 if (Check.equals("upload")){
                 File file = new File(Data);
@@ -710,8 +742,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     mFileInputStream.close();
                     dos.close();
                     conn.disconnect();
+                    bitmap = null;
                     }
-                }else if (Check.equals("download")){
+                }
+                /*else if (Check.equals("download")){
                     Log.e("DOWNLOAD", Data);
                     URL connectUrl = new URL(url);
                     HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
@@ -749,12 +783,29 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     outputStream.close();
                     tmp.close();
                     conn.disconnect();
+
+                    if (file.exists()){
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize= 3;
+                        bitmap  = BitmapFactory.decodeFile(file.getAbsolutePath(),options);
+                        Log.e(TAG, "GetPicture to Bitmap = " +bitmap);
+                    }
                 }
+                    */
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return bitmap;
         }
+        /*
+        @Override
+        protected void onPostExecute(Bitmap  bitmap) {
+            super.onPostExecute(bitmap);
+            Log.e(TAG,"postExcute = "+bitmap+" name = "+setNickName);
+          //  addMsg(setNickName,"사진",3,bitmap);
+            //rereset();
+        }
+        */
     }
     public byte[] getByteArrayFromDrawable(Bitmap d) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -808,5 +859,4 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
 }

@@ -691,8 +691,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     conn.setDoOutput(true);
                     conn.setUseCaches(false);
                     conn.setRequestMethod("POST");
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(7000);
+                    conn.setReadTimeout(7000);
                     conn.setRequestProperty("Connection", "Keep-Alive");
                     conn.setRequestProperty("ENCTYPE", "Multipart/form-data");
                     conn.setRequestProperty("Accept-Encoding", "gzip");
@@ -740,7 +740,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     Log.e("LOG"," "+log);
                     mFileInputStream.close();
                     dos.close();
-                    conn.disconnect();
+                    //conn.disconnect();
                     bitmap = null;
                     }
                 }

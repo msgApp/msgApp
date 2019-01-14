@@ -43,19 +43,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SQLiteDatabase db;
     DBHelper helper =  new DBHelper(MainActivity.this);
     TextView search_pw, search_id, register, login_id, login_pw, tx_view;
-    JSONArray fList;
+    JSONArray fList, msg;
     JSONObject pList;
-    JSONArray msg;
     ArrayList userList;
-    String result, result2, userId, msgToken="";
-    int countItem = 0;
-    int go=0;
+    int countItem = 0, go=0, listenCount = 0, cCount = 0;
     private Socket mSocket;
     ArrayList<GetFriendListItem2> mainList;
-    String fEmail,fNickName,fImg,fText;
-    int listenCount = 0;
-    int cCount = 0;
-
+    String fEmail, fNickName, fImg, fText, result, result2, userId, msgToken="";
+    boolean firstCheck = false;
     @Override
     protected void onResume() {
         super.onResume();
@@ -95,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }catch (Exception e){
                 }
                 mSocket.emit("sendFriend",data);
+
                 mSocket.on("friendList", listener);
 
                 Intent intent2 = new Intent(MainActivity.this,ViewPagerActivity.class);
@@ -147,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.login_btn:
                 //insert
+                firstCheck = false;
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 final JSONObject loginData = new JSONObject();
                 try{
@@ -303,9 +300,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-
                     fList = (JSONArray) args[0];
-                    Log.e(TAG,"FList" + fList);
+                    Log.e(TAG,"FList = " + fList.toString()+", firstCheck = "+firstCheck);
+                    if (fList.toString().equals("[]")){
+                        Log.e(TAG,"FList is Null");
+                        firstCheck = true;
+                        Log.e(TAG,"Change True firstCheck");
+                        goIntent();
+                    }
+                    if (firstCheck){
+                        Log.e(TAG,"InnerFirstCheck = "+firstCheck);
+                        Log.e(TAG, "ㅡㅡㅡㅡlistener goIntentㅡㅡㅡㅡ");
+
+                    }
                     userList = new ArrayList();
                     listenCount = (fList.length()-1);
                     int count = 0;
@@ -363,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            Log.e(TAG, "Login Result = "+s);
             result = s;
             result2 = result.substring(2,result.length()-2);
           //  Log.e(TAG, "RESULT = "+result2);
@@ -424,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (Yn.equals("n")) {
             db.insert("friend", null, values); // 테이블/널컬럼핵/데이터(널컬럼핵=디폴트)
+            Log.e(TAG, "ㅡㅡㅡInsertㅡㅡㅡ");
             Log.e(TAG, "LISTC = " + listenCount + " cCount " + countItem);
             if (listenCount == cCount) {
                 goIntent();

@@ -231,9 +231,7 @@ public class RegisterActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-
             result = s;
-
             if(result.equals("[\"signUp success\"]")) {
                 Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
                 startActivity(intent);
@@ -242,7 +240,6 @@ public class RegisterActivity extends AppCompatActivity{
 
         }
     }
-
     public final static boolean isValidEmail(CharSequence target) {
         if (TextUtils.isEmpty(target)) {
             return false;

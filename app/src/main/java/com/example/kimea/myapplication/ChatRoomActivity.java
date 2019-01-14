@@ -43,7 +43,6 @@ import com.example.kimea.myapplication.item.GetMessageItem;
 import com.example.kimea.myapplication.util.ChatApplication;
 import com.example.kimea.myapplication.util.DBHelper;
 import com.example.kimea.myapplication.util.RequestHttpURLConnection;
-import com.squareup.picasso.Picasso;
 import com.sun.mail.iap.ByteArray;
 
 import org.apache.http.HttpConnection;

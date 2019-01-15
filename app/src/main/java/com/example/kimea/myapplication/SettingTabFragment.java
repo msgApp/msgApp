@@ -1,6 +1,7 @@
 package com.example.kimea.myapplication;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.List;
 
 import io.socket.client.Socket;
 
@@ -57,6 +59,8 @@ public class SettingTabFragment extends Fragment{
         helper = new DBHelper(getActivity().getApplicationContext());
         db = helper.getWritableDatabase();
 
+
+
         SharedPreferences preferences = getActivity().getSharedPreferences("pref",Context.MODE_PRIVATE);
         myEmail = preferences.getString("myEmail","");
         Log.e(TAG,"myEmail = "+myEmail);
@@ -70,8 +74,10 @@ public class SettingTabFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.setting_fragment,container,false);
+        ActivityManager am = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
+        Log.e(TAG,"Check Activity  =  "+ac.get(0).topActivity.getClassName());
 
         imgview = view.findViewById(R.id.profileImg);
         profile = view.findViewById(R.id.profileText);

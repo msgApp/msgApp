@@ -66,7 +66,7 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
         noti = getIntent().getStringExtra("noti");
         Log.e(TAG,"VIEWNOTI = "+noti);
         if (noti!=null){
-            Intent intent = new Intent(ViewPagerActivity.this,ChatRoomActivity.class);
+            Intent intent = new Intent(this,ChatRoomActivity.class);
             intent.putExtra("email",getIntent().getStringExtra("email"));
             intent.putExtra("roomname",getIntent().getStringExtra("roomname"));
             intent.putExtra("roomNickName",getIntent().getStringExtra("roomNickName"));
@@ -106,7 +106,7 @@ public class ViewPagerActivity extends AppCompatActivity implements TabPagerAdap
         SharedPreferences.Editor editor = pref.edit();
         if (pref.getString("email","").isEmpty()) {
             editor.putString("email", "none");
-            editor.commit();
+            editor.apply();
         }
 
         tabLayout = findViewById(R.id.tabLayout);

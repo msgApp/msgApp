@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
               //  Log.e(TAG,"DIVICESEARCHsuccess "+cursor.getString(0));
                 userId = cursor.getString(0);
                 cursor.close();
+                db.close();
             }else{
                // Log.e(TAG,"DIVICESEARCHfailed");
                 userId = null;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Log.e(TAG," "+e);
             db = helper.getWritableDatabase();
             db.execSQL("create table divice(user text,token text,msgToken text,loginyn text Default 'n');");
+            db.close();
            // Log.e(TAG,"DIVICETABLECREATE");
 
         }
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 serverTask.execute();
                 db = helper.getWritableDatabase();
                 db.execSQL("delete from token where token is not null");
-
+                db.close();
                 final Handler delayHandler = new Handler();
                 delayHandler.postDelayed(new Runnable() {
                     @Override
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 final String DATABASE_TABLE_ONEUSER = "CREATE TABLE oneUser(user_seq INTEGER PRIMARY KEY, userId TEXT)";
                                 db = helper.getWritableDatabase();
                                 db.execSQL(DATABASE_TABLE_ONEUSER);
-
+                                db.close();
                                 SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = pref.edit();
                                 editor.putString("userId", login_id.getText().toString());
@@ -390,14 +392,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!fcur.getString(1).equals(fNickName)) {
                     db.execSQL("update friend set friendnick = '" + fNickName + "' where friendemail ='" + fEmail + "'");
                     Log.e(TAG, "UpdateFriendNick");
+                    db.close();
                 }
                 if (!fcur.getString(2).equals(fImg)) {
                     db.execSQL("update friend set friendimg = '" + fImg + "' where friendemail ='" + fEmail + "'");
                     Log.e(TAG, "UpdateFriendImg");
+                    db.close();
                 }
                 if (!fcur.getString(3).equals(fText)) {
                     db.execSQL("update friend set friendText = '" + fText + "' where friendemail ='" + fEmail + "'");
                     Log.e(TAG, "UpdateFriendText");
+                    db.close();
                 }
             }
         }catch (Exception e){
@@ -436,11 +441,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, "LISTC = " + listenCount + " cCount " + countItem);
             if (listenCount == cCount) {
                 goIntent();
+                db.close();
             } else {
                 cCount++;
             }
         }
-
     }
 
     // db 객체를 얻어온다. 쓰기 가능
@@ -471,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        db.close();
         mSocket.emit("outActivity", actData);
         mSocket.disconnect();
         super.onDestroy();
@@ -561,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             db.insert("oneUser", null, values1);
            Log.e(TAG,"CATCH");
         }
-
+        db.close();
     }
 
 }

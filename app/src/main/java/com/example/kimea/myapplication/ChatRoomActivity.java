@@ -2,6 +2,7 @@ package com.example.kimea.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,11 +18,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -30,11 +29,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,10 +39,6 @@ import com.example.kimea.myapplication.adapter.ChatAdapter;
 import com.example.kimea.myapplication.item.GetMessageItem;
 import com.example.kimea.myapplication.util.ChatApplication;
 import com.example.kimea.myapplication.util.DBHelper;
-import com.example.kimea.myapplication.util.RequestHttpURLConnection;
-import com.sun.mail.iap.ByteArray;
-
-import org.apache.http.HttpConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,21 +48,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.concurrent.Executors;
+import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -81,9 +68,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 2;
     static final int REQUEST_IMAGE_CROP = 3;
-    Boolean album = false;
-    Boolean picture = false;
-    Uri realURI,photoURI, photoURI2;
+    Boolean album = false, picture = false;
+    Uri realURI, photoURI, photoURI2;
     public static Context CONTEXT;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -503,7 +489,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-
         JSONObject actData = new JSONObject();
         db = helper.getReadableDatabase();
         String query2 = "select user from divice";
@@ -527,10 +512,18 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onStop() {
         super.onStop();
+        ActivityManager am = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
+        Log.e(TAG,"On Stop Check Activity = "+ac.get(0).topActivity.getClassName());
         SharedPreferences preferences = getSharedPreferences("chatEmail", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("email", "none");
-        editor.commit();
+        if (ac.get(0).topActivity.getClassName().equals("com.sec.android.gallery3d.app.GalleryActivity")||ac.get(0).topActivity.getClassName().equals("com.linecorp.b612.android.activity.ActivityCameraForOtherApp")||ac.get(0).topActivity.getClassName().equals("com.sec.android.gallery3d.app.CropImage")){
+           Log.e(TAG,"ㅡㅡㅡStop Ifㅡㅡㅡ");
+        }else{
+            editor.putString("email", "none");
+        }
+
+        editor.apply();
     }
     public void set_badge_alarm(int badge_count) {
         Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");

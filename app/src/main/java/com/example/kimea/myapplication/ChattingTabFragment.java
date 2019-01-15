@@ -205,6 +205,7 @@ public class ChattingTabFragment extends Fragment implements ChatRoomAdapter.OnS
             String result = array[0] + array2[0] + array2[1];
             db.execSQL("drop table '" + result + "';");
             db.delete("oneUser", "userId = ?", new String[]{room});
+            db.close();
             mSocket.emit("outRoom", jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();

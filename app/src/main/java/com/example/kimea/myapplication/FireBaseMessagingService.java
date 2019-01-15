@@ -55,7 +55,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         sendRegistrationToServer(s);
     }
     private void sendRegistrationToServer(String token) {
-
         SharedPreferences pref = getSharedPreferences("pref", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("badge", badge);
@@ -77,7 +76,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
 
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> ac = am.getRunningTasks(1);
-        SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
 
         String[] array = chatRoom.split("@");
         String ss = array[1];
@@ -101,7 +99,9 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
         cur.moveToFirst();
         String mineCheck = cur.getString(0);
 
+        SharedPreferences getEmail = getSharedPreferences("chatEmail",MODE_PRIVATE);
         if(email!=null){
+            Log.e(TAG,"Check ChatEmail = "+getEmail.getString("email","this is null"));
             SharedPreferences pref = getSharedPreferences("pref",MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
             String badge_check = pref.getString(chatRoom,"");
@@ -117,7 +117,7 @@ public class FireBaseMessagingService extends FirebaseMessagingService{
                     sendNotification(msgBody, msgTitle,email, roomNick, intentRoomName);
                     addOneBadge();
                 }
-                Log.e(TAG,"activity"+ac.get(0).topActivity.getClassName());
+                Log.e(TAG,"activity = "+ac.get(0).topActivity.getClassName());
                 try {
                     ((ViewPagerActivity) ViewPagerActivity.CONTEXT).reset();
                 }catch (Exception e){

@@ -76,6 +76,7 @@ public class FriendTabFragment extends Fragment {
             msgToken = cursor2.getString(2);
         }
         cursor2.close();
+        database.close();
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("myEmail",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("email", id);
@@ -159,6 +160,7 @@ public class FriendTabFragment extends Fragment {
                 String text = curso2r.getString(3);
                 addProfile(img, nick, text, email);
             }
+            db.close();
             /*
             String pos = getArguments().getString("position");
             Log.i("Arguments position", pos);

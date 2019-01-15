@@ -32,7 +32,6 @@
             android:theme="@style/Login"
             android:configChanges="screenSize|orientation"
             >
-
         </activity>
         <activity
             android:name=".LoadingActivity"
@@ -43,7 +42,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
+        </activity>
+        <activity
+            android:name=".ViewChatImgActivity"
+            android:theme="@style/AppTheme2"
+            android:configChanges="screenSize|orientation"
+            >
         </activity>
         <activity
             android:name=".RegisterActivity"

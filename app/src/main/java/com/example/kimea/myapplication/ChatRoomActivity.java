@@ -94,8 +94,10 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatroom);
+
         ChatApplication app = (ChatApplication) getApplication();
         mSocket = app.getSocket();
+
         Intent intent = getIntent();
         CONTEXT = this;
         //!!상대 이메일 입니다!!
@@ -128,6 +130,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         emaile.commit();
         msgInput = findViewById(R.id.message_input);
         sendBtn = findViewById(R.id.send_button);
+
+
         msgInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -151,10 +155,8 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                     FilterArray[0] = new InputFilter.LengthFilter(500);
                     msgInput.setFilters(FilterArray);
                 } else {
-
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 if (msgInput.getText().toString().replace(" ", "").equals("")) {
@@ -189,7 +191,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         String[] ary2 = ss.split("\\.");
         result = array[0] + ary2[0] + ary2[1];
         db = helper.getWritableDatabase();
-        // db.execSQL("drop table '"+result+"'");
         try {
             SQLiteDatabase database = helper.getReadableDatabase();
             String sql = "select * from '" + result + "'";
@@ -212,7 +213,7 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
 
         items = new ArrayList();
         // RecyclerView를 위해 CustomAdapter를 사용합니다.
-        mAdapter = new ChatAdapter(items);
+        mAdapter = new ChatAdapter(items, CONTEXT);
         mRecyclerView.setAdapter(mAdapter);
         // ArrayList 에 Item 객체(데이터) 넣기
 
@@ -227,7 +228,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             String roomNickname = cursor.getString(4);
             byte[] getImg = cursor.getBlob(5);
             String type = cursor.getString(6);
-           // Log.e(TAG,"SqlLite img = "+getImg+ " TYPE = "+type+" TEXT = "+text);
             try {
                 if (type.equals("2")){
                     Bitmap bitmap = BitmapFactory.decodeByteArray(getImg,0,getImg.length);
@@ -265,7 +265,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
                 myEmail = cursor2.getString(0);
                 Log.i("ChatRoomAct-myEmail", myEmail);
                 addMsg("me", msgInput.getText().toString(), 1,null);
-                //mAdapter.notifyItemInserted(items.size());
                 mAdapter.notifyDataSetChanged();
 
                 //채팅방 목록 테이블에 존재하는지 확인
@@ -335,7 +334,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             pushData.put("u_email", myEmail);
             pushData.put("f_email", email);
             pushData.put("isPicture",false);
-            //   pushData.put("room",email);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -345,20 +343,15 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
     public void addMsg(String setName, String setMsg, int type, Bitmap bitmap) {
         if (type == 0) {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_MESSAGE).username(setName).userMessage(setMsg).build());
-            //insert(setName,setMsg,"0");
         } else if(type == 1) {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_MYMSG).username(setName).userMessage(setMsg).build());
-            //insert(setName,setMsg,"1");
         }
         else if(type == 2) {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_MYIMG).username(setName).userMessage(setMsg).userBitmap(bitmap).build());
-            //insert(setName,setMsg,"1");
         }
         else if(type == 3) {
             items.add(new GetMessageItem.Builder(GetMessageItem.TYPE_IMG).username(setName).userMessage(setMsg).userBitmap(bitmap).build());
-            //insert(setName,setMsg,"1");
         }
-        // mAdapter.notifyItemInserted(items.size());
         mAdapter.notifyDataSetChanged();
         scrollToBottom();
     }
@@ -424,8 +417,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             });
         }
     };
-
-
     public String userId() {
         db = helper.getReadableDatabase();
         String query = "select user from divice";
@@ -502,9 +493,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
             e.printStackTrace();
         }
         mSocket.emit("outActivity", actData);
-
-        Intent intent = new Intent();
-        String rs2 = "";
         db.close();
         finish();
     }
@@ -564,18 +552,6 @@ public class ChatRoomActivity extends Activity implements View.OnClickListener {
         }
         File imageFile = new File(storageDir, imageFileName);
         return imageFile;
-
-        // 특정 경로와 폴더를 지정하지 않고, 메모리 최상 위치에 저장 방법
-    }
-    private File downloadImg(){
-        File storageDir = new File(Environment.getExternalStorageDirectory()+ "/Pictures", "MsgApp");
-
-        if (!storageDir.exists()) {
-            Log.i("mCurrentPhotoPath1", storageDir.toString());
-            storageDir.mkdirs();
-        }
-
-        return storageDir;
 
         // 특정 경로와 폴더를 지정하지 않고, 메모리 최상 위치에 저장 방법
     }
